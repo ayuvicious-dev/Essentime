@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Essentime — Timer App</title>
+<meta name="description" content="Essentime, timer sederhana untuk ritual harianmu.">
+<meta name="theme-color" content="#B8763E">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFFBF3;
+    --paper:#FFFFFF;
+    --gold-light:#E8B876;
+    --gold-dark:#B8763E;
+    --gold-mid:#D9A05B;
+    --brown:#4A2F18;
+    --brown-soft:#8A6B49;
+    --brown-faint:#C9AE8C;
+    --line:#EFE2CD;
+    --shadow: rgba(90,58,30,0.10);
+    --danger:#B5533C;
+    --ok:#6E8B57;
+    --radius-card: 20px;
+    --radius-input: 12px;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, #FFF3DE 0%, transparent 60%),
+      var(--cream);
+    color:var(--brown);
+    font-family:var(--sans);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;}
+  input{font-family:inherit;}
+
+  a{color:var(--gold-dark);}
+
+  .shell{
+    max-width:460px;
+    margin:0 auto;
+    min-height:100vh;
+    padding:28px 20px 56px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- brand mark ---------- */
+  .brandmark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brandmark img{width:38px;height:38px;display:block;}
+  .brandmark .wordmark{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:26px;
+    color:var(--brown);
+    letter-spacing:0.2px;
+  }
+
+  /* ---------- auth screen ---------- */
+  #auth-screen{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px 0;
+  }
+  #auth-screen .brandmark{
+    flex-direction:column;
+    gap:14px;
+    margin-bottom:6px;
+  }
+  #auth-screen .brandmark img{width:72px;height:72px;}
+  #auth-screen .wordmark{font-size:34px;}
+  .tagline{
+    color:var(--brown-soft);
+    font-size:14px;
+    margin:2px 0 30px;
+    letter-spacing:0.3px;
+  }
+
+  .auth-card{
+    background:var(--paper);
+    border-radius:var(--radius-card);
+    box-shadow:0 18px 40px -18px var(--shadow), 0 2px 8px -2px var(--shadow);
+    padding:28px 24px;
+    width:100%;
+    text-align:left;
+  }
+  .auth-tabs{
+    display:flex;
+    gap:6px;
+    background:var(--cream);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:22px;
+  }
+  .auth-tab{
+    flex:1;
+    border:none;
+    background:transparent;
+    padding:9px 0;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--brown-soft);
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .auth-tab.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+  }
+
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--brown-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:16px;}
+  .field input{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-input);
+    font-size:15px;
+    color:var(--brown);
+    background:#FFFEFC;
+    outline:none;
+    transition:border-color .15s;
+  }
+  .field input:focus{border-color:var(--gold-dark);}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:none;
+    border-radius:var(--radius-input);
+    padding:13px 18px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    width:100%;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    box-shadow:0 10px 22px -10px rgba(184,118,62,0.55);
+  }
+  .btn-primary:disabled{opacity:0.55;cursor:default;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--brown-soft);
+    padding:8px 10px;
+  }
+
+  .auth-msg{
+    font-size:13px;
+    margin-top:14px;
+    padding:10px 12px;
+    border-radius:10px;
+    display:none;
+  }
+  .auth-msg.error{display:block;background:#FBEAE4;color:var(--danger);}
+  .auth-msg.info{display:block;background:#F0F6EC;color:var(--ok);}
+
+  .auth-foot{
+    text-align:center;
+    margin-top:18px;
+    font-size:13px;
+    color:var(--brown-soft);
+  }
+  .auth-foot button{
+    background:none;border:none;color:var(--gold-dark);
+    font-weight:600;cursor:pointer;font-size:13px;padding:0;
+  }
+
+  /* ---------- app screen ---------- */
+  #app-screen{display:none;flex:1;flex-direction:column;}
+  .app-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .app-header .greet{
+    font-size:12.5px;
+    color:var(--brown-soft);
+    margin-top:1px;
+  }
+  .header-actions{display:flex;align-items:center;gap:4px;}
+  .icon-btn{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    width:38px;height:38px;
+    border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--brown-soft);
+  }
+  .icon-btn:hover{border-color:var(--gold-mid);color:var(--gold-dark);}
+
+  /* new timer composer */
+  .composer{
+    background:var(--paper);
+    border-radius:var(--radius-card);
+    box-shadow:0 14px 30px -18px var(--shadow);
+    padding:18px 18px 16px;
+    margin-bottom:24px;
+  }
+  .composer .field{margin-bottom:12px;}
+  .duration-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .duration-row .field{flex:1;margin-bottom:0;}
+  .duration-row input{text-align:center;}
+  .presets{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .preset-chip{
+    border:1.5px solid var(--line);
+    background:#FFFEFC;
+    color:var(--brown-soft);
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 12px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .preset-chip:hover{border-color:var(--gold-mid);color:var(--gold-dark);}
+
+  /* timer list */
+  #timer-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .empty-state{
+    text-align:center;
+    padding:44px 10px;
+    color:var(--brown-faint);
+  }
+  .empty-state img{width:56px;opacity:0.55;margin-bottom:14px;}
+  .empty-state p{font-size:14px;margin:0;line-height:1.6;}
+
+  .timer-card{
+    background:var(--paper);
+    border-radius:var(--radius-card);
+    box-shadow:0 12px 26px -18px var(--shadow);
+    padding:18px 18px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .timer-card.finished{
+    box-shadow:0 12px 26px -16px rgba(181,83,60,0.35);
+  }
+  .timer-card .bar-bg{
+    position:absolute;left:0;top:0;height:3px;width:100%;
+    background:var(--line);
+  }
+  .timer-card .bar-fill{
+    position:absolute;left:0;top:0;height:3px;
+    background:linear-gradient(90deg, var(--gold-light), var(--gold-dark));
+    transition:width 1s linear;
+  }
+  .timer-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:10px;
+    margin-top:4px;
+  }
+  .timer-name{
+    font-weight:600;
+    font-size:15px;
+    color:var(--brown);
+    word-break:break-word;
+    padding-right:8px;
+  }
+  .timer-name .status{
+    display:block;
+    font-size:11.5px;
+    font-weight:500;
+    color:var(--brown-faint);
+    margin-top:2px;
+  }
+  .delete-btn{
+    background:none;border:none;color:var(--brown-faint);
+    cursor:pointer;padding:2px;flex-shrink:0;
+  }
+  .delete-btn:hover{color:var(--danger);}
+
+  .timer-mid{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .timer-digits{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:38px;
+    color:var(--brown);
+    letter-spacing:0.5px;
+    font-variant-numeric:tabular-nums;
+  }
+  .timer-card.finished .timer-digits{color:var(--danger);}
+
+  .timer-controls{display:flex;gap:8px;}
+  .ctrl-btn{
+    width:44px;height:44px;
+    border-radius:13px;
+    border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    color:#fff;
+  }
+  .ctrl-btn.play{background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));}
+  .ctrl-btn.pause{background:var(--brown-soft);}
+  .ctrl-btn.reset{background:var(--paper);color:var(--brown-soft);border:1.5px solid var(--line);}
+  .ctrl-btn:active{transform:scale(0.94);}
+
+  footer.hint{
+    text-align:center;
+    color:var(--brown-faint);
+    font-size:12px;
+    margin-top:30px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .bar-fill{transition:none;}
+    .btn, .ctrl-btn{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- AUTH SCREEN -->
+  <section id="auth-screen">
+    <div class="brandmark">
+      <img src="icons/icon-192.png" alt="Essentime">
+      <div class="wordmark">Essentime</div>
+    </div>
+    <p class="tagline">Timer tenang untuk ritual harianmu</p>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-mode="login" type="button">Masuk</button>
+        <button class="auth-tab" data-mode="register" type="button">Daftar</button>
+      </div>
+
+      <form id="auth-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" required placeholder="nama@email.com">
+        </div>
+        <div class="field">
+          <label for="password">Kata sandi</label>
+          <input id="password" type="password" autocomplete="current-password" required placeholder="Minimal 6 karakter" minlength="6">
+        </div>
+        <button class="btn btn-primary" id="auth-submit" type="submit">Masuk</button>
+      </form>
+
+      <div class="auth-msg" id="auth-msg"></div>
+
+      <div class="auth-foot" id="reset-row">
+        Lupa kata sandi? <button type="button" id="reset-btn">Kirim tautan reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP SCREEN -->
+  <section id="app-screen">
+    <div class="app-header">
+      <div class="brandmark">
+        <img src="icons/icon-192.png" alt="Essentime">
+        <div>
+          <div class="wordmark" style="font-size:20px;">Essentime</div>
+          <div class="greet" id="greet-text"></div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="logout-btn" title="Keluar" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="field">
+        <label for="timer-name">Nama timer</label>
+        <input id="timer-name" type="text" placeholder="mis. Menyeduh teh" maxlength="40">
+      </div>
+      <div class="duration-row">
+        <div class="field">
+          <label for="dur-min">Menit</label>
+          <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="dur-sec">Detik</label>
+          <input id="dur-sec" type="number" min="0" max="59" value="0" inputmode="numeric">
+        </div>
+      </div>
+      <div class="presets" id="presets">
+        <button class="preset-chip" data-sec="60" type="button">1 mnt</button>
+        <button class="preset-chip" data-sec="180" type="button">3 mnt</button>
+        <button class="preset-chip" data-sec="300" type="button">5 mnt</button>
+        <button class="preset-chip" data-sec="600" type="button">10 mnt</button>
+        <button class="preset-chip" data-sec="900" type="button">15 mnt</button>
+      </div>
+      <button class="btn btn-primary" id="add-timer-btn" type="button">Tambah timer</button>
+      <div class="auth-msg" id="composer-msg"></div>
+    </div>
+
+    <div id="timer-list"></div>
+
+    <footer class="hint">Tersimpan otomatis ke akunmu &middot; Essentime</footer>
+  </section>
+
+</div>
+
+<audio id="chime" preload="auto"></audio>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged, sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  getFirestore, collection, doc, addDoc, deleteDoc, updateDoc,
+  onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAbHqPZXxFvHPULKbFzx4Vu13iFJdL-0wQ",
+  authDomain: "essentime-11301.firebaseapp.com",
+  projectId: "essentime-11301",
+  storageBucket: "essentime-11301.firebasestorage.app",
+  messagingSenderId: "161378904688",
+  appId: "1:161378904688:web:ad26c512748e34d2be62b5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ---------------- elements ---------------- */
+const authScreen = document.getElementById('auth-screen');
+const appScreen = document.getElementById('app-screen');
+const authForm = document.getElementById('auth-form');
+const authSubmit = document.getElementById('auth-submit');
+const authMsg = document.getElementById('auth-msg');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const resetBtn = document.getElementById('reset-btn');
+const tabs = document.querySelectorAll('.auth-tab');
+const greetText = document.getElementById('greet-text');
+const logoutBtn = document.getElementById('logout-btn');
+const timerNameInput = document.getElementById('timer-name');
+const durMinInput = document.getElementById('dur-min');
+const durSecInput = document.getElementById('dur-sec');
+const addTimerBtn = document.getElementById('add-timer-btn');
+const timerList = document.getElementById('timer-list');
+const presetsRow = document.getElementById('presets');
+const chime = document.getElementById('chime');
+const composerMsg = document.getElementById('composer-msg');
+
+let mode = 'login';
+let unsubscribeTimers = null;
+let tickHandle = null;
+const localTimers = new Map(); // id -> data
+
+/* ---------------- simple beep (no external audio file) ---------------- */
+function playChime(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    [0, 0.28, 0.56].forEach((offset, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = i === 2 ? 880 : 660;
+      gain.gain.setValueAtTime(0.0001, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.25, now + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.26);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.3);
+    });
+  }catch(e){ /* audio not available */ }
+}
+
+function notify(title, body){
+  if('Notification' in window && Notification.permission === 'granted'){
+    try{ new Notification(title, { body, icon:'icons/icon-192.png' }); }catch(e){}
+  }
+}
+
+/* ---------------- auth UI ---------------- */
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    mode = tab.dataset.mode;
+    tabs.forEach(t => t.classList.toggle('active', t === tab));
+    authSubmit.textContent = mode === 'login' ? 'Masuk' : 'Buat akun';
+    passwordInput.autocomplete = mode === 'login' ? 'current-password' : 'new-password';
+    hideMsg();
+  });
+});
+
+function showMsg(text, type){
+  authMsg.textContent = text;
+  authMsg.className = 'auth-msg ' + type;
+}
+function hideMsg(){
+  authMsg.className = 'auth-msg';
+  authMsg.textContent = '';
+}
+
+function friendlyAuthError(code){
+  const map = {
+    'auth/invalid-email': 'Format email tidak valid.',
+    'auth/user-not-found': 'Akun dengan email ini tidak ditemukan.',
+    'auth/wrong-password': 'Kata sandi salah.',
+    'auth/invalid-credential': 'Email atau kata sandi salah.',
+    'auth/email-already-in-use': 'Email ini sudah terdaftar. Coba masuk.',
+    'auth/weak-password': 'Kata sandi minimal 6 karakter.',
+    'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
+    'auth/network-request-failed': 'Koneksi bermasalah. Periksa internetmu.'
+  };
+  return map[code] || 'Terjadi kesalahan. Coba lagi.';
+}
+
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideMsg();
+  authSubmit.disabled = true;
+  authSubmit.textContent = 'Memproses...';
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  try{
+    if(mode === 'login'){
+      await signInWithEmailAndPassword(auth, email, password);
+    }else{
+      await createUserWithEmailAndPassword(auth, email, password);
+    }
+  }catch(err){
+    showMsg(friendlyAuthError(err.code), 'error');
+  }finally{
+    authSubmit.disabled = false;
+    authSubmit.textContent = mode === 'login' ? 'Masuk' : 'Buat akun';
+  }
+});
+
+resetBtn.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  if(!email){
+    showMsg('Isi email terlebih dahulu, lalu tekan kirim tautan reset.', 'error');
+    return;
+  }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    showMsg('Tautan reset kata sandi telah dikirim ke email tersebut.', 'info');
+  }catch(err){
+    showMsg(friendlyAuthError(err.code), 'error');
+  }
+});
+
+logoutBtn.addEventListener('click', () => signOut(auth));
+
+/* ---------------- auth state ---------------- */
+onAuthStateChanged(auth, (user) => {
+  if(user){
+    authScreen.style.display = 'none';
+    appScreen.style.display = 'flex';
+    greetText.textContent = user.email;
+    if('Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission().catch(()=>{});
+    }
+    subscribeTimers(user.uid);
+    startTicker();
+  }else{
+    appScreen.style.display = 'none';
+    authScreen.style.display = 'flex';
+    if(unsubscribeTimers){ unsubscribeTimers(); unsubscribeTimers = null; }
+    localTimers.clear();
+    stopTicker();
+    timerList.innerHTML = '';
+    authForm.reset();
+    hideMsg();
+  }
+});
+
+/* ---------------- timer composer ---------------- */
+presetsRow.addEventListener('click', (e) => {
+  const chip = e.target.closest('.preset-chip');
+  if(!chip) return;
+  const sec = parseInt(chip.dataset.sec, 10);
+  durMinInput.value = Math.floor(sec / 60);
+  durSecInput.value = sec % 60;
+});
+
+function showComposerMsg(text, type){
+  composerMsg.textContent = text;
+  composerMsg.className = 'auth-msg ' + type;
+}
+function hideComposerMsg(){
+  composerMsg.className = 'auth-msg';
+  composerMsg.textContent = '';
+}
+function friendlyFirestoreError(err){
+  const code = err && err.code;
+  if(code === 'permission-denied'){
+    return 'Ditolak oleh Firestore Rules. Pastikan Rules sudah diatur agar user boleh menulis ke koleksi timernya sendiri (lihat README).';
+  }
+  if(code === 'unavailable' || code === 'failed-precondition'){
+    return 'Firestore Database sepertinya belum dibuat untuk project ini. Buat database di Firebase Console (Firestore Database → Create database).';
+  }
+  if(code === 'unauthenticated'){
+    return 'Sesi login sudah tidak valid. Coba keluar lalu masuk lagi.';
+  }
+  return 'Gagal menambah timer: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui') + '. Cek Console browser (F12) untuk detail.';
+}
+
+addTimerBtn.addEventListener('click', async () => {
+  hideComposerMsg();
+  const user = auth.currentUser;
+  if(!user){
+    showComposerMsg('Kamu belum masuk. Muat ulang halaman dan masuk lagi.', 'error');
+    return;
+  }
+  const name = timerNameInput.value.trim() || 'Timer';
+  const min = Math.max(0, parseInt(durMinInput.value, 10) || 0);
+  const sec = Math.max(0, Math.min(59, parseInt(durSecInput.value, 10) || 0));
+  const totalSec = min * 60 + sec;
+  if(totalSec <= 0){
+    showComposerMsg('Atur durasi menit/detik lebih dari 0 dulu.', 'error');
+    durMinInput.focus();
+    return;
+  }
+  addTimerBtn.disabled = true;
+  try{
+    await addDoc(collection(db, 'users', user.uid, 'timers'), {
+      name,
+      durationSeconds: totalSec,
+      remainingSeconds: totalSec,
+      status: 'running', // idle | running | paused | finished
+      endAt: Date.now() + totalSec * 1000,
+      createdAt: serverTimestamp()
+    });
+    timerNameInput.value = '';
+  }catch(err){
+    console.error(err);
+    showComposerMsg(friendlyFirestoreError(err), 'error');
+  }finally{
+    addTimerBtn.disabled = false;
+  }
+});
+
+/* ---------------- firestore sync ---------------- */
+function subscribeTimers(uid){
+  const q = query(collection(db, 'users', uid, 'timers'), orderBy('createdAt', 'desc'));
+  unsubscribeTimers = onSnapshot(q, (snap) => {
+    localTimers.clear();
+    snap.forEach(docSnap => {
+      localTimers.set(docSnap.id, docSnap.data());
+    });
+    renderTimers();
+  }, (err) => {
+    console.error(err);
+    showComposerMsg(friendlyFirestoreError(err), 'error');
+  });
+}
+
+function fmt(totalSeconds){
+  const s = Math.max(0, Math.round(totalSeconds));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+}
+
+function currentRemaining(data){
+  if(data.status === 'running' && data.endAt){
+    const endMs = data.endAt.toMillis ? data.endAt.toMillis() : data.endAt;
+    return Math.max(0, (endMs - Date.now()) / 1000);
+  }
+  return data.remainingSeconds;
+}
+
+function renderTimers(){
+  if(localTimers.size === 0){
+    timerList.innerHTML = `
+      <div class="empty-state">
+        <img src="icons/icon-192.png" alt="">
+        <p>Belum ada timer.<br>Tambahkan yang pertama di atas.</p>
+      </div>`;
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  localTimers.forEach((data, id) => {
+    frag.appendChild(buildCard(id, data));
+  });
+  timerList.innerHTML = '';
+  timerList.appendChild(frag);
+}
+
+function buildCard(id, data){
+  const remaining = currentRemaining(data);
+  const pct = data.durationSeconds > 0 ? Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) : 0;
+  const finished = data.status === 'finished';
+
+  const card = document.createElement('div');
+  card.className = 'timer-card' + (finished ? ' finished' : '');
+  card.dataset.id = id;
+
+  const statusLabel = {
+    idle: 'Siap',
+    running: 'Berjalan',
+    paused: 'Dijeda',
+    finished: 'Selesai'
+  }[data.status] || '';
+
+  card.innerHTML = `
+    <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+    <div class="timer-top">
+      <div class="timer-name">${escapeHtml(data.name)}<span class="status">${statusLabel}</span></div>
+      <button class="delete-btn" title="Hapus" data-action="delete">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+    </div>
+    <div class="timer-mid">
+      <div class="timer-digits" data-role="digits">${fmt(remaining)}</div>
+      <div class="timer-controls">
+        ${finished
+          ? `<button class="ctrl-btn reset" data-action="reset" title="Ulangi">${iconReset()}</button>`
+          : data.status === 'running'
+            ? `<button class="ctrl-btn pause" data-action="pause" title="Jeda">${iconPause()}</button>`
+            : `<button class="ctrl-btn play" data-action="play" title="Mulai">${iconPlay()}</button>`
+        }
+        <button class="ctrl-btn reset" data-action="reset" title="Atur ulang">${iconRotate()}</button>
+      </div>
+    </div>
+  `;
+
+  card.querySelector('[data-action="delete"]').addEventListener('click', () => handleDelete(id));
+  const playBtn = card.querySelector('[data-action="play"]');
+  if(playBtn) playBtn.addEventListener('click', () => handlePlay(id, data));
+  const pauseBtn = card.querySelector('[data-action="pause"]');
+  if(pauseBtn) pauseBtn.addEventListener('click', () => handlePause(id, data));
+  card.querySelectorAll('[data-action="reset"]').forEach(btn => btn.addEventListener('click', () => handleReset(id, data)));
+
+  return card;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function iconPlay(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
+function iconPause(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
+function iconReset(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
+function iconRotate(){ return `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`; }
+
+/* ---------------- timer actions ---------------- */
+async function handlePlay(id, data){
+  const user = auth.currentUser;
+  if(!user) return;
+  const remaining = currentRemaining(data) > 0 ? currentRemaining(data) : data.durationSeconds;
+  const endAt = Date.now() + remaining * 1000;
+  await updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+    status: 'running',
+    endAt,
+    remainingSeconds: remaining
+  });
+}
+
+async function handlePause(id, data){
+  const user = auth.currentUser;
+  if(!user) return;
+  const remaining = currentRemaining(data);
+  await updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+    status: 'paused',
+    endAt: null,
+    remainingSeconds: remaining
+  });
+}
+
+async function handleReset(id, data){
+  const user = auth.currentUser;
+  if(!user) return;
+  await updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+    status: 'idle',
+    endAt: null,
+    remainingSeconds: data.durationSeconds
+  });
+}
+
+async function handleDelete(id){
+  const user = auth.currentUser;
+  if(!user) return;
+  await deleteDoc(doc(db, 'users', user.uid, 'timers', id));
+}
+
+/* ---------------- ticking (local display + finish detection) ---------------- */
+function startTicker(){
+  stopTicker();
+  tickHandle = setInterval(tick, 250);
+}
+function stopTicker(){
+  if(tickHandle){ clearInterval(tickHandle); tickHandle = null; }
+}
+
+async function tick(){
+  const user = auth.currentUser;
+  if(!user) return;
+  for(const [id, data] of localTimers.entries()){
+    if(data.status !== 'running') continue;
+    const remaining = currentRemaining(data);
+    const card = timerList.querySelector(`.timer-card[data-id="${id}"] [data-role="digits"]`);
+    if(card) card.textContent = fmt(remaining);
+    const barFill = timerList.querySelector(`.timer-card[data-id="${id}"] .bar-fill`);
+    if(barFill && data.durationSeconds > 0){
+      barFill.style.width = Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) + '%';
+    }
+    if(remaining <= 0){
+      data.status = 'finished';
+      playChime();
+      notify('Essentime', `"${data.name}" selesai.`);
+      try{
+        await updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+          status: 'finished',
+          endAt: null,
+          remainingSeconds: 0
+        });
+      }catch(e){ /* will resync on next snapshot */ }
+    }
+  }
+}
+
+/* ---------------- service worker ---------------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
