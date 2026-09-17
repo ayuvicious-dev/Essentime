@@ -52,7 +52,7 @@
     max-width:460px;
     margin:0 auto;
     min-height:100vh;
-    padding:28px 20px 56px;
+    padding:28px 20px 110px;
     display:flex;
     flex-direction:column;
   }
@@ -137,7 +137,7 @@
     margin:0 0 6px;
   }
   .field{margin-bottom:16px;}
-  .field input{
+  .field input, .field select{
     width:100%;
     padding:12px 14px;
     border:1.5px solid var(--line);
@@ -148,7 +148,7 @@
     outline:none;
     transition:border-color .15s;
   }
-  .field input:focus{border-color:var(--gold-dark);}
+  .field input:focus, .field select:focus{border-color:var(--gold-dark);}
 
   .btn{
     display:inline-flex;
@@ -311,11 +311,17 @@
     color:var(--brown-faint);
     margin-top:2px;
   }
+  .card-actions{display:flex;align-items:center;gap:2px;flex-shrink:0;}
   .delete-btn{
     background:none;border:none;color:var(--brown-faint);
-    cursor:pointer;padding:2px;flex-shrink:0;
+    cursor:pointer;padding:4px;flex-shrink:0;
   }
   .delete-btn:hover{color:var(--danger);}
+  .edit-btn{
+    background:none;border:none;color:var(--brown-faint);
+    cursor:pointer;padding:4px;flex-shrink:0;
+  }
+  .edit-btn:hover{color:var(--gold-dark);}
 
   .timer-mid{
     display:flex;
@@ -353,6 +359,218 @@
     font-size:12px;
     margin-top:30px;
   }
+
+  /* ---------- tabs ---------- */
+  .tab-screen{flex:1;}
+  .section-title{
+    font-family:var(--serif);
+    font-size:16px;
+    font-weight:600;
+    color:var(--brown);
+    margin:4px 0 12px;
+  }
+
+  /* dashboard stats */
+  .stats-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .stat-card{
+    flex:1;
+    background:var(--paper);
+    border-radius:16px;
+    box-shadow:0 12px 26px -18px var(--shadow);
+    padding:14px 8px;
+    text-align:center;
+  }
+  .stat-num{
+    font-family:var(--serif);
+    font-size:24px;
+    font-weight:700;
+    color:var(--gold-dark);
+  }
+  .stat-label{
+    font-size:11px;
+    color:var(--brown-soft);
+    margin-top:2px;
+  }
+
+  /* folder chips */
+  .folder-chips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .folder-chip{
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    font-size:12.5px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .folder-chip.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    border-color:transparent;
+  }
+  .folder-chip-add{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px dashed var(--gold-mid);
+    background:transparent;
+    color:var(--gold-dark);
+    font-size:18px;
+    font-weight:700;
+    line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .folder-chip-add:hover{background:#FBEEDB;}
+  .folder-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--gold-dark);
+    background:#FBEEDB;
+    padding:2px 8px;
+    border-radius:999px;
+    margin-top:4px;
+    margin-right:6px;
+  }
+  .step-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--ok);
+    background:#F0F6EC;
+    padding:2px 8px;
+    border-radius:999px;
+    margin-top:4px;
+    margin-right:6px;
+  }
+  .sequence-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--paper);
+    border-radius:14px;
+    box-shadow:0 12px 26px -18px var(--shadow);
+    padding:12px 14px;
+    margin-bottom:16px;
+    font-size:12.5px;
+    color:var(--brown-soft);
+  }
+  .sequence-bar .btn{padding:9px 14px;font-size:13px;white-space:nowrap;}
+
+  /* settings */
+  .settings-card{
+    background:var(--paper);
+    border-radius:var(--radius-card);
+    box-shadow:0 14px 30px -18px var(--shadow);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .settings-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13.5px;
+    color:var(--brown-soft);
+    padding-bottom:14px;
+    margin-bottom:14px;
+    border-bottom:1px solid var(--line);
+  }
+  .settings-row strong{color:var(--brown);font-size:13.5px;}
+
+  /* ---------- add-timer modal ---------- */
+  .modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(74,47,24,0.38);
+    z-index:60;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal-sheet{
+    background:var(--cream);
+    width:100%;
+    max-width:420px;
+    border-radius:24px;
+    padding:24px 22px;
+    box-shadow:0 24px 60px -18px rgba(74,47,24,0.35);
+    max-height:88vh;
+    overflow-y:auto;
+    animation:sheet-up .18s ease;
+  }
+  @keyframes sheet-up{
+    from{transform:translateY(12px) scale(0.98);opacity:0;}
+    to{transform:translateY(0) scale(1);opacity:1;}
+  }
+  .modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+  }
+
+  /* ---------- bottom nav ---------- */
+  .bottom-nav{
+    position:fixed;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    width:calc(100% - 32px);
+    max-width:420px;
+    background:var(--paper);
+    border-radius:22px;
+    box-shadow:0 16px 36px -14px var(--shadow), 0 2px 10px -2px var(--shadow);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:6px 8px;
+    z-index:40;
+  }
+  .nav-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    background:transparent;
+    border:none;
+    color:var(--brown-faint);
+    font-size:10.5px;
+    font-weight:600;
+    padding:7px 2px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .nav-item svg{width:19px;height:19px;}
+  .nav-item.active{color:var(--gold-dark);background:#FBEEDB;}
+  .nav-fab{
+    width:50px;height:50px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:none;
+    margin-top:-28px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 24px -8px rgba(184,118,62,0.65);
+    cursor:pointer;
+  }
+  .nav-fab:active{transform:scale(0.94);}
 
   @media (prefers-reduced-motion: reduce){
     .bar-fill{transition:none;}
@@ -402,51 +620,136 @@
   <section id="app-screen">
     <div class="app-header">
       <div class="brandmark">
-        <img src="icons/icon-192.png" alt="Essentime">
-        <div>
-          <div class="wordmark" style="font-size:20px;">Essentime</div>
-          <div class="greet" id="greet-text"></div>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button class="icon-btn" id="logout-btn" title="Keluar" type="button">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </button>
+        <div class="wordmark" style="font-size:20px;">Essentime</div>
       </div>
     </div>
 
-    <div class="composer">
-      <div class="field">
-        <label for="timer-name">Nama timer</label>
-        <input id="timer-name" type="text" placeholder="mis. Menyeduh teh" maxlength="40">
+    <!-- DASHBOARD -->
+    <div class="tab-screen" id="tab-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total timer</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-running">0</div><div class="stat-label">Berjalan</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-finished">0</div><div class="stat-label">Selesai</div></div>
       </div>
-      <div class="duration-row">
-        <div class="field">
-          <label for="dur-min">Menit</label>
-          <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label for="dur-sec">Detik</label>
-          <input id="dur-sec" type="number" min="0" max="59" value="0" inputmode="numeric">
-        </div>
-      </div>
-      <div class="presets" id="presets">
-        <button class="preset-chip" data-sec="60" type="button">1 mnt</button>
-        <button class="preset-chip" data-sec="180" type="button">3 mnt</button>
-        <button class="preset-chip" data-sec="300" type="button">5 mnt</button>
-        <button class="preset-chip" data-sec="600" type="button">10 mnt</button>
-        <button class="preset-chip" data-sec="900" type="button">15 mnt</button>
-      </div>
-      <button class="btn btn-primary" id="add-timer-btn" type="button">Tambah timer</button>
-      <div class="auth-msg" id="composer-msg"></div>
+      <h3 class="section-title">Sedang berjalan</h3>
+      <div id="dashboard-running-list"></div>
     </div>
 
-    <div id="timer-list"></div>
+    <!-- FOLDER TIMER -->
+    <div class="tab-screen" id="tab-folders" style="display:none;">
+      <div class="folder-chips" id="folder-chips"></div>
+      <div class="sequence-bar" id="sequence-bar" style="display:none;">
+        <span>Timer di folder ini lanjut otomatis satu per satu.</span>
+        <button class="btn btn-primary" id="run-sequence-btn" type="button">Mulai urutan</button>
+      </div>
+      <div id="folder-timer-list"></div>
+    </div>
 
-    <footer class="hint">Tersimpan otomatis ke akunmu &middot; Essentime</footer>
+    <!-- RIWAYAT TIMER -->
+    <div class="tab-screen" id="tab-history" style="display:none;">
+      <h3 class="section-title">Riwayat timer selesai</h3>
+      <div id="history-list"></div>
+    </div>
+
+    <!-- SETTING -->
+    <div class="tab-screen" id="tab-settings" style="display:none;">
+      <div class="settings-card">
+        <div class="settings-row"><span>Masuk sebagai</span><strong id="settings-email"></strong></div>
+        <button class="btn btn-primary" id="notif-btn" type="button" style="width:100%;margin-bottom:10px;">Aktifkan notifikasi</button>
+        <button class="btn" id="logout-btn" type="button" style="width:100%;background:#FBEAE4;color:var(--danger);">Keluar</button>
+      </div>
+      <footer class="hint">Tersimpan otomatis ke akunmu &middot; Essentime</footer>
+    </div>
   </section>
 
 </div>
+
+<!-- ADD TIMER MODAL -->
+<div class="modal-backdrop" id="add-modal-backdrop">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <div class="wordmark" id="modal-title" style="font-size:17px;">Timer baru</div>
+      <button class="icon-btn" id="close-add-modal" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label for="timer-name">Nama timer</label>
+      <input id="timer-name" type="text" placeholder="mis. Menyeduh teh" maxlength="40">
+    </div>
+    <div class="duration-row">
+      <div class="field">
+        <label for="dur-min">Menit</label>
+        <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="dur-sec">Detik</label>
+        <input id="dur-sec" type="number" min="0" max="59" value="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="presets" id="presets">
+      <button class="preset-chip" data-sec="60" type="button">1 mnt</button>
+      <button class="preset-chip" data-sec="180" type="button">3 mnt</button>
+      <button class="preset-chip" data-sec="300" type="button">5 mnt</button>
+      <button class="preset-chip" data-sec="600" type="button">10 mnt</button>
+      <button class="preset-chip" data-sec="900" type="button">15 mnt</button>
+    </div>
+    <div class="field">
+      <label for="timer-folder-select">Simpan ke folder</label>
+      <select id="timer-folder-select">
+        <option value="Umum">Umum</option>
+        <option value="__new__">+ Tambah folder baru...</option>
+      </select>
+    </div>
+    <div class="field" id="new-folder-field" style="display:none;">
+      <label for="timer-folder-new">Nama folder baru</label>
+      <input id="timer-folder-new" type="text" placeholder="mis. Pagi, Kerja, Masak" maxlength="24">
+    </div>
+    <button class="btn btn-primary" id="add-timer-btn" type="button">Tambah timer</button>
+    <div class="auth-msg" id="composer-msg"></div>
+  </div>
+</div>
+
+<!-- NEW FOLDER MODAL -->
+<div class="modal-backdrop" id="new-folder-modal-backdrop">
+  <div class="modal-sheet" style="max-width:340px;">
+    <div class="modal-head">
+      <div class="wordmark" style="font-size:17px;">Folder baru</div>
+      <button class="icon-btn" id="close-new-folder-modal" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label for="new-folder-name">Nama folder</label>
+      <input id="new-folder-name" type="text" placeholder="mis. Pagi, Kerja, Masak" maxlength="24">
+    </div>
+    <button class="btn btn-primary" id="create-folder-btn" type="button">Buat folder</button>
+    <div class="auth-msg" id="new-folder-msg"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav" style="display:none;">
+  <button class="nav-item active" data-tab="dashboard" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-item" data-tab="folders" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span>Folder</span>
+  </button>
+  <button class="nav-fab" id="nav-add-btn" type="button" title="Tambah timer">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="nav-item" data-tab="history" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+    <span>Riwayat</span>
+  </button>
+  <button class="nav-item" data-tab="settings" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Setting</span>
+  </button>
+</nav>
 
 <audio id="chime" preload="auto"></audio>
 
@@ -484,21 +787,57 @@ const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const resetBtn = document.getElementById('reset-btn');
 const tabs = document.querySelectorAll('.auth-tab');
-const greetText = document.getElementById('greet-text');
 const logoutBtn = document.getElementById('logout-btn');
 const timerNameInput = document.getElementById('timer-name');
 const durMinInput = document.getElementById('dur-min');
 const durSecInput = document.getElementById('dur-sec');
+const timerFolderSelect = document.getElementById('timer-folder-select');
+const newFolderField = document.getElementById('new-folder-field');
+const timerFolderNewInput = document.getElementById('timer-folder-new');
 const addTimerBtn = document.getElementById('add-timer-btn');
-const timerList = document.getElementById('timer-list');
+const modalTitle = document.getElementById('modal-title');
 const presetsRow = document.getElementById('presets');
 const chime = document.getElementById('chime');
 const composerMsg = document.getElementById('composer-msg');
 
+/* tabs + modal */
+const bottomNav = document.getElementById('bottom-nav');
+const navAddBtn = document.getElementById('nav-add-btn');
+const addModalBackdrop = document.getElementById('add-modal-backdrop');
+const closeAddModalBtn = document.getElementById('close-add-modal');
+const settingsEmail = document.getElementById('settings-email');
+const notifBtn = document.getElementById('notif-btn');
+const statTotal = document.getElementById('stat-total');
+const statRunning = document.getElementById('stat-running');
+const statFinished = document.getElementById('stat-finished');
+const dashboardRunningList = document.getElementById('dashboard-running-list');
+const folderChipsRow = document.getElementById('folder-chips');
+const folderTimerList = document.getElementById('folder-timer-list');
+const sequenceBar = document.getElementById('sequence-bar');
+const runSequenceBtn = document.getElementById('run-sequence-btn');
+const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
+const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
+const newFolderNameInput = document.getElementById('new-folder-name');
+const createFolderBtn = document.getElementById('create-folder-btn');
+const newFolderMsg = document.getElementById('new-folder-msg');
+const historyList = document.getElementById('history-list');
+const tabScreens = {
+  dashboard: document.getElementById('tab-dashboard'),
+  folders: document.getElementById('tab-folders'),
+  history: document.getElementById('tab-history'),
+  settings: document.getElementById('tab-settings')
+};
+
 let mode = 'login';
 let unsubscribeTimers = null;
+let unsubscribeFolders = null;
 let tickHandle = null;
+let currentTab = 'dashboard';
+let currentFolder = 'Semua';
+let knownFolderNames = ['Umum'];
+let editingId = null;
 const localTimers = new Map(); // id -> data
+const localFolders = new Map(); // id -> {name}
 
 /* ---------------- simple beep (no external audio file) ---------------- */
 function playChime(){
@@ -597,24 +936,177 @@ resetBtn.addEventListener('click', async () => {
 
 logoutBtn.addEventListener('click', () => signOut(auth));
 
+/* ---------------- bottom nav tabs ---------------- */
+bottomNav.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentTab = btn.dataset.tab;
+    bottomNav.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b === btn));
+    Object.entries(tabScreens).forEach(([key, el]) => {
+      el.style.display = key === currentTab ? '' : 'none';
+    });
+    renderAll();
+  });
+});
+
+/* ---------------- add-timer modal ---------------- */
+function populateFolderSelect(){
+  const current = timerFolderSelect.value;
+  const options = knownFolderNames.map(f =>
+    `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`
+  ).join('');
+  timerFolderSelect.innerHTML = options + `<option value="__new__">+ Tambah folder baru...</option>`;
+  if(knownFolderNames.includes(current)){
+    timerFolderSelect.value = current;
+  }
+}
+timerFolderSelect.addEventListener('change', () => {
+  const isNew = timerFolderSelect.value === '__new__';
+  newFolderField.style.display = isNew ? '' : 'none';
+  if(isNew) timerFolderNewInput.focus();
+});
+
+function openAddModal(){
+  editingId = null;
+  hideComposerMsg();
+  populateFolderSelect();
+  modalTitle.textContent = 'Timer baru';
+  addTimerBtn.textContent = 'Tambah timer';
+  timerNameInput.value = '';
+  durMinInput.value = 5;
+  durSecInput.value = 0;
+  timerFolderSelect.value = 'Umum';
+  newFolderField.style.display = 'none';
+  timerFolderNewInput.value = '';
+  addModalBackdrop.classList.add('open');
+}
+function openEditModal(id, data){
+  editingId = id;
+  hideComposerMsg();
+  populateFolderSelect();
+  modalTitle.textContent = 'Edit timer';
+  addTimerBtn.textContent = 'Simpan perubahan';
+  timerNameInput.value = data.name || '';
+  const totalSec = data.durationSeconds || 0;
+  durMinInput.value = Math.floor(totalSec / 60);
+  durSecInput.value = totalSec % 60;
+  const folder = data.folder || 'Umum';
+  if(!knownFolderNames.includes(folder)){
+    timerFolderSelect.insertAdjacentHTML('afterbegin', `<option value="${escapeHtml(folder)}">${escapeHtml(folder)}</option>`);
+  }
+  timerFolderSelect.value = folder;
+  newFolderField.style.display = 'none';
+  timerFolderNewInput.value = '';
+  addModalBackdrop.classList.add('open');
+}
+function closeAddModal(){
+  addModalBackdrop.classList.remove('open');
+  editingId = null;
+}
+navAddBtn.addEventListener('click', openAddModal);
+closeAddModalBtn.addEventListener('click', closeAddModal);
+addModalBackdrop.addEventListener('click', (e) => {
+  if(e.target === addModalBackdrop) closeAddModal();
+});
+
+/* ---------------- new-folder modal ---------------- */
+function showNewFolderMsg(text, type){
+  newFolderMsg.textContent = text;
+  newFolderMsg.className = 'auth-msg ' + type;
+}
+function hideNewFolderMsg(){
+  newFolderMsg.className = 'auth-msg';
+  newFolderMsg.textContent = '';
+}
+function openNewFolderModal(){
+  hideNewFolderMsg();
+  newFolderNameInput.value = '';
+  newFolderModalBackdrop.classList.add('open');
+  setTimeout(() => newFolderNameInput.focus(), 50);
+}
+function closeNewFolderModal(){
+  newFolderModalBackdrop.classList.remove('open');
+}
+closeNewFolderModalBtn.addEventListener('click', closeNewFolderModal);
+newFolderModalBackdrop.addEventListener('click', (e) => {
+  if(e.target === newFolderModalBackdrop) closeNewFolderModal();
+});
+
+createFolderBtn.addEventListener('click', async () => {
+  hideNewFolderMsg();
+  const user = auth.currentUser;
+  if(!user) return;
+  const name = newFolderNameInput.value.trim();
+  if(!name){
+    showNewFolderMsg('Isi nama folder dulu.', 'error');
+    newFolderNameInput.focus();
+    return;
+  }
+  if(knownFolderNames.some(f => f.toLowerCase() === name.toLowerCase())){
+    showNewFolderMsg('Folder dengan nama itu sudah ada.', 'error');
+    return;
+  }
+  createFolderBtn.disabled = true;
+  try{
+    await addDoc(collection(db, 'users', user.uid, 'folders'), {
+      name,
+      createdAt: serverTimestamp()
+    });
+    currentFolder = name;
+    closeNewFolderModal();
+  }catch(err){
+    console.error(err);
+    showNewFolderMsg('Gagal membuat folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'), 'error');
+  }finally{
+    createFolderBtn.disabled = false;
+  }
+});
+
+/* ---------------- settings tab ---------------- */
+notifBtn.addEventListener('click', () => {
+  if(!('Notification' in window)){
+    notifBtn.textContent = 'Notifikasi tidak didukung';
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    notifBtn.textContent = 'Notifikasi sudah aktif';
+    return;
+  }
+  Notification.requestPermission().then(updateNotifBtn).catch(()=>{});
+});
+function updateNotifBtn(){
+  if(!('Notification' in window)) return;
+  notifBtn.textContent = Notification.permission === 'granted' ? 'Notifikasi sudah aktif' : 'Aktifkan notifikasi';
+  notifBtn.disabled = Notification.permission === 'granted';
+}
+
 /* ---------------- auth state ---------------- */
 onAuthStateChanged(auth, (user) => {
   if(user){
     authScreen.style.display = 'none';
     appScreen.style.display = 'flex';
-    greetText.textContent = user.email;
+    bottomNav.style.display = 'flex';
+    settingsEmail.textContent = user.email;
+    updateNotifBtn();
     if('Notification' in window && Notification.permission === 'default'){
-      Notification.requestPermission().catch(()=>{});
+      Notification.requestPermission().then(updateNotifBtn).catch(()=>{});
     }
     subscribeTimers(user.uid);
+    subscribeFolders(user.uid);
     startTicker();
   }else{
     appScreen.style.display = 'none';
     authScreen.style.display = 'flex';
+    bottomNav.style.display = 'none';
+    closeAddModal();
+    closeNewFolderModal();
     if(unsubscribeTimers){ unsubscribeTimers(); unsubscribeTimers = null; }
+    if(unsubscribeFolders){ unsubscribeFolders(); unsubscribeFolders = null; }
     localTimers.clear();
+    localFolders.clear();
     stopTicker();
-    timerList.innerHTML = '';
+    dashboardRunningList.innerHTML = '';
+    folderTimerList.innerHTML = '';
+    historyList.innerHTML = '';
     authForm.reset();
     hideMsg();
   }
@@ -667,17 +1159,42 @@ addTimerBtn.addEventListener('click', async () => {
     durMinInput.focus();
     return;
   }
+  let folder;
+  if(timerFolderSelect.value === '__new__'){
+    folder = timerFolderNewInput.value.trim();
+    if(!folder){
+      showComposerMsg('Isi nama folder baru dulu, atau pilih folder yang sudah ada.', 'error');
+      timerFolderNewInput.focus();
+      return;
+    }
+  }else{
+    folder = timerFolderSelect.value || 'Umum';
+  }
   addTimerBtn.disabled = true;
   try{
-    await addDoc(collection(db, 'users', user.uid, 'timers'), {
-      name,
-      durationSeconds: totalSec,
-      remainingSeconds: totalSec,
-      status: 'running', // idle | running | paused | finished
-      endAt: Date.now() + totalSec * 1000,
-      createdAt: serverTimestamp()
-    });
+    if(editingId){
+      await updateDoc(doc(db, 'users', user.uid, 'timers', editingId), {
+        name,
+        folder,
+        durationSeconds: totalSec,
+        remainingSeconds: totalSec,
+        status: 'idle',
+        endAt: null
+      });
+    }else{
+      await addDoc(collection(db, 'users', user.uid, 'timers'), {
+        name,
+        folder,
+        durationSeconds: totalSec,
+        remainingSeconds: totalSec,
+        status: 'running', // idle | running | paused | finished
+        endAt: Date.now() + totalSec * 1000,
+        createdAt: serverTimestamp()
+      });
+    }
     timerNameInput.value = '';
+    timerFolderNewInput.value = '';
+    closeAddModal();
   }catch(err){
     console.error(err);
     showComposerMsg(friendlyFirestoreError(err), 'error');
@@ -694,10 +1211,23 @@ function subscribeTimers(uid){
     snap.forEach(docSnap => {
       localTimers.set(docSnap.id, docSnap.data());
     });
-    renderTimers();
+    renderAll();
   }, (err) => {
     console.error(err);
     showComposerMsg(friendlyFirestoreError(err), 'error');
+  });
+}
+
+function subscribeFolders(uid){
+  const q = collection(db, 'users', uid, 'folders');
+  unsubscribeFolders = onSnapshot(q, (snap) => {
+    localFolders.clear();
+    snap.forEach(docSnap => {
+      localFolders.set(docSnap.id, docSnap.data());
+    });
+    renderAll();
+  }, (err) => {
+    console.error(err);
   });
 }
 
@@ -716,24 +1246,98 @@ function currentRemaining(data){
   return data.remainingSeconds;
 }
 
-function renderTimers(){
-  if(localTimers.size === 0){
-    timerList.innerHTML = `
+function renderList(container, entries, emptyMsg, stepMap){
+  if(entries.length === 0){
+    container.innerHTML = `
       <div class="empty-state">
         <img src="icons/icon-192.png" alt="">
-        <p>Belum ada timer.<br>Tambahkan yang pertama di atas.</p>
+        <p>${emptyMsg}</p>
       </div>`;
     return;
   }
   const frag = document.createDocumentFragment();
-  localTimers.forEach((data, id) => {
-    frag.appendChild(buildCard(id, data));
-  });
-  timerList.innerHTML = '';
-  timerList.appendChild(frag);
+  entries.forEach(([id, data]) => frag.appendChild(buildCard(id, data, stepMap && stepMap.get(id))));
+  container.innerHTML = '';
+  container.appendChild(frag);
 }
 
-function buildCard(id, data){
+function timestampMs(data){
+  return data.createdAt && data.createdAt.toMillis ? data.createdAt.toMillis() : 0;
+}
+
+function getFolderQueue(folderName){
+  return Array.from(localTimers.entries())
+    .filter(([, d]) => (d.folder || 'Umum') === folderName)
+    .sort((a, b) => timestampMs(a[1]) - timestampMs(b[1]));
+}
+
+function renderAll(){
+  const all = Array.from(localTimers.entries());
+  const active = all.filter(([, d]) => d.status !== 'finished');
+  const running = all.filter(([, d]) => d.status === 'running');
+  const finished = all.filter(([, d]) => d.status === 'finished');
+
+  /* dashboard stats */
+  statTotal.textContent = all.length;
+  statRunning.textContent = running.length;
+  statFinished.textContent = finished.length;
+
+  /* folders: distinct folder names from active timers + explicitly-created empty folders */
+  const explicitFolderNames = Array.from(localFolders.values()).map(f => f.name);
+  const folderNames = Array.from(new Set([
+    ...active.map(([, d]) => d.folder || 'Umum'),
+    ...explicitFolderNames
+  ])).sort();
+  if(!folderNames.includes(currentFolder) && currentFolder !== 'Semua'){
+    currentFolder = 'Semua';
+  }
+  knownFolderNames = Array.from(new Set([
+    ...all.map(([, d]) => d.folder || 'Umum'),
+    ...explicitFolderNames
+  ])).sort();
+  populateFolderSelect();
+
+  if(currentTab === 'dashboard'){
+    renderList(dashboardRunningList, running, 'Belum ada timer yang berjalan.');
+  }
+  if(currentTab === 'folders'){
+    folderChipsRow.innerHTML =
+      `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>` +
+      `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
+      folderNames.map(f =>
+        `<button class="folder-chip${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>`
+      ).join('');
+    folderChipsRow.querySelectorAll('.folder-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        currentFolder = chip.dataset.folder;
+        renderAll();
+      });
+    });
+    document.getElementById('add-folder-chip').addEventListener('click', openNewFolderModal);
+    const visible = currentFolder === 'Semua'
+      ? active
+      : active.filter(([, d]) => (d.folder || 'Umum') === currentFolder);
+
+    if(currentFolder === 'Semua'){
+      sequenceBar.style.display = 'none';
+      renderList(folderTimerList, visible, 'Belum ada timer di folder ini.');
+    }else{
+      const queue = getFolderQueue(currentFolder);
+      const stepMap = new Map(queue.map(([id], i) => [id, `Langkah ${i + 1}/${queue.length}`]));
+      const anyRunning = queue.some(([, d]) => d.status === 'running');
+      const hasIdle = queue.some(([, d]) => d.status === 'idle');
+      sequenceBar.style.display = queue.length > 1 ? 'flex' : 'none';
+      runSequenceBtn.disabled = anyRunning || !hasIdle;
+      runSequenceBtn.textContent = anyRunning ? 'Sedang berjalan…' : 'Mulai urutan';
+      renderList(folderTimerList, visible, 'Belum ada timer di folder ini.', stepMap);
+    }
+  }
+  if(currentTab === 'history'){
+    renderList(historyList, finished, 'Belum ada timer yang selesai.');
+  }
+}
+
+function buildCard(id, data, stepLabel){
   const remaining = currentRemaining(data);
   const pct = data.durationSeconds > 0 ? Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) : 0;
   const finished = data.status === 'finished';
@@ -752,10 +1356,15 @@ function buildCard(id, data){
   card.innerHTML = `
     <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
     <div class="timer-top">
-      <div class="timer-name">${escapeHtml(data.name)}<span class="status">${statusLabel}</span></div>
-      <button class="delete-btn" title="Hapus" data-action="delete">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      </button>
+      <div class="timer-name">${escapeHtml(data.name)}<span class="status"><span class="folder-badge">${escapeHtml(data.folder || 'Umum')}</span>${stepLabel ? `<span class="step-badge">${escapeHtml(stepLabel)}</span>` : ''}${statusLabel}</span></div>
+      <div class="card-actions">
+        <button class="edit-btn" title="Edit" data-action="edit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+        </button>
+        <button class="delete-btn" title="Hapus" data-action="delete">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
     </div>
     <div class="timer-mid">
       <div class="timer-digits" data-role="digits">${fmt(remaining)}</div>
@@ -772,6 +1381,7 @@ function buildCard(id, data){
   `;
 
   card.querySelector('[data-action="delete"]').addEventListener('click', () => handleDelete(id));
+  card.querySelector('[data-action="edit"]').addEventListener('click', () => openEditModal(id, data));
   const playBtn = card.querySelector('[data-action="play"]');
   if(playBtn) playBtn.addEventListener('click', () => handlePlay(id, data));
   const pauseBtn = card.querySelector('[data-action="pause"]');
@@ -804,6 +1414,20 @@ async function handlePlay(id, data){
     remainingSeconds: remaining
   });
 }
+
+/* start the next never-started timer in the same folder, in creation order */
+async function maybeStartNextInFolder(folderName, finishedData){
+  const queue = getFolderQueue(folderName);
+  const finishedMs = timestampMs(finishedData);
+  const next = queue.find(([, d]) => timestampMs(d) > finishedMs && d.status === 'idle');
+  if(next) await handlePlay(next[0], next[1]);
+}
+
+runSequenceBtn.addEventListener('click', () => {
+  const queue = getFolderQueue(currentFolder);
+  const first = queue.find(([, d]) => d.status === 'idle');
+  if(first) handlePlay(first[0], first[1]);
+});
 
 async function handlePause(id, data){
   const user = auth.currentUser;
@@ -847,11 +1471,14 @@ async function tick(){
   for(const [id, data] of localTimers.entries()){
     if(data.status !== 'running') continue;
     const remaining = currentRemaining(data);
-    const card = timerList.querySelector(`.timer-card[data-id="${id}"] [data-role="digits"]`);
-    if(card) card.textContent = fmt(remaining);
-    const barFill = timerList.querySelector(`.timer-card[data-id="${id}"] .bar-fill`);
-    if(barFill && data.durationSeconds > 0){
-      barFill.style.width = Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) + '%';
+    document.querySelectorAll(`.timer-card[data-id="${id}"] [data-role="digits"]`).forEach(el => {
+      el.textContent = fmt(remaining);
+    });
+    if(data.durationSeconds > 0){
+      const pct = Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) + '%';
+      document.querySelectorAll(`.timer-card[data-id="${id}"] .bar-fill`).forEach(el => {
+        el.style.width = pct;
+      });
     }
     if(remaining <= 0){
       data.status = 'finished';
@@ -863,6 +1490,7 @@ async function tick(){
           endAt: null,
           remainingSeconds: 0
         });
+        await maybeStartNextInFolder(data.folder || 'Umum', data);
       }catch(e){ /* will resync on next snapshot */ }
     }
   }
