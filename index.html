@@ -403,20 +403,18 @@
 
   .sound-option-row{
     display:flex;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
     gap:8px;
   }
   .sound-option-btn{
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:4px;
-    flex:1 1 calc(33.333% - 6px);
-    min-width:66px;
+    flex:1 1 0;
+    min-width:0;
     border:1.5px solid var(--line);
     background:var(--cream);
-    padding:10px 4px 8px;
+    padding:12px 4px;
     border-radius:14px;
     cursor:pointer;
     transition:background .15s, border-color .15s, color .15s, transform .1s;
@@ -424,7 +422,7 @@
   }
   .sound-option-btn:active{ transform:scale(0.96); }
   .sound-option-btn .sound-symbol{ width:20px; height:20px; }
-  .sound-option-btn .sound-label{ font-size:10.5px; font-weight:600; }
+  .sound-option-btn .sound-label{ display:none; }
   .sound-option-btn.active{
     border-color:var(--gold-dark);
     background:#FBEEDB;
