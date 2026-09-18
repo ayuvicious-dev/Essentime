@@ -455,8 +455,9 @@
   .timer-card-compact .timer-name{font-size:14px;flex:1;min-width:0;padding-right:0;}
   .timer-card-compact .timer-digits-wrap{flex-shrink:0;}
   .timer-card-compact .timer-digits{font-size:15px;font-family:var(--sans);font-weight:500;letter-spacing:0;}
-  .timer-card-compact .bar-bg{height:1px;background:var(--line);}
+  .timer-card-compact .bar-bg{display:none;}
   .timer-card-compact .bar-fill{display:none;}
+  .timer-card-compact + .timer-card-compact{border-top:1px solid var(--line);}
   .timer-card-compact .step-number{width:18px;height:18px;font-size:11px;}
   .timer-card-compact .card-actions{flex-shrink:0;}
   .timer-card-compact .timer-controls.compact{justify-content:flex-end;margin-top:8px;}
@@ -518,6 +519,10 @@
     display:flex;
     align-items:center;
     gap:8px;
+    width:100%;
+    padding-bottom:14px;
+    margin-bottom:6px;
+    border-bottom:1px solid var(--line);
   }
   .folder-row{
     display:flex;
@@ -555,6 +560,21 @@
     text-overflow:ellipsis;
     white-space:nowrap;
   }
+  .folder-row-main{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:1;
+    min-width:0;
+  }
+  .folder-row-total{
+    font-size:12px;
+    font-weight:500;
+    color:var(--brown-faint);
+    flex-shrink:0;
+    font-variant-numeric:tabular-nums;
+  }
+  .folder-row.active .folder-row-total{ color:rgba(255,255,255,0.85); }
   .folder-row-actions{
     display:flex;
     align-items:center;
@@ -627,15 +647,6 @@
     align-items:center;
     justify-content:center;
     flex-shrink:0;
-  }
-  #modal-step-badge{
-    display:inline-block;
-    font-size:12px;
-    font-weight:600;
-    color:var(--ok);
-    background:#F0F6EC;
-    padding:4px 10px;
-    border-radius:999px;
   }
   .timer-digits-wrap{
     display:flex;
@@ -907,8 +918,11 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div id="modal-step-badge" style="display:none;margin:-6px 0 14px;"></div>
-    <div class="field">
+    <div class="field" id="step-order-field" style="display:none;">
+      <label for="step-order-input">Urutan langkah</label>
+      <input id="step-order-input" type="number" min="1" inputmode="numeric">
+    </div>
+    <div class="field" id="folder-select-field">
       <label for="timer-folder-select">Simpan ke folder</label>
       <select id="timer-folder-select">
         <option value="Umum">Umum</option>
@@ -929,7 +943,7 @@
         <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
       </div>
     </div>
-    <div class="rentetan-section">
+    <div class="rentetan-section" id="rentetan-section">
       <div class="rentetan-list" id="rentetan-list"></div>
       <button class="rentetan-add-btn" id="add-rentetan-btn" type="button">+ Tambah rentetan</button>
     </div>
@@ -1023,14 +1037,17 @@ const logoutBtn = document.getElementById('logout-btn');
 const timerNameInput = document.getElementById('timer-name');
 const durMinInput = document.getElementById('dur-min');
 const timerFolderSelect = document.getElementById('timer-folder-select');
+const folderSelectField = document.getElementById('folder-select-field');
 const newFolderField = document.getElementById('new-folder-field');
 const timerFolderNewInput = document.getElementById('timer-folder-new');
 const addTimerBtn = document.getElementById('add-timer-btn');
 const modalTitle = document.getElementById('modal-title');
-const modalStepBadge = document.getElementById('modal-step-badge');
+const stepOrderField = document.getElementById('step-order-field');
+const stepOrderInput = document.getElementById('step-order-input');
 const chime = document.getElementById('chime');
 const composerMsg = document.getElementById('composer-msg');
 const rentetanList = document.getElementById('rentetan-list');
+const rentetanSection = document.getElementById('rentetan-section');
 const addRentetanBtn = document.getElementById('add-rentetan-btn');
 const rentetanTotal = document.getElementById('rentetan-total');
 const rentetanTotalValue = document.getElementById('rentetan-total-value');
@@ -1275,13 +1292,16 @@ function openAddModal(){
   hideComposerMsg();
   populateFolderSelect();
   modalTitle.textContent = 'Timer baru';
-  modalStepBadge.style.display = 'none';
+  stepOrderField.style.display = 'none';
+  stepOrderInput.value = '';
   addTimerBtn.textContent = 'Tambah timer';
   timerNameInput.value = '';
   durMinInput.value = 5;
+  folderSelectField.style.display = '';
   timerFolderSelect.value = 'Umum';
   newFolderField.style.display = 'none';
   timerFolderNewInput.value = '';
+  rentetanSection.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
 }
@@ -1290,11 +1310,15 @@ function openAddModalForFolder(folderName){
   if(knownFolderNames.includes(folderName)){
     timerFolderSelect.value = folderName;
   }
+  folderSelectField.style.display = 'none';
   newFolderField.style.display = 'none';
+  rentetanSection.style.display = 'none';
   const queue = getFolderQueue(folderName);
   modalTitle.textContent = 'Tambah timer';
-  modalStepBadge.textContent = `Akan jadi langkah ${queue.length + 1} di "${folderName}"`;
-  modalStepBadge.style.display = 'inline-block';
+  stepOrderInput.min = 1;
+  stepOrderInput.max = queue.length + 1;
+  stepOrderInput.value = queue.length + 1;
+  stepOrderField.style.display = '';
   timerNameInput.focus();
 }
 function openEditModal(id, data){
@@ -1302,7 +1326,11 @@ function openEditModal(id, data){
   hideComposerMsg();
   populateFolderSelect();
   modalTitle.textContent = 'Edit timer';
+  stepOrderField.style.display = 'none';
+  stepOrderInput.value = '';
   addTimerBtn.textContent = 'Simpan perubahan';
+  folderSelectField.style.display = '';
+  rentetanSection.style.display = '';
   timerNameInput.value = data.name || '';
   const totalSec = data.durationSeconds || 0;
   durMinInput.value = Math.round(totalSec / 60);
@@ -1533,6 +1561,12 @@ folderAddTimerBtn.addEventListener('click', () => {
   openAddModalForFolder(targetFolder);
 });
 function openFolderDetail(folderName){
+  if(folderName === 'Semua'){
+    currentFolder = 'Semua';
+    folderListView = true;
+    renderAll();
+    return;
+  }
   currentFolder = folderName;
   folderListView = false;
   renderAll();
@@ -1652,8 +1686,16 @@ addTimerBtn.addEventListener('click', async () => {
     return { name: stepName, durationSeconds: stepMin * 60 };
   }).filter(step => step.durationSeconds > 0);
   const isChain = rentetanSteps.length > 0;
+  const isFolderInsert = !editingId && stepOrderField.style.display !== 'none';
+  const startsIdle = isChain || isFolderInsert; // rentetan/antrean folder: semua antre dulu, dimulai manual lewat "Mulai urutan"
   addTimerBtn.disabled = true;
   try{
+    let insertOrder = null;
+    if(isFolderInsert){
+      const totalNew = 1 + rentetanSteps.length;
+      const desired = parseInt(stepOrderInput.value, 10);
+      insertOrder = await shiftFolderQueueForInsert(folder, desired, totalNew);
+    }
     if(editingId){
       await updateDoc(doc(db, 'users', user.uid, 'timers', editingId), {
         name,
@@ -1669,11 +1711,13 @@ addTimerBtn.addEventListener('click', async () => {
         folder,
         durationSeconds: totalSec,
         remainingSeconds: totalSec,
-        status: isChain ? 'idle' : 'running', // rentetan: semua antre dulu, dimulai manual lewat "Mulai urutan"
-        endAt: isChain ? null : Date.now() + totalSec * 1000,
-        createdAt: serverTimestamp()
+        status: startsIdle ? 'idle' : 'running',
+        endAt: startsIdle ? null : Date.now() + totalSec * 1000,
+        createdAt: serverTimestamp(),
+        ...(insertOrder !== null ? { order: insertOrder } : {})
       });
     }
+    let stepOrderCounter = insertOrder !== null ? insertOrder + 1 : null;
     for(const step of rentetanSteps){
       await addDoc(collection(db, 'users', user.uid, 'timers'), {
         name: step.name,
@@ -1682,8 +1726,10 @@ addTimerBtn.addEventListener('click', async () => {
         remainingSeconds: step.durationSeconds,
         status: 'idle', // menunggu giliran, otomatis lanjut lewat maybeStartNextInFolder
         endAt: null,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        ...(stepOrderCounter !== null ? { order: stepOrderCounter } : {})
       });
+      if(stepOrderCounter !== null) stepOrderCounter++;
     }
     timerNameInput.value = '';
     timerFolderNewInput.value = '';
@@ -1767,7 +1813,29 @@ function timestampMs(data){
 function getFolderQueue(folderName){
   return Array.from(localTimers.entries())
     .filter(([, d]) => (d.folder || 'Umum') === folderName)
-    .sort((a, b) => timestampMs(a[1]) - timestampMs(b[1]));
+    .sort((a, b) => {
+      const oa = (a[1].order === undefined || a[1].order === null) ? Infinity : a[1].order;
+      const ob = (b[1].order === undefined || b[1].order === null) ? Infinity : b[1].order;
+      if(oa !== ob) return oa - ob;
+      return timestampMs(a[1]) - timestampMs(b[1]);
+    });
+}
+
+// Geser urutan langkah yang sudah ada di folder supaya timer baru bisa disisipkan
+// di posisi manapun (bukan cuma di akhir). Menomori ulang seluruh antrean folder
+// dengan field `order` eksplisit, lalu mengembalikan posisi (1-based) untuk item baru.
+async function shiftFolderQueueForInsert(folder, desiredPosition, countNew){
+  const user = auth.currentUser;
+  const queue = getFolderQueue(folder);
+  const maxPos = queue.length + 1;
+  const clamped = Math.min(Math.max(1, desiredPosition || maxPos), maxPos);
+  const updates = queue.map(([id], i) => {
+    const origPos = i + 1;
+    const newPos = origPos >= clamped ? origPos + countNew : origPos;
+    return updateDoc(doc(db, 'users', user.uid, 'timers', id), { order: newPos });
+  });
+  await Promise.all(updates);
+  return clamped;
 }
 
 function renderAll(){
@@ -1789,6 +1857,7 @@ function renderAll(){
   ])).sort();
   if(!folderNames.includes(currentFolder) && currentFolder !== 'Semua'){
     currentFolder = 'Semua';
+    folderListView = true;
   }
   knownFolderNames = Array.from(new Set([
     ...all.map(([, d]) => d.folder || 'Umum'),
@@ -1812,9 +1881,13 @@ function renderAll(){
         const anyRunning = queue.some(([, d]) => d.status === 'running');
         const hasIdle = queue.some(([, d]) => d.status === 'idle');
         const canStart = queue.length > 0 && hasIdle && !anyRunning;
+        const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
         return `
         <div class="folder-row${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}">
-          <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+          <div class="folder-row-main">
+            <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+            <span class="folder-row-total">${fmt(totalSeconds)}</span>
+          </div>
           <div class="folder-row-actions">
             <button class="folder-row-action" title="Duplikat" data-folder-action="duplicate" data-folder="${escapeHtml(f)}" type="button">${iconDuplicateSmall()}</button>
             <button class="folder-row-action" title="Edit" data-folder-action="edit" data-folder="${escapeHtml(f)}" type="button">${iconEditSmall()}</button>
@@ -1865,10 +1938,16 @@ function renderAll(){
 }
 
 function buildCard(id, data, stepLabel){
-  const remaining = currentRemaining(data);
-  const pct = data.durationSeconds > 0 ? Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) : 0;
-  const finished = data.status === 'finished';
   const compact = !!stepLabel;
+  const remaining = currentRemaining(data);
+  // Kartu langkah di antrean folder (compact) menampilkan durasi bulat seperti
+  // semula diatur untuk status idle/dijeda — hanya langkah yang benar-benar
+  // sedang berjalan yang menunjukkan hitungan mundur langsung.
+  const displaySeconds = (compact && (data.status === 'idle' || data.status === 'paused'))
+    ? data.durationSeconds
+    : remaining;
+  const pct = data.durationSeconds > 0 ? Math.min(100, Math.max(0, (displaySeconds / data.durationSeconds) * 100)) : 0;
+  const finished = data.status === 'finished';
 
   const card = document.createElement('div');
   card.className = 'timer-card' + (compact ? ' timer-card-compact' : '') + (finished ? ' finished' : '');
@@ -1877,8 +1956,8 @@ function buildCard(id, data, stepLabel){
   const statusLabel = compact
     ? {
         idle: '',
-        running: 'Berjalan',
-        paused: 'Dijeda',
+        running: '',
+        paused: '',
         finished: 'Selesai'
       }[data.status] || ''
     : {
@@ -1889,7 +1968,7 @@ function buildCard(id, data, stepLabel){
       }[data.status] || '';
 
   const digitsWrapHtml = `
-    <div class="timer-digits" data-role="digits">${fmt(remaining)}</div>
+    <div class="timer-digits" data-role="digits">${fmt(displaySeconds)}</div>
   `;
   const controlsHtml = `
     ${finished
