@@ -50,7 +50,7 @@
   }
 
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;overscroll-behavior-y:contain;}
   body{
     background:
       radial-gradient(ellipse 900px 500px at 15% -10%, var(--glow) 0%, transparent 60%),
@@ -69,7 +69,7 @@
     max-width:460px;
     margin:0 auto;
     min-height:100vh;
-    padding:28px 20px 110px;
+    padding:28px 20px 140px;
     display:flex;
     flex-direction:column;
   }
@@ -160,11 +160,13 @@
     border:1.5px solid var(--line);
     border-radius:var(--radius-input);
     font-size:15px;
-    color:var(--brown);
+    color:#3E2A16;
     background:#FFFEFC;
     outline:none;
     transition:border-color .15s;
   }
+  .field input::placeholder{ color:#B7A488; opacity:1; }
+  .field select{ color-scheme:light; }
   .field input:focus, .field select:focus{border-color:var(--gold-dark);}
   .select-with-edit{
     display:flex;
@@ -302,6 +304,7 @@
   }
   .duration-row .field{flex:1;margin-bottom:0;}
   .duration-row input{text-align:center;}
+  .duration-row input#timer-name{text-align:left;}
 
   /* rentetan (timer chain) */
   .rentetan-section{ margin-bottom:14px; }
@@ -420,7 +423,7 @@
     color:var(--brown-soft);
   }
   .sound-option-btn:active{ transform:scale(0.96); }
-  .sound-option-btn .sound-symbol{ font-size:20px; line-height:1; }
+  .sound-option-btn .sound-symbol{ width:20px; height:20px; }
   .sound-option-btn .sound-label{ font-size:10.5px; font-weight:600; }
   .sound-option-btn.active{
     border-color:var(--gold-dark);
@@ -919,13 +922,28 @@
   }
   .category-filter-row{
     display:flex;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+    width:100%;
+    min-width:0;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+    scroll-padding-inline:20px;
     gap:6px;
-    padding-bottom:14px;
-    margin-bottom:6px;
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--cream);
+    margin:0 -20px 6px;
+    padding:0 20px 14px;
     border-bottom:1px solid var(--line);
   }
+  .category-filter-row::-webkit-scrollbar{ display:none; }
   .category-filter-chip{
+    flex-shrink:0;
+    scroll-snap-align:start;
+    white-space:nowrap;
     border:1.5px solid var(--line);
     background:var(--paper);
     color:var(--brown-soft);
@@ -1084,6 +1102,58 @@
     color:#fff;
   }
 
+  /* ---------- category manage list (settings) ---------- */
+  .category-manage-row{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .category-manage-empty{
+    font-size:12.5px;
+    color:var(--brown-faint);
+    padding:6px 2px;
+  }
+  .category-manage-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:var(--cream);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px;
+  }
+  .category-manage-name{
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--brown);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    flex:1;
+    min-width:0;
+  }
+  .category-manage-actions{
+    display:flex;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .category-manage-btn{
+    width:28px;
+    height:28px;
+    border:none;
+    border-radius:50%;
+    background:var(--paper);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--brown-soft);
+    cursor:pointer;
+    padding:0;
+  }
+  .category-manage-btn svg{ width:14px; height:14px; }
+  .category-manage-btn.delete{ color:var(--danger); }
+
   /* ---------- add-timer modal ---------- */
   .modal-backdrop{
     display:none;
@@ -1162,6 +1232,7 @@
   body.landscape-fullscreen .app-header,
   body.landscape-fullscreen .tab-screen,
   body.landscape-fullscreen .bottom-nav,
+  body.landscape-fullscreen .bottom-nav-fade,
   body.landscape-fullscreen .modal-backdrop{
     display:none !important;
   }
@@ -1213,6 +1284,16 @@
   .landscape-controls .ctrl-btn svg{width:24px;height:24px;}
 
   /* ---------- bottom nav ---------- */
+  .bottom-nav-fade{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:96px;
+    background:linear-gradient(to top, var(--cream) 45%, rgba(255,255,255,0) 100%);
+    pointer-events:none;
+    z-index:39;
+  }
   .bottom-nav{
     position:fixed;
     left:50%;
@@ -1338,6 +1419,10 @@
         </div>
       </div>
       <div class="settings-card">
+        <h3 class="section-title" style="margin:0 0 10px;">Daftar Kategori</h3>
+        <div class="category-manage-row" id="category-manage-row"></div>
+      </div>
+      <div class="settings-card">
         <h3 class="section-title" style="margin:0 0 10px;">Tentang</h3>
         <div class="settings-row"><span>Tanggal rilis</span><strong id="settings-release-date">17 September 2026</strong></div>
         <div class="settings-row" style="border-bottom:none;padding-bottom:0;margin-bottom:0;"><span>Sudah berjalan</span><strong id="settings-release-age"></strong></div>
@@ -1398,12 +1483,12 @@
         <div class="combo-dropdown" id="category-combo-dropdown"></div>
       </div>
     </div>
-    <div class="field">
-      <label for="timer-name">Nama timer</label>
-      <input id="timer-name" type="text" maxlength="40">
-    </div>
     <div class="duration-row">
-      <div class="field">
+      <div class="field" style="flex:2;">
+        <label for="timer-name">Nama timer</label>
+        <input id="timer-name" type="text" maxlength="40">
+      </div>
+      <div class="field" style="flex:1;">
         <label for="dur-min">Menit</label>
         <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
       </div>
@@ -1412,19 +1497,24 @@
       <label>Nada dering / getar</label>
       <div class="sound-option-row" id="sound-option-row">
         <button class="sound-option-btn" data-sound="chime" type="button" title="Lonceng">
-          <span class="sound-symbol">🔔</span><span class="sound-label">Lonceng</span>
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="sound-label">Lonceng</span>
         </button>
         <button class="sound-option-btn" data-sound="bell" type="button" title="Bel">
-          <span class="sound-symbol">🛎️</span><span class="sound-label">Bel</span>
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/></svg>
+          <span class="sound-label">Bel</span>
         </button>
         <button class="sound-option-btn" data-sound="melody" type="button" title="Melodi">
-          <span class="sound-symbol">🎵</span><span class="sound-label">Melodi</span>
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span class="sound-label">Melodi</span>
         </button>
         <button class="sound-option-btn" data-sound="alarm" type="button" title="Alarm">
-          <span class="sound-symbol">⏰</span><span class="sound-label">Alarm</span>
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg>
+          <span class="sound-label">Alarm</span>
         </button>
         <button class="sound-option-btn" data-sound="vibrate" type="button" title="Getar">
-          <span class="sound-symbol">📳</span><span class="sound-label">Getar</span>
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 8 2 2-2 2 2 2-2 2"/><path d="m22 8-2 2 2 2-2 2 2 2"/><rect x="8" y="4" width="8" height="16" rx="2"/></svg>
+          <span class="sound-label">Getar</span>
         </button>
       </div>
     </div>
@@ -1464,6 +1554,31 @@
       <label for="new-folder-category-new">Nama kategori baru</label>
       <input id="new-folder-category-new" type="text" placeholder="mis. Persiapan, Memasak, Menunggu" maxlength="24">
     </div>
+    <div class="field">
+      <label>Nada dering / getar</label>
+      <div class="sound-option-row" id="folder-sound-option-row">
+        <button class="sound-option-btn" data-sound="chime" type="button" title="Lonceng">
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="sound-label">Lonceng</span>
+        </button>
+        <button class="sound-option-btn" data-sound="bell" type="button" title="Bel">
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/></svg>
+          <span class="sound-label">Bel</span>
+        </button>
+        <button class="sound-option-btn" data-sound="melody" type="button" title="Melodi">
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span class="sound-label">Melodi</span>
+        </button>
+        <button class="sound-option-btn" data-sound="alarm" type="button" title="Alarm">
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg>
+          <span class="sound-label">Alarm</span>
+        </button>
+        <button class="sound-option-btn" data-sound="vibrate" type="button" title="Getar">
+          <svg class="sound-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 8 2 2-2 2 2 2-2 2"/><path d="m22 8-2 2 2 2-2 2 2 2"/><rect x="8" y="4" width="8" height="16" rx="2"/></svg>
+          <span class="sound-label">Getar</span>
+        </button>
+      </div>
+    </div>
     <button class="btn btn-primary" id="create-folder-btn" type="button">Buat folder</button>
     <div class="auth-msg" id="new-folder-msg"></div>
   </div>
@@ -1487,6 +1602,7 @@
 </div>
 
 <!-- BOTTOM NAV -->
+<div class="bottom-nav-fade" id="bottom-nav-fade" style="display:none;"></div>
 <nav class="bottom-nav" id="bottom-nav" style="display:none;">
   <button class="nav-item active" data-tab="folders" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
@@ -1569,6 +1685,7 @@ const soundOptionRow = document.getElementById('sound-option-row');
 
 /* tabs + modal */
 const bottomNav = document.getElementById('bottom-nav');
+const bottomNavFade = document.getElementById('bottom-nav-fade');
 const navAddBtn = document.getElementById('nav-add-btn');
 const addModalBackdrop = document.getElementById('add-modal-backdrop');
 const closeAddModalBtn = document.getElementById('close-add-modal');
@@ -1657,6 +1774,7 @@ const newFolderCategorySelect = document.getElementById('new-folder-category-sel
 const newFolderCategoryField = document.getElementById('new-folder-category-field');
 const newFolderCategoryNewField = document.getElementById('new-folder-category-new-field');
 const newFolderCategoryNewInput = document.getElementById('new-folder-category-new');
+const folderSoundOptionRow = document.getElementById('folder-sound-option-row');
 const tabScreens = {
   folders: document.getElementById('tab-folders'),
   settings: document.getElementById('tab-settings')
@@ -1674,7 +1792,8 @@ let currentFolder = '';
 let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
 let folderSearchOpen = false;
 let folderSearchQuery = '';
-let categoryFilter = '';
+let hiddenCategories = new Set();
+let selectedFolderSoundType = 'chime';
 let knownFolderNames = ['Umum'];
 let knownCategoryNames = [];
 let editingId = null;
@@ -1896,7 +2015,17 @@ function setSoundOption(type){
   });
 }
 soundOptionRow.querySelectorAll('.sound-option-btn').forEach(btn => {
-  btn.addEventListener('click', () => setSoundOption(btn.dataset.sound));
+  btn.addEventListener('click', () => { setSoundOption(btn.dataset.sound); playChime(btn.dataset.sound); });
+});
+
+function setFolderSoundOption(type){
+  selectedFolderSoundType = type || 'chime';
+  folderSoundOptionRow.querySelectorAll('.sound-option-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.sound === selectedFolderSoundType);
+  });
+}
+folderSoundOptionRow.querySelectorAll('.sound-option-btn').forEach(btn => {
+  btn.addEventListener('click', () => { setFolderSoundOption(btn.dataset.sound); playChime(btn.dataset.sound); });
 });
 
 function openAddModal(){
@@ -1926,6 +2055,8 @@ function openAddModalForFolder(folderName){
   if(knownFolderNames.includes(folderName)){
     timerFolderInput.value = folderName;
   }
+  const folderEntry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  setSoundOption((folderEntry && folderEntry.soundType) || 'chime');
   folderSelectField.style.display = 'none';
   rentetanSection.style.display = 'none';
   const queue = getFolderQueue(folderName);
@@ -2019,6 +2150,7 @@ function openNewFolderModal(){
     newFolderCategorySelect.value = '__new__';
     newFolderCategoryNewField.style.display = '';
   }
+  setFolderSoundOption('chime');
   newFolderModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
   setTimeout(() => newFolderNameInput.focus(), 50);
@@ -2047,6 +2179,7 @@ function openEditFolderModal(folderName){
     newFolderCategorySelect.value = '__new__';
     newFolderCategoryNewField.style.display = '';
   }
+  setFolderSoundOption((folderEntry && folderEntry.soundType) || 'chime');
   newFolderModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
   setTimeout(() => { newFolderNameInput.focus(); newFolderNameInput.select(); }, 50);
@@ -2093,17 +2226,19 @@ createFolderBtn.addEventListener('click', async () => {
     showNewFolderMsg('Pilih kategori dulu.', 'error');
     return;
   }
+  const soundType = selectedFolderSoundType || 'chime';
   createFolderBtn.disabled = true;
   try{
     if(category && !knownCategoryNames.includes(category)){
       await addDoc(collection(db, 'users', user.uid, 'categories'), { name: category, createdAt: serverTimestamp() });
     }
     if(folderModalMode === 'rename'){
-      await renameFolder(renamingFolderOldName, name, category);
+      await renameFolder(renamingFolderOldName, name, category, soundType);
     }else{
       await addDoc(collection(db, 'users', user.uid, 'folders'), {
         name,
         category,
+        soundType,
         createdAt: serverTimestamp()
       });
     }
@@ -2117,11 +2252,13 @@ createFolderBtn.addEventListener('click', async () => {
   }
 });
 
-async function renameFolder(oldName, newName, category){
+async function renameFolder(oldName, newName, category, soundType){
   const user = auth.currentUser;
   if(!user) return;
   const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === oldName);
-  const fields = category === undefined ? { name: newName } : { name: newName, category };
+  const fields = { name: newName };
+  if(category !== undefined) fields.category = category;
+  if(soundType !== undefined) fields.soundType = soundType;
   if(entry){
     await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), fields);
   }else{
@@ -2212,6 +2349,90 @@ function getFolderCategory(folderName){
   return (entry && entry.category) || '';
 }
 
+/* ---------------- daftar kategori (settings) ---------------- */
+function renderCategoryManageList(){
+  const row = document.getElementById('category-manage-row');
+  if(!row) return;
+  if(!knownCategoryNames.length){
+    row.innerHTML = `<div class="category-manage-empty">Belum ada kategori.</div>`;
+    return;
+  }
+  row.innerHTML = knownCategoryNames.map(c => `
+    <div class="category-manage-item">
+      <span class="category-manage-name" title="${escapeHtml(c)}">${escapeHtml(c)}</span>
+      <div class="category-manage-actions">
+        <button class="category-manage-btn edit" data-category="${escapeHtml(c)}" type="button" title="Ubah nama">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        </button>
+        <button class="category-manage-btn delete" data-category="${escapeHtml(c)}" type="button" title="Hapus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+  row.querySelectorAll('.category-manage-btn.edit').forEach(btn => {
+    btn.addEventListener('click', () => renameCategory(btn.dataset.category));
+  });
+  row.querySelectorAll('.category-manage-btn.delete').forEach(btn => {
+    btn.addEventListener('click', () => deleteCategory(btn.dataset.category));
+  });
+}
+
+async function renameCategory(oldName){
+  const user = auth.currentUser;
+  if(!user) return;
+  const input = prompt('Ubah nama kategori:', oldName);
+  if(input === null) return;
+  const newName = input.trim();
+  if(!newName || newName === oldName) return;
+  if(knownCategoryNames.some(c => c.toLowerCase() === newName.toLowerCase())){
+    alert('Kategori dengan nama itu sudah ada.');
+    return;
+  }
+  try{
+    const entry = Array.from(localCategories.entries()).find(([, d]) => d.name === oldName);
+    if(entry){
+      await updateDoc(doc(db, 'users', user.uid, 'categories', entry[0]), { name: newName });
+    }
+    const foldersToUpdate = Array.from(localFolders.entries()).filter(([, d]) => d.category === oldName);
+    await Promise.all(foldersToUpdate.map(([id]) =>
+      updateDoc(doc(db, 'users', user.uid, 'folders', id), { category: newName })
+    ));
+    const timersToUpdate = Array.from(localTimers.entries()).filter(([, d]) => d.category === oldName);
+    await Promise.all(timersToUpdate.map(([id]) =>
+      updateDoc(doc(db, 'users', user.uid, 'timers', id), { category: newName })
+    ));
+  }catch(err){
+    console.error(err);
+    alert('Gagal mengubah kategori: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
+
+async function deleteCategory(name){
+  const user = auth.currentUser;
+  if(!user) return;
+  const ok = confirm(`Hapus kategori "${name}"? Folder/timer yang memakainya akan jadi tanpa kategori.`);
+  if(!ok) return;
+  try{
+    const entry = Array.from(localCategories.entries()).find(([, d]) => d.name === name);
+    if(entry){
+      await deleteDoc(doc(db, 'users', user.uid, 'categories', entry[0]));
+    }
+    hiddenCategories.delete(name);
+    const foldersToUpdate = Array.from(localFolders.entries()).filter(([, d]) => d.category === name);
+    await Promise.all(foldersToUpdate.map(([id]) =>
+      updateDoc(doc(db, 'users', user.uid, 'folders', id), { category: '' })
+    ));
+    const timersToUpdate = Array.from(localTimers.entries()).filter(([, d]) => d.category === name);
+    await Promise.all(timersToUpdate.map(([id]) =>
+      updateDoc(doc(db, 'users', user.uid, 'timers', id), { category: '' })
+    ));
+  }catch(err){
+    console.error(err);
+    alert('Gagal menghapus kategori: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
+
 async function toggleFolderPriority(folderName){
   const user = auth.currentUser;
   if(!user || !folderName || folderName === 'Semua') return;
@@ -2275,6 +2496,7 @@ onAuthStateChanged(auth, (user) => {
     authScreen.style.display = 'none';
     appScreen.style.display = 'flex';
     bottomNav.style.display = 'flex';
+    bottomNavFade.style.display = 'block';
     settingsEmail.textContent = user.email;
     updateNotifBtn();
     if('Notification' in window && Notification.permission === 'default'){
@@ -2288,6 +2510,7 @@ onAuthStateChanged(auth, (user) => {
     appScreen.style.display = 'none';
     authScreen.style.display = 'flex';
     bottomNav.style.display = 'none';
+    bottomNavFade.style.display = 'none';
     closeAddModal();
     closeNewFolderModal();
     if(unsubscribeTimers){ unsubscribeTimers(); unsubscribeTimers = null; }
@@ -2554,7 +2777,7 @@ addTimerBtn.addEventListener('click', async () => {
   }).filter(step => step.durationSeconds > 0);
   const isChain = rentetanSteps.length > 0;
   const isFolderInsert = !editingId && stepOrderField.style.display !== 'none';
-  const startsIdle = isChain || isFolderInsert; // rentetan/antrean folder: semua antre dulu, dimulai manual lewat "Mulai urutan"
+  const startsIdle = true; // timer baru selalu masuk dulu ke daftar (idle), tidak auto mulai
   addTimerBtn.disabled = true;
   try{
     if(category && !knownCategoryNames.includes(category)){
@@ -2661,6 +2884,8 @@ function subscribeCategories(uid){
     });
     knownCategoryNames = Array.from(localCategories.values()).map(c => c.name).sort();
     populateCategorySelect();
+    renderCategoryManageList();
+    renderAll();
   }, (err) => {
     console.error(err);
   });
@@ -2760,7 +2985,10 @@ function renderAll(){
     const searchedFolderNames = (folderSearchQuery.trim()
       ? folderNames.filter(f => f.toLowerCase().includes(folderSearchQuery.trim().toLowerCase()))
       : folderNames
-    ).filter(f => !categoryFilter || getFolderCategory(f) === categoryFilter);
+    ).filter(f => {
+      const cat = getFolderCategory(f);
+      return !cat || !hiddenCategories.has(cat);
+    });
 
     folderChipsRow.innerHTML =
       `<div class="folder-chips-top">` +
@@ -2777,8 +3005,8 @@ function renderAll(){
         `<button class="folder-fullscreen-btn" id="folder-fullscreen-btn" type="button" title="Tampilan layar penuh" ${all.some(([, d]) => d.status === 'running' || d.status === 'paused') ? '' : 'disabled'}>${iconFullscreenSmall()}</button>` +
       `</div>` +
       `<div class="category-filter-row">
-         <button class="category-filter-chip${!categoryFilter ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
-         ${knownCategoryNames.map(c => `<button class="category-filter-chip${categoryFilter === c ? ' active' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}</button>`).join('')}
+         <button class="category-filter-chip${hiddenCategories.size === 0 ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
+         ${knownCategoryNames.map(c => `<button class="category-filter-chip${!hiddenCategories.has(c) ? ' active' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}</button>`).join('')}
        </div>` +
       (searchedFolderNames.length === 0
         ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
@@ -2856,7 +3084,18 @@ function renderAll(){
 
     folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
       chip.addEventListener('click', () => {
-        categoryFilter = chip.dataset.category;
+        const cat = chip.dataset.category;
+        if(!cat){
+          if(hiddenCategories.size === 0){
+            knownCategoryNames.forEach(c => hiddenCategories.add(c));
+          }else{
+            hiddenCategories.clear();
+          }
+        }else if(hiddenCategories.has(cat)){
+          hiddenCategories.delete(cat);
+        }else{
+          hiddenCategories.add(cat);
+        }
         renderAll();
       });
     });
