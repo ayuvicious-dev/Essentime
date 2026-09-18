@@ -255,23 +255,101 @@
   }
   .duration-row .field{flex:1;margin-bottom:0;}
   .duration-row input{text-align:center;}
-  .presets{
+
+  /* rentetan (timer chain) */
+  .rentetan-section{ margin-bottom:14px; }
+  .rentetan-list{ display:flex; flex-direction:column; }
+  .rentetan-item{
     display:flex;
     gap:8px;
-    flex-wrap:wrap;
-    margin-bottom:14px;
+    position:relative;
+    padding-left:18px;
   }
-  .preset-chip{
-    border:1.5px solid var(--line);
+  .rentetan-item::before{
+    content:'';
+    position:absolute;
+    left:5px;
+    top:0;
+    bottom:-2px;
+    width:1.5px;
+    background:var(--line);
+  }
+  .rentetan-item:last-child::before{ bottom:50%; }
+  .rentetan-item::after{
+    content:'';
+    position:absolute;
+    left:2px;
+    top:16px;
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--gold-mid);
+  }
+  .rentetan-item-body{
+    flex:1;
+    min-width:0;
     background:#FFFEFC;
-    color:var(--brown-soft);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:10px;
+  }
+  .rentetan-item-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .rentetan-item-num{
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--gold-dark);
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  .rentetan-remove-btn{
+    background:none;
+    border:none;
+    color:var(--brown-faint);
+    cursor:pointer;
+    padding:4px;
+    display:flex;
+    border-radius:6px;
+  }
+  .rentetan-remove-btn:hover{ color:var(--danger); background:#FBEAE4; }
+  .rentetan-item-body .field{ margin-bottom:10px; }
+  .rentetan-item-body .field:last-child{ margin-bottom:0; }
+  .rentetan-item-body input{ text-align:left; }
+  .rentetan-add-btn{
+    width:100%;
+    border:1.5px dashed var(--gold-mid);
+    background:transparent;
+    color:var(--gold-dark);
     font-size:12.5px;
     font-weight:600;
-    padding:7px 12px;
-    border-radius:999px;
+    padding:10px;
+    border-radius:14px;
     cursor:pointer;
+    margin-left:18px;
+    width:calc(100% - 18px);
   }
-  .preset-chip:hover{border-color:var(--gold-mid);color:var(--gold-dark);}
+  .rentetan-add-btn:hover{ background:#FBEEDB; }
+  .rentetan-total{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#FBEEDB;
+    border-radius:14px;
+    padding:12px 14px;
+    margin:14px 0;
+    font-size:13px;
+    font-weight:600;
+    color:var(--brown-soft);
+  }
+  .rentetan-total strong{
+    font-family:var(--serif);
+    font-size:16px;
+    color:var(--gold-dark);
+  }
 
   /* timer list */
   #timer-list{
@@ -426,21 +504,60 @@
     align-items:center;
     gap:8px;
   }
-  .folder-chips > .folder-chip{
+  .folder-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
     width:100%;
-    text-align:left;
-    border-radius:0;
-    padding:12px 4px;
+    padding:10px 4px;
     border-bottom:1px solid var(--line);
   }
-  .folder-chips > .folder-chip:last-child{
+  .folder-row:last-child{
     border-bottom:none;
   }
-  .folder-chips > .folder-chip.active{
+  .folder-row.active{
     border-radius:999px;
-    padding:8px 14px;
+    padding:8px 8px 8px 14px;
     border-bottom:none;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
   }
+  .folder-row.active .folder-chip-label{ color:#fff; }
+  .folder-row.active .folder-row-action{ color:rgba(255,255,255,0.85); }
+  .folder-row.active .folder-row-action:hover{ color:#fff; }
+  .folder-chip-label{
+    border:none;
+    background:transparent;
+    color:var(--brown-soft);
+    font-size:12.5px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+    flex:1;
+    min-width:0;
+    padding:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .folder-row-actions{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    flex-shrink:0;
+  }
+  .folder-row-action{
+    background:none;
+    border:none;
+    color:var(--brown-faint);
+    cursor:pointer;
+    padding:5px;
+    flex-shrink:0;
+    display:flex;
+    border-radius:6px;
+  }
+  .folder-row-action:hover{ color:var(--gold-dark); background:#FBEEDB; }
+  .folder-row-action.danger:hover{ color:var(--danger); background:#FBEAE4; }
   .folder-chip{
     border:none;
     background:transparent;
@@ -506,6 +623,12 @@
     color:var(--brown-soft);
   }
   .sequence-bar .btn{padding:9px 14px;font-size:13px;white-space:nowrap;}
+  .folder-detail-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
 
   /* settings */
   .settings-card{
@@ -699,12 +822,22 @@
 
     <!-- FOLDER TIMER -->
     <div class="tab-screen" id="tab-folders" style="display:none;">
-      <div class="folder-chips" id="folder-chips"></div>
-      <div class="sequence-bar" id="sequence-bar" style="display:none;">
-        <span>Timer di folder ini lanjut otomatis satu per satu.</span>
-        <button class="btn btn-primary" id="run-sequence-btn" type="button">Mulai urutan</button>
+      <div id="folder-list-view">
+        <div class="folder-chips" id="folder-chips"></div>
       </div>
-      <div id="folder-timer-list"></div>
+      <div id="folder-detail-view" style="display:none;">
+        <div class="folder-detail-head">
+          <button class="icon-btn" id="folder-back-btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="wordmark" id="folder-detail-title" style="font-size:17px;">Semua</div>
+        </div>
+        <div class="sequence-bar" id="sequence-bar" style="display:none;">
+          <span>Timer di folder ini lanjut otomatis satu per satu.</span>
+          <button class="btn btn-primary" id="run-sequence-btn" type="button">Mulai urutan</button>
+        </div>
+        <div id="folder-timer-list"></div>
+      </div>
     </div>
 
     <!-- RIWAYAT TIMER -->
@@ -756,27 +889,6 @@
       </button>
     </div>
     <div class="field">
-      <label for="timer-name">Nama timer</label>
-      <input id="timer-name" type="text" placeholder="mis. Menyeduh teh" maxlength="40">
-    </div>
-    <div class="duration-row">
-      <div class="field">
-        <label for="dur-min">Menit</label>
-        <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label for="dur-sec">Detik</label>
-        <input id="dur-sec" type="number" min="0" max="59" value="0" inputmode="numeric">
-      </div>
-    </div>
-    <div class="presets" id="presets">
-      <button class="preset-chip" data-sec="60" type="button">1 mnt</button>
-      <button class="preset-chip" data-sec="180" type="button">3 mnt</button>
-      <button class="preset-chip" data-sec="300" type="button">5 mnt</button>
-      <button class="preset-chip" data-sec="600" type="button">10 mnt</button>
-      <button class="preset-chip" data-sec="900" type="button">15 mnt</button>
-    </div>
-    <div class="field">
       <label for="timer-folder-select">Simpan ke folder</label>
       <select id="timer-folder-select">
         <option value="Umum">Umum</option>
@@ -787,6 +899,24 @@
       <label for="timer-folder-new">Nama folder baru</label>
       <input id="timer-folder-new" type="text" placeholder="mis. Pagi, Kerja, Masak" maxlength="24">
     </div>
+    <div class="field">
+      <label for="timer-name">Nama timer</label>
+      <input id="timer-name" type="text" maxlength="40">
+    </div>
+    <div class="duration-row">
+      <div class="field">
+        <label for="dur-min">Menit</label>
+        <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
+      </div>
+    </div>
+    <div class="rentetan-section">
+      <div class="rentetan-list" id="rentetan-list"></div>
+      <button class="rentetan-add-btn" id="add-rentetan-btn" type="button">+ Tambah rentetan</button>
+    </div>
+    <div class="rentetan-total" id="rentetan-total" style="display:none;">
+      <span>Total waktu timer</span>
+      <strong id="rentetan-total-value">0 menit</strong>
+    </div>
     <button class="btn btn-primary" id="add-timer-btn" type="button">Tambah timer</button>
     <div class="auth-msg" id="composer-msg"></div>
   </div>
@@ -796,7 +926,7 @@
 <div class="modal-backdrop" id="new-folder-modal-backdrop">
   <div class="modal-sheet" style="max-width:340px;">
     <div class="modal-head">
-      <div class="wordmark" style="font-size:17px;">Folder baru</div>
+      <div class="wordmark" style="font-size:17px;" id="new-folder-modal-title">Folder baru</div>
       <button class="icon-btn" id="close-new-folder-modal" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -872,15 +1002,17 @@ const tabs = document.querySelectorAll('.auth-tab');
 const logoutBtn = document.getElementById('logout-btn');
 const timerNameInput = document.getElementById('timer-name');
 const durMinInput = document.getElementById('dur-min');
-const durSecInput = document.getElementById('dur-sec');
 const timerFolderSelect = document.getElementById('timer-folder-select');
 const newFolderField = document.getElementById('new-folder-field');
 const timerFolderNewInput = document.getElementById('timer-folder-new');
 const addTimerBtn = document.getElementById('add-timer-btn');
 const modalTitle = document.getElementById('modal-title');
-const presetsRow = document.getElementById('presets');
 const chime = document.getElementById('chime');
 const composerMsg = document.getElementById('composer-msg');
+const rentetanList = document.getElementById('rentetan-list');
+const addRentetanBtn = document.getElementById('add-rentetan-btn');
+const rentetanTotal = document.getElementById('rentetan-total');
+const rentetanTotalValue = document.getElementById('rentetan-total-value');
 
 /* tabs + modal */
 const bottomNav = document.getElementById('bottom-nav');
@@ -956,6 +1088,10 @@ const folderChipsRow = document.getElementById('folder-chips');
 const folderTimerList = document.getElementById('folder-timer-list');
 const sequenceBar = document.getElementById('sequence-bar');
 const runSequenceBtn = document.getElementById('run-sequence-btn');
+const folderListViewEl = document.getElementById('folder-list-view');
+const folderDetailViewEl = document.getElementById('folder-detail-view');
+const folderBackBtn = document.getElementById('folder-back-btn');
+const folderDetailTitle = document.getElementById('folder-detail-title');
 const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
 const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
 const newFolderNameInput = document.getElementById('new-folder-name');
@@ -977,6 +1113,7 @@ let currentTab = 'dashboard';
 const appHeaderTitle = document.getElementById('app-header-title');
 const TAB_TITLES = { dashboard: 'Dashboard', folders: 'Folder', history: 'Riwayat', settings: 'Setting' };
 let currentFolder = 'Semua';
+let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
 let knownFolderNames = ['Umum'];
 let editingId = null;
 const localTimers = new Map(); // id -> data
@@ -1080,15 +1217,19 @@ resetBtn.addEventListener('click', async () => {
 logoutBtn.addEventListener('click', () => signOut(auth));
 
 /* ---------------- bottom nav tabs ---------------- */
+function switchToTab(tabName){
+  currentTab = tabName;
+  bottomNav.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+  Object.entries(tabScreens).forEach(([key, el]) => {
+    el.style.display = key === currentTab ? '' : 'none';
+  });
+  appHeaderTitle.textContent = TAB_TITLES[currentTab] || '';
+  renderAll();
+}
 bottomNav.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
-    currentTab = btn.dataset.tab;
-    bottomNav.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b === btn));
-    Object.entries(tabScreens).forEach(([key, el]) => {
-      el.style.display = key === currentTab ? '' : 'none';
-    });
-    appHeaderTitle.textContent = TAB_TITLES[currentTab] || '';
-    renderAll();
+    if(btn.dataset.tab === 'folders') folderListView = true;
+    switchToTab(btn.dataset.tab);
   });
 });
 
@@ -1117,10 +1258,10 @@ function openAddModal(){
   addTimerBtn.textContent = 'Tambah timer';
   timerNameInput.value = '';
   durMinInput.value = 5;
-  durSecInput.value = 0;
   timerFolderSelect.value = 'Umum';
   newFolderField.style.display = 'none';
   timerFolderNewInput.value = '';
+  resetRentetanList();
   addModalBackdrop.classList.add('open');
 }
 function openEditModal(id, data){
@@ -1131,8 +1272,7 @@ function openEditModal(id, data){
   addTimerBtn.textContent = 'Simpan perubahan';
   timerNameInput.value = data.name || '';
   const totalSec = data.durationSeconds || 0;
-  durMinInput.value = Math.floor(totalSec / 60);
-  durSecInput.value = totalSec % 60;
+  durMinInput.value = Math.round(totalSec / 60);
   const folder = data.folder || 'Umum';
   if(!knownFolderNames.includes(folder)){
     timerFolderSelect.insertAdjacentHTML('afterbegin', `<option value="${escapeHtml(folder)}">${escapeHtml(folder)}</option>`);
@@ -1140,6 +1280,7 @@ function openEditModal(id, data){
   timerFolderSelect.value = folder;
   newFolderField.style.display = 'none';
   timerFolderNewInput.value = '';
+  resetRentetanList();
   addModalBackdrop.classList.add('open');
 }
 function closeAddModal(){
@@ -1161,11 +1302,29 @@ function hideNewFolderMsg(){
   newFolderMsg.className = 'auth-msg';
   newFolderMsg.textContent = '';
 }
+const newFolderModalTitle = document.getElementById('new-folder-modal-title');
+let folderModalMode = 'create'; // 'create' | 'rename'
+let renamingFolderOldName = null;
+
 function openNewFolderModal(){
+  folderModalMode = 'create';
+  renamingFolderOldName = null;
+  newFolderModalTitle.textContent = 'Folder baru';
+  createFolderBtn.textContent = 'Buat folder';
   hideNewFolderMsg();
   newFolderNameInput.value = '';
   newFolderModalBackdrop.classList.add('open');
   setTimeout(() => newFolderNameInput.focus(), 50);
+}
+function openEditFolderModal(folderName){
+  folderModalMode = 'rename';
+  renamingFolderOldName = folderName;
+  newFolderModalTitle.textContent = 'Ubah nama folder';
+  createFolderBtn.textContent = 'Simpan';
+  hideNewFolderMsg();
+  newFolderNameInput.value = folderName;
+  newFolderModalBackdrop.classList.add('open');
+  setTimeout(() => { newFolderNameInput.focus(); newFolderNameInput.select(); }, 50);
 }
 function closeNewFolderModal(){
   newFolderModalBackdrop.classList.remove('open');
@@ -1185,25 +1344,99 @@ createFolderBtn.addEventListener('click', async () => {
     newFolderNameInput.focus();
     return;
   }
-  if(knownFolderNames.some(f => f.toLowerCase() === name.toLowerCase())){
+  const clash = knownFolderNames.some(f =>
+    f.toLowerCase() === name.toLowerCase() &&
+    !(folderModalMode === 'rename' && f.toLowerCase() === renamingFolderOldName.toLowerCase())
+  );
+  if(clash){
     showNewFolderMsg('Folder dengan nama itu sudah ada.', 'error');
     return;
   }
   createFolderBtn.disabled = true;
   try{
-    await addDoc(collection(db, 'users', user.uid, 'folders'), {
-      name,
-      createdAt: serverTimestamp()
-    });
+    if(folderModalMode === 'rename'){
+      await renameFolder(renamingFolderOldName, name);
+    }else{
+      await addDoc(collection(db, 'users', user.uid, 'folders'), {
+        name,
+        createdAt: serverTimestamp()
+      });
+    }
     currentFolder = name;
     closeNewFolderModal();
   }catch(err){
     console.error(err);
-    showNewFolderMsg('Gagal membuat folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'), 'error');
+    showNewFolderMsg((folderModalMode === 'rename' ? 'Gagal mengubah folder: ' : 'Gagal membuat folder: ') + (err && err.message ? err.message : 'kesalahan tidak diketahui'), 'error');
   }finally{
     createFolderBtn.disabled = false;
   }
 });
+
+async function renameFolder(oldName, newName){
+  const user = auth.currentUser;
+  if(!user) return;
+  const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === oldName);
+  if(entry){
+    await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), { name: newName });
+  }else{
+    await addDoc(collection(db, 'users', user.uid, 'folders'), { name: newName, createdAt: serverTimestamp() });
+  }
+  const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === oldName);
+  await Promise.all(timersInFolder.map(([id]) =>
+    updateDoc(doc(db, 'users', user.uid, 'timers', id), { folder: newName })
+  ));
+}
+
+async function handleDeleteFolder(folderName){
+  const user = auth.currentUser;
+  if(!user) return;
+  const ok = confirm(`Hapus folder "${folderName}"? Timer di dalamnya akan dipindah ke folder Umum.`);
+  if(!ok) return;
+  try{
+    const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === folderName);
+    if(entry){
+      await deleteDoc(doc(db, 'users', user.uid, 'folders', entry[0]));
+    }
+    const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === folderName);
+    await Promise.all(timersInFolder.map(([id]) =>
+      updateDoc(doc(db, 'users', user.uid, 'timers', id), { folder: 'Umum' })
+    ));
+    if(currentFolder === folderName) currentFolder = 'Semua';
+  }catch(err){
+    console.error(err);
+    alert('Gagal menghapus folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
+
+async function handleDuplicateFolder(folderName){
+  const user = auth.currentUser;
+  if(!user) return;
+  let newName = folderName + ' (Salinan)';
+  let suffix = 2;
+  while(knownFolderNames.some(f => f.toLowerCase() === newName.toLowerCase())){
+    newName = folderName + ' (Salinan ' + suffix + ')';
+    suffix++;
+  }
+  try{
+    await addDoc(collection(db, 'users', user.uid, 'folders'), { name: newName, createdAt: serverTimestamp() });
+    const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === folderName);
+    await Promise.all(timersInFolder.map(([, d]) =>
+      addDoc(collection(db, 'users', user.uid, 'timers'), {
+        name: d.name,
+        folder: newName,
+        durationSeconds: d.durationSeconds,
+        remainingSeconds: d.durationSeconds,
+        status: 'idle',
+        endAt: null,
+        createdAt: serverTimestamp()
+      })
+    ));
+    currentFolder = newName;
+  }catch(err){
+    console.error(err);
+    alert('Gagal menduplikat folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
 
 /* ---------------- settings tab ---------------- */
 notifBtn.addEventListener('click', () => {
@@ -1257,13 +1490,76 @@ onAuthStateChanged(auth, (user) => {
 });
 
 /* ---------------- timer composer ---------------- */
-presetsRow.addEventListener('click', (e) => {
-  const chip = e.target.closest('.preset-chip');
-  if(!chip) return;
-  const sec = parseInt(chip.dataset.sec, 10);
-  durMinInput.value = Math.floor(sec / 60);
-  durSecInput.value = sec % 60;
+
+folderBackBtn.addEventListener('click', () => {
+  folderListView = true;
+  renderAll();
 });
+function openFolderDetail(folderName){
+  currentFolder = folderName;
+  folderListView = false;
+  renderAll();
+}
+function resetRentetanList(){
+  rentetanList.innerHTML = '';
+  updateRentetanUI();
+}
+function renumberRentetanItems(){
+  rentetanList.querySelectorAll('.rentetan-item').forEach((item, i) => {
+    item.querySelector('.rentetan-item-num').textContent = 'Rentetan ' + (i + 1);
+  });
+}
+function updateRentetanUI(){
+  const minuteInputs = rentetanList.querySelectorAll('.rentetan-minutes-input');
+  if(minuteInputs.length === 0){
+    rentetanTotal.style.display = 'none';
+    return;
+  }
+  let totalMinutes = 0;
+  minuteInputs.forEach(inp => { totalMinutes += Math.max(0, parseInt(inp.value, 10) || 0); });
+  rentetanTotalValue.textContent = formatMinutesTotal(totalMinutes);
+  rentetanTotal.style.display = 'flex';
+}
+function formatMinutesTotal(totalMinutes){
+  if(totalMinutes >= 60){
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return m > 0 ? `${h} jam ${m} menit` : `${h} jam`;
+  }
+  return `${totalMinutes} menit`;
+}
+function addRentetanRow(){
+  const item = document.createElement('div');
+  item.className = 'rentetan-item';
+  item.innerHTML = `
+    <div class="rentetan-item-body">
+      <div class="rentetan-item-head">
+        <span class="rentetan-item-num">Rentetan</span>
+        <button class="rentetan-remove-btn" type="button" title="Hapus rentetan">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="field">
+        <label>Nama timer</label>
+        <input type="text" class="rentetan-name-input" placeholder="mis. Istirahat" maxlength="40">
+      </div>
+      <div class="field">
+        <label>Menit</label>
+        <input type="number" class="rentetan-minutes-input" min="0" max="180" value="1" inputmode="numeric">
+      </div>
+    </div>
+  `;
+  rentetanList.appendChild(item);
+  item.querySelector('.rentetan-remove-btn').addEventListener('click', () => {
+    item.remove();
+    renumberRentetanItems();
+    updateRentetanUI();
+  });
+  item.querySelector('.rentetan-minutes-input').addEventListener('input', updateRentetanUI);
+  renumberRentetanItems();
+  updateRentetanUI();
+}
+addRentetanBtn.addEventListener('click', addRentetanRow);
 
 function showComposerMsg(text, type){
   composerMsg.textContent = text;
@@ -1296,10 +1592,9 @@ addTimerBtn.addEventListener('click', async () => {
   }
   const name = timerNameInput.value.trim() || 'Timer';
   const min = Math.max(0, parseInt(durMinInput.value, 10) || 0);
-  const sec = Math.max(0, Math.min(59, parseInt(durSecInput.value, 10) || 0));
-  const totalSec = min * 60 + sec;
+  const totalSec = min * 60;
   if(totalSec <= 0){
-    showComposerMsg('Atur durasi menit/detik lebih dari 0 dulu.', 'error');
+    showComposerMsg('Atur durasi menit lebih dari 0 dulu.', 'error');
     durMinInput.focus();
     return;
   }
@@ -1314,6 +1609,12 @@ addTimerBtn.addEventListener('click', async () => {
   }else{
     folder = timerFolderSelect.value || 'Umum';
   }
+  const rentetanSteps = Array.from(rentetanList.querySelectorAll('.rentetan-item')).map((item, i) => {
+    const stepMin = Math.max(0, parseInt(item.querySelector('.rentetan-minutes-input').value, 10) || 0);
+    const stepName = item.querySelector('.rentetan-name-input').value.trim() || `Rentetan ${i + 1}`;
+    return { name: stepName, durationSeconds: stepMin * 60 };
+  }).filter(step => step.durationSeconds > 0);
+  const isChain = rentetanSteps.length > 0;
   addTimerBtn.disabled = true;
   try{
     if(editingId){
@@ -1331,14 +1632,31 @@ addTimerBtn.addEventListener('click', async () => {
         folder,
         durationSeconds: totalSec,
         remainingSeconds: totalSec,
-        status: 'running', // idle | running | paused | finished
-        endAt: Date.now() + totalSec * 1000,
+        status: isChain ? 'idle' : 'running', // rentetan: semua antre dulu, dimulai manual lewat "Mulai urutan"
+        endAt: isChain ? null : Date.now() + totalSec * 1000,
+        createdAt: serverTimestamp()
+      });
+    }
+    for(const step of rentetanSteps){
+      await addDoc(collection(db, 'users', user.uid, 'timers'), {
+        name: step.name,
+        folder,
+        durationSeconds: step.durationSeconds,
+        remainingSeconds: step.durationSeconds,
+        status: 'idle', // menunggu giliran, otomatis lanjut lewat maybeStartNextInFolder
+        endAt: null,
         createdAt: serverTimestamp()
       });
     }
     timerNameInput.value = '';
     timerFolderNewInput.value = '';
+    resetRentetanList();
+    currentFolder = folder;
     closeAddModal();
+    if(isChain){
+      switchToTab('folders');
+      openFolderDetail(folder);
+    }
   }catch(err){
     console.error(err);
     showComposerMsg(friendlyFirestoreError(err), 'error');
@@ -1445,37 +1763,60 @@ function renderAll(){
     renderList(dashboardRunningList, running, '');
   }
   if(currentTab === 'folders'){
+    folderListViewEl.style.display = folderListView ? '' : 'none';
+    folderDetailViewEl.style.display = folderListView ? 'none' : '';
     folderChipsRow.innerHTML =
       `<div class="folder-chips-top">` +
         `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>` +
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
       `</div>` +
-      folderNames.map(f =>
-        `<button class="folder-chip${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>`
-      ).join('');
+      folderNames.map(f => `
+        <div class="folder-row${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}">
+          <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+          <div class="folder-row-actions">
+            <button class="folder-row-action" title="Duplikat" data-folder-action="duplicate" data-folder="${escapeHtml(f)}" type="button">${iconDuplicateSmall()}</button>
+            <button class="folder-row-action" title="Edit" data-folder-action="edit" data-folder="${escapeHtml(f)}" type="button">${iconEditSmall()}</button>
+            <button class="folder-row-action danger" title="Hapus" data-folder-action="delete" data-folder="${escapeHtml(f)}" type="button">${iconDeleteSmall()}</button>
+          </div>
+        </div>
+      `).join('');
     folderChipsRow.querySelectorAll('.folder-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        currentFolder = chip.dataset.folder;
-        renderAll();
+      chip.addEventListener('click', () => openFolderDetail(chip.dataset.folder));
+    });
+    folderChipsRow.querySelectorAll('.folder-chip-label').forEach(chip => {
+      chip.addEventListener('click', () => openFolderDetail(chip.dataset.folder));
+    });
+    folderChipsRow.querySelectorAll('[data-folder-action]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.folderAction;
+        const folderName = btn.dataset.folder;
+        if(action === 'edit') openEditFolderModal(folderName);
+        else if(action === 'delete') handleDeleteFolder(folderName);
+        else if(action === 'duplicate') handleDuplicateFolder(folderName);
       });
     });
     document.getElementById('add-folder-chip').addEventListener('click', openNewFolderModal);
-    const visible = currentFolder === 'Semua'
-      ? active
-      : active.filter(([, d]) => (d.folder || 'Umum') === currentFolder);
 
-    if(currentFolder === 'Semua'){
-      sequenceBar.style.display = 'none';
-      renderList(folderTimerList, visible, '');
-    }else{
-      const queue = getFolderQueue(currentFolder);
-      const stepMap = new Map(queue.map(([id], i) => [id, `Langkah ${i + 1}/${queue.length}`]));
-      const anyRunning = queue.some(([, d]) => d.status === 'running');
-      const hasIdle = queue.some(([, d]) => d.status === 'idle');
-      sequenceBar.style.display = queue.length > 1 ? 'flex' : 'none';
-      runSequenceBtn.disabled = anyRunning || !hasIdle;
-      runSequenceBtn.textContent = anyRunning ? 'Sedang berjalan…' : 'Mulai urutan';
-      renderList(folderTimerList, visible, '', stepMap);
+    if(!folderListView){
+      folderDetailTitle.textContent = currentFolder;
+      const visible = currentFolder === 'Semua'
+        ? active
+        : active.filter(([, d]) => (d.folder || 'Umum') === currentFolder);
+
+      if(currentFolder === 'Semua'){
+        sequenceBar.style.display = 'none';
+        renderList(folderTimerList, visible, '');
+      }else{
+        const queue = getFolderQueue(currentFolder);
+        const stepMap = new Map(queue.map(([id], i) => [id, `Langkah ${i + 1}/${queue.length}`]));
+        const anyRunning = queue.some(([, d]) => d.status === 'running');
+        const hasIdle = queue.some(([, d]) => d.status === 'idle');
+        sequenceBar.style.display = queue.length > 1 ? 'flex' : 'none';
+        runSequenceBtn.disabled = anyRunning || !hasIdle;
+        runSequenceBtn.textContent = anyRunning ? 'Sedang berjalan…' : 'Mulai urutan';
+        renderList(folderTimerList, visible, '', stepMap);
+      }
     }
   }
   if(currentTab === 'history'){
@@ -1543,6 +1884,9 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+function iconEditSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>`; }
+function iconDeleteSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`; }
+function iconDuplicateSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`; }
 function iconPlay(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPause(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
 function iconReset(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
