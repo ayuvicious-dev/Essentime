@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Essentime — Timer App</title>
+<title>Essentime</title>
 <meta name="description" content="Essentime, timer sederhana untuk ritual harianmu.">
 <meta name="theme-color" content="#B8763E">
 <link rel="manifest" href="manifest.json">
@@ -26,17 +26,34 @@
     --shadow: rgba(90,58,30,0.10);
     --danger:#B5533C;
     --ok:#6E8B57;
+    --glow:#FFF3DE;
     --radius-card: 20px;
     --radius-input: 12px;
     --serif: 'Playfair Display', Georgia, serif;
     --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
+  html[data-theme="dark"]{
+    --cream:#1C1712;
+    --paper:#26201A;
+    --gold-light:#E8B876;
+    --gold-dark:#C98A4F;
+    --gold-mid:#D9A05B;
+    --brown:#F3E9DA;
+    --brown-soft:#C9AE8C;
+    --brown-faint:#8A7359;
+    --line:#3A3126;
+    --shadow: rgba(0,0,0,0.35);
+    --danger:#E28A72;
+    --ok:#9BC17F;
+    --glow:#2E2519;
+  }
+
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(ellipse 900px 500px at 15% -10%, #FFF3DE 0%, transparent 60%),
+      radial-gradient(ellipse 900px 500px at 15% -10%, var(--glow) 0%, transparent 60%),
       var(--cream);
     color:var(--brown);
     font-family:var(--sans);
@@ -264,7 +281,7 @@
   }
   .empty-state{
     text-align:center;
-    padding:44px 10px;
+    padding:20px 10px;
     color:var(--brown-faint);
   }
   .empty-state img{width:56px;opacity:0.55;margin-bottom:14px;}
@@ -399,13 +416,34 @@
   /* folder chips */
   .folder-chips{
     display:flex;
+    flex-direction:column;
+    align-items:flex-start;
     gap:8px;
-    flex-wrap:wrap;
     margin-bottom:18px;
   }
+  .folder-chips-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .folder-chips > .folder-chip{
+    width:100%;
+    text-align:left;
+    border-radius:0;
+    padding:12px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .folder-chips > .folder-chip:last-child{
+    border-bottom:none;
+  }
+  .folder-chips > .folder-chip.active{
+    border-radius:999px;
+    padding:8px 14px;
+    border-bottom:none;
+  }
   .folder-chip{
-    border:1.5px solid var(--line);
-    background:var(--paper);
+    border:none;
+    background:transparent;
     color:var(--brown-soft);
     font-size:12.5px;
     font-weight:600;
@@ -488,6 +526,30 @@
     border-bottom:1px solid var(--line);
   }
   .settings-row strong{color:var(--brown);font-size:13.5px;}
+
+  .font-size-row{
+    display:flex;
+    gap:6px;
+    background:var(--cream);
+    border-radius:999px;
+    padding:4px;
+  }
+  .font-size-btn{
+    flex:1;
+    border:none;
+    background:transparent;
+    padding:9px 0;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--brown-soft);
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .font-size-btn.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+  }
 
   /* ---------- add-timer modal ---------- */
   .modal-backdrop{
@@ -620,7 +682,7 @@
   <section id="app-screen">
     <div class="app-header">
       <div class="brandmark">
-        <div class="wordmark" style="font-size:20px;">Essentime</div>
+        <div class="wordmark" id="app-header-title" style="font-size:20px;">Dashboard</div>
       </div>
     </div>
 
@@ -654,11 +716,31 @@
     <!-- SETTING -->
     <div class="tab-screen" id="tab-settings" style="display:none;">
       <div class="settings-card">
+        <h3 class="section-title" style="margin:0 0 10px;">Mode</h3>
+        <div class="font-size-row" id="theme-mode-row">
+          <button class="font-size-btn" data-theme="light" type="button">Light</button>
+          <button class="font-size-btn" data-theme="dark" type="button">Dark</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3 class="section-title" style="margin:0 0 10px;">Font</h3>
+        <div class="font-size-row" id="font-size-row">
+          <button class="font-size-btn" data-scale="0.9" type="button">Kecil</button>
+          <button class="font-size-btn active" data-scale="1" type="button">Sedang</button>
+          <button class="font-size-btn" data-scale="1.15" type="button">Besar</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3 class="section-title" style="margin:0 0 10px;">Tentang</h3>
+        <div class="settings-row"><span>Tanggal rilis</span><strong id="settings-release-date">17 September 2026</strong></div>
+        <div class="settings-row" style="border-bottom:none;padding-bottom:0;margin-bottom:0;"><span>Sudah berjalan</span><strong id="settings-release-age"></strong></div>
+      </div>
+      <div class="settings-card">
+        <h3 class="section-title" style="margin:0 0 10px;">Akun</h3>
         <div class="settings-row"><span>Masuk sebagai</span><strong id="settings-email"></strong></div>
         <button class="btn btn-primary" id="notif-btn" type="button" style="width:100%;margin-bottom:10px;">Aktifkan notifikasi</button>
         <button class="btn" id="logout-btn" type="button" style="width:100%;background:#FBEAE4;color:var(--danger);">Keluar</button>
       </div>
-      <footer class="hint">Tersimpan otomatis ke akunmu &middot; Essentime</footer>
     </div>
   </section>
 
@@ -807,6 +889,65 @@ const addModalBackdrop = document.getElementById('add-modal-backdrop');
 const closeAddModalBtn = document.getElementById('close-add-modal');
 const settingsEmail = document.getElementById('settings-email');
 const notifBtn = document.getElementById('notif-btn');
+const settingsReleaseAge = document.getElementById('settings-release-age');
+
+function updateReleaseAge(){
+  if(!settingsReleaseAge) return;
+  const release = new Date(2026, 8, 17); // 17 September 2026
+  const now = new Date();
+  let years = now.getFullYear() - release.getFullYear();
+  let months = now.getMonth() - release.getMonth();
+  if(now.getDate() < release.getDate()) months -= 1;
+  if(months < 0){ years -= 1; months += 12; }
+  let label;
+  if(years <= 0 && months <= 0){
+    label = 'Baru rilis';
+  }else if(years <= 0){
+    label = `${months} bulan`;
+  }else if(months === 0){
+    label = `${years} tahun`;
+  }else{
+    label = `${years} tahun ${months} bulan`;
+  }
+  settingsReleaseAge.textContent = label;
+}
+updateReleaseAge();
+
+/* ---------------- font size ---------------- */
+const fontSizeRow = document.getElementById('font-size-row');
+function applyFontScale(scale){
+  document.documentElement.style.zoom = scale;
+  fontSizeRow.querySelectorAll('.font-size-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.dataset.scale) === scale);
+  });
+}
+fontSizeRow.querySelectorAll('.font-size-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const scale = parseFloat(btn.dataset.scale);
+    localStorage.setItem('essentime-font-scale', scale);
+    applyFontScale(scale);
+  });
+});
+applyFontScale(parseFloat(localStorage.getItem('essentime-font-scale')) || 1);
+
+/* ---------------- theme mode ---------------- */
+const themeModeRow = document.getElementById('theme-mode-row');
+function applyThemeMode(mode){
+  document.documentElement.setAttribute('data-theme', mode);
+  themeModeRow.querySelectorAll('.font-size-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === mode);
+  });
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if(themeColorMeta) themeColorMeta.setAttribute('content', mode === 'dark' ? '#26201A' : '#B8763E');
+}
+themeModeRow.querySelectorAll('.font-size-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.theme;
+    localStorage.setItem('essentime-theme-mode', mode);
+    applyThemeMode(mode);
+  });
+});
+applyThemeMode(localStorage.getItem('essentime-theme-mode') || 'light');
 const statTotal = document.getElementById('stat-total');
 const statRunning = document.getElementById('stat-running');
 const statFinished = document.getElementById('stat-finished');
@@ -833,6 +974,8 @@ let unsubscribeTimers = null;
 let unsubscribeFolders = null;
 let tickHandle = null;
 let currentTab = 'dashboard';
+const appHeaderTitle = document.getElementById('app-header-title');
+const TAB_TITLES = { dashboard: 'Dashboard', folders: 'Folder', history: 'Riwayat', settings: 'Setting' };
 let currentFolder = 'Semua';
 let knownFolderNames = ['Umum'];
 let editingId = null;
@@ -944,6 +1087,7 @@ bottomNav.querySelectorAll('.nav-item').forEach(btn => {
     Object.entries(tabScreens).forEach(([key, el]) => {
       el.style.display = key === currentTab ? '' : 'none';
     });
+    appHeaderTitle.textContent = TAB_TITLES[currentTab] || '';
     renderAll();
   });
 });
@@ -1251,7 +1395,7 @@ function renderList(container, entries, emptyMsg, stepMap){
     container.innerHTML = `
       <div class="empty-state">
         <img src="icons/icon-192.png" alt="">
-        <p>${emptyMsg}</p>
+        ${emptyMsg ? `<p>${emptyMsg}</p>` : ''}
       </div>`;
     return;
   }
@@ -1298,12 +1442,14 @@ function renderAll(){
   populateFolderSelect();
 
   if(currentTab === 'dashboard'){
-    renderList(dashboardRunningList, running, 'Belum ada timer yang berjalan.');
+    renderList(dashboardRunningList, running, '');
   }
   if(currentTab === 'folders'){
     folderChipsRow.innerHTML =
-      `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>` +
-      `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
+      `<div class="folder-chips-top">` +
+        `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>` +
+        `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
+      `</div>` +
       folderNames.map(f =>
         `<button class="folder-chip${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>`
       ).join('');
@@ -1320,7 +1466,7 @@ function renderAll(){
 
     if(currentFolder === 'Semua'){
       sequenceBar.style.display = 'none';
-      renderList(folderTimerList, visible, 'Belum ada timer di folder ini.');
+      renderList(folderTimerList, visible, '');
     }else{
       const queue = getFolderQueue(currentFolder);
       const stepMap = new Map(queue.map(([id], i) => [id, `Langkah ${i + 1}/${queue.length}`]));
@@ -1329,11 +1475,11 @@ function renderAll(){
       sequenceBar.style.display = queue.length > 1 ? 'flex' : 'none';
       runSequenceBtn.disabled = anyRunning || !hasIdle;
       runSequenceBtn.textContent = anyRunning ? 'Sedang berjalan…' : 'Mulai urutan';
-      renderList(folderTimerList, visible, 'Belum ada timer di folder ini.', stepMap);
+      renderList(folderTimerList, visible, '', stepMap);
     }
   }
   if(currentTab === 'history'){
-    renderList(historyList, finished, 'Belum ada timer yang selesai.');
+    renderList(historyList, finished, '');
   }
 }
 
