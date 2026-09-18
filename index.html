@@ -398,6 +398,36 @@
     color:var(--gold-dark);
   }
 
+  .sound-option-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .sound-option-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    flex:1 1 calc(33.333% - 6px);
+    min-width:66px;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    padding:10px 4px 8px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s, transform .1s;
+    color:var(--brown-soft);
+  }
+  .sound-option-btn:active{ transform:scale(0.96); }
+  .sound-option-btn .sound-symbol{ font-size:20px; line-height:1; }
+  .sound-option-btn .sound-label{ font-size:10.5px; font-weight:600; }
+  .sound-option-btn.active{
+    border-color:var(--gold-dark);
+    background:#FBEEDB;
+    color:var(--gold-dark);
+  }
+
   /* timer list */
   #timer-list{
     display:flex;
@@ -750,6 +780,19 @@
     transition:background .15s, color .15s, border-color .15s;
   }
   .folder-multitask-btn:hover{ background:#FBEEDB; color:var(--gold-dark); }
+  .folder-fullscreen-btn{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .folder-fullscreen-btn:hover{ background:#FBEEDB; color:var(--gold-dark); }
+  .folder-fullscreen-btn:disabled{ opacity:0.4; cursor:default; }
   .folder-row-check{
     width:22px;height:22px;
     flex-shrink:0;
@@ -1365,6 +1408,26 @@
         <input id="dur-min" type="number" min="0" max="180" value="5" inputmode="numeric">
       </div>
     </div>
+    <div class="field">
+      <label>Nada dering / getar</label>
+      <div class="sound-option-row" id="sound-option-row">
+        <button class="sound-option-btn" data-sound="chime" type="button" title="Lonceng">
+          <span class="sound-symbol">🔔</span><span class="sound-label">Lonceng</span>
+        </button>
+        <button class="sound-option-btn" data-sound="bell" type="button" title="Bel">
+          <span class="sound-symbol">🛎️</span><span class="sound-label">Bel</span>
+        </button>
+        <button class="sound-option-btn" data-sound="melody" type="button" title="Melodi">
+          <span class="sound-symbol">🎵</span><span class="sound-label">Melodi</span>
+        </button>
+        <button class="sound-option-btn" data-sound="alarm" type="button" title="Alarm">
+          <span class="sound-symbol">⏰</span><span class="sound-label">Alarm</span>
+        </button>
+        <button class="sound-option-btn" data-sound="vibrate" type="button" title="Getar">
+          <span class="sound-symbol">📳</span><span class="sound-label">Getar</span>
+        </button>
+      </div>
+    </div>
     <div class="rentetan-section" id="rentetan-section">
       <div class="rentetan-list" id="rentetan-list"></div>
       <button class="rentetan-add-btn" id="add-rentetan-btn" type="button">+ Tambah rentetan</button>
@@ -1502,6 +1565,7 @@ const rentetanSection = document.getElementById('rentetan-section');
 const addRentetanBtn = document.getElementById('add-rentetan-btn');
 const rentetanTotal = document.getElementById('rentetan-total');
 const rentetanTotalValue = document.getElementById('rentetan-total-value');
+const soundOptionRow = document.getElementById('sound-option-row');
 
 /* tabs + modal */
 const bottomNav = document.getElementById('bottom-nav');
@@ -1614,6 +1678,7 @@ let categoryFilter = '';
 let knownFolderNames = ['Umum'];
 let knownCategoryNames = [];
 let editingId = null;
+let selectedSoundType = 'chime';
 let multitaskMode = false; // true = modal gabung timer sedang terbuka
 let multitaskSelected = new Set();
 let multitaskSearchQuery = '';
@@ -1622,23 +1687,38 @@ const localTimers = new Map(); // id -> data
 const localFolders = new Map(); // id -> {name}
 const localCategories = new Map(); // id -> {name}
 
-/* ---------------- simple beep (no external audio file) ---------------- */
-function playChime(){
+/* ---------------- finish sounds (no external audio file) + vibration ---------------- */
+function playChime(soundType){
+  const type = soundType || 'chime';
+  if(type === 'vibrate'){
+    try{ if('vibrate' in navigator) navigator.vibrate([220, 120, 220, 120, 220]); }catch(e){}
+    return;
+  }
   try{
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const now = ctx.currentTime;
-    [0, 0.28, 0.56].forEach((offset, i) => {
+    const tone = (freq, start, dur, waveType, peak) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = i === 2 ? 880 : 660;
-      gain.gain.setValueAtTime(0.0001, now + offset);
-      gain.gain.exponentialRampToValueAtTime(0.25, now + offset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.26);
+      osc.type = waveType || 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + start);
+      gain.gain.exponentialRampToValueAtTime(peak || 0.25, now + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
       osc.connect(gain).connect(ctx.destination);
-      osc.start(now + offset);
-      osc.stop(now + offset + 0.3);
-    });
+      osc.start(now + start);
+      osc.stop(now + start + dur + 0.02);
+    };
+    if(type === 'bell'){
+      tone(440, 0, 1.1, 'sine', 0.28);
+      tone(880, 0, 0.9, 'sine', 0.08);
+    }else if(type === 'melody'){
+      [523.25, 587.33, 659.25, 783.99].forEach((freq, i) => tone(freq, i * 0.16, 0.22, 'sine', 0.22));
+    }else if(type === 'alarm'){
+      [0, 0.18, 0.36, 0.54, 0.8, 0.98, 1.16, 1.34].forEach(offset => tone(880, offset, 0.14, 'square', 0.18));
+    }else{
+      [0, 0.28, 0.56].forEach((offset, i) => tone(i === 2 ? 880 : 660, offset, 0.26, 'sine', 0.25));
+    }
   }catch(e){ /* audio not available */ }
 }
 
@@ -1809,6 +1889,16 @@ timerCategoryInput.addEventListener('focus', openCategoryCombo);
 timerCategoryInput.addEventListener('blur', () => setTimeout(closeCategoryCombo, 120));
 
 
+function setSoundOption(type){
+  selectedSoundType = type || 'chime';
+  soundOptionRow.querySelectorAll('.sound-option-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.sound === selectedSoundType);
+  });
+}
+soundOptionRow.querySelectorAll('.sound-option-btn').forEach(btn => {
+  btn.addEventListener('click', () => setSoundOption(btn.dataset.sound));
+});
+
 function openAddModal(){
   editingId = null;
   hideComposerMsg();
@@ -1825,7 +1915,7 @@ function openAddModal(){
   closeFolderCombo();
   timerCategoryInput.value = knownCategoryNames.length ? knownCategoryNames[0] : '';
   closeCategoryCombo();
-  updateEditCategoryBtn();
+  setSoundOption('chime');
   rentetanSection.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
@@ -1866,7 +1956,7 @@ function openEditModal(id, data){
   const category = data.category || '';
   timerCategoryInput.value = category || (knownCategoryNames.length ? knownCategoryNames[0] : '');
   closeCategoryCombo();
-  updateEditCategoryBtn();
+  setSoundOption(data.soundType || 'chime');
   resetRentetanList();
   addModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
@@ -2485,7 +2575,8 @@ addTimerBtn.addEventListener('click', async () => {
         durationSeconds: totalSec,
         remainingSeconds: totalSec,
         status: 'idle',
-        endAt: null
+        endAt: null,
+        soundType: selectedSoundType
       });
     }else{
       await addDoc(collection(db, 'users', user.uid, 'timers'), {
@@ -2497,6 +2588,7 @@ addTimerBtn.addEventListener('click', async () => {
         status: startsIdle ? 'idle' : 'running',
         endAt: startsIdle ? null : Date.now() + totalSec * 1000,
         createdAt: serverTimestamp(),
+        soundType: selectedSoundType,
         ...(insertOrder !== null ? { order: insertOrder } : {})
       });
     }
@@ -2511,6 +2603,7 @@ addTimerBtn.addEventListener('click', async () => {
         status: 'idle', // menunggu giliran, otomatis lanjut lewat maybeStartNextInFolder
         endAt: null,
         createdAt: serverTimestamp(),
+        soundType: selectedSoundType,
         ...(stepOrderCounter !== null ? { order: stepOrderCounter } : {})
       });
       if(stepOrderCounter !== null) stepOrderCounter++;
@@ -2681,6 +2774,7 @@ function renderAll(){
         ) +
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
         `<button class="folder-multitask-btn" id="multitask-toggle-btn" type="button" title="Gabung timer (multitasking)">${iconLayersSmall()}</button>` +
+        `<button class="folder-fullscreen-btn" id="folder-fullscreen-btn" type="button" title="Tampilan layar penuh" ${all.some(([, d]) => d.status === 'running' || d.status === 'paused') ? '' : 'disabled'}>${iconFullscreenSmall()}</button>` +
       `</div>` +
       `<div class="category-filter-row">
          <button class="category-filter-chip${!categoryFilter ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
@@ -2749,6 +2843,15 @@ function renderAll(){
     const multitaskToggleBtn = document.getElementById('multitask-toggle-btn');
     if(multitaskToggleBtn){
       multitaskToggleBtn.addEventListener('click', openMultitaskModal);
+    }
+    const folderFullscreenBtn = document.getElementById('folder-fullscreen-btn');
+    if(folderFullscreenBtn){
+      folderFullscreenBtn.addEventListener('click', () => {
+        if(folderFullscreenBtn.disabled) return;
+        landscapeDismissed = false;
+        manualFullscreenRequested = true;
+        updateLandscapeMode();
+      });
     }
 
     folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
@@ -2901,6 +3004,7 @@ function iconCloseSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 2
 function iconStarSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.25 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5"/></svg>`; }
 function iconPinSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s7-7.58 7-12A7 7 0 1 0 5 9c0 4.42 7 12 7 12z"/></svg>`; }
 function iconLayersSmall(){ return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`; }
+function iconFullscreenSmall(){ return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>`; }
 function iconCheckSmall(){ return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`; }
 function iconPlaySmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPlay(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
@@ -3089,7 +3193,7 @@ async function tick(){
     }
     if(remaining <= 0){
       data.status = 'finished';
-      playChime();
+      playChime(data.soundType);
       notify('Essentime', `"${data.name}" selesai.`);
       try{
         await updateDoc(doc(db, 'users', user.uid, 'timers', id), {
