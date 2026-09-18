@@ -238,6 +238,19 @@
     cursor:pointer;color:var(--brown-soft);
   }
   .icon-btn:hover{border-color:var(--gold-mid);color:var(--gold-dark);}
+  .icon-btn.danger-btn:hover{border-color:var(--danger);color:var(--danger);}
+  .icon-btn.star-btn.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    border-color:transparent;
+    color:#fff;
+  }
+  .icon-btn.star-btn.active svg{ fill:currentColor; }
+  .icon-btn.pin-btn.active{
+    background:var(--brown);
+    border-color:transparent;
+    color:var(--cream);
+  }
+  .icon-btn.pin-btn.active svg{ fill:currentColor; }
 
   /* new timer composer */
   .composer{
@@ -594,6 +607,38 @@
   .folder-row-action:hover{ color:var(--gold-dark); background:#FBEEDB; }
   .folder-row-action.danger:hover{ color:var(--danger); background:#FBEAE4; }
   .folder-row-action:disabled{ color:var(--brown-faint); opacity:0.35; cursor:default; background:none; }
+  .folder-row-action.pin-toggle.active{ color:var(--brown); background:#EFE2CD; }
+  .folder-row-action.star-toggle.active{ color:var(--gold-dark); background:#FBEEDB; }
+  .folder-row.active .folder-row-action.pin-toggle.active,
+  .folder-row.active .folder-row-action.star-toggle.active{ color:#fff; background:rgba(255,255,255,0.28); }
+  .folder-row-action-start{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border:none;
+    border-radius:999px;
+    padding:7px 14px;
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:0.2px;
+    cursor:pointer;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    box-shadow:0 8px 16px -8px rgba(184,118,62,0.6);
+    flex-shrink:0;
+    margin-left:4px;
+    transition:transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+  }
+  .folder-row-action-start:hover{ transform:scale(1.04); }
+  .folder-row-action-start:active{ transform:scale(0.97); }
+  .folder-row-action-start:disabled{
+    background:var(--line);
+    color:var(--brown-faint);
+    box-shadow:none;
+    cursor:default;
+    transform:none;
+  }
+  .folder-row.active .folder-row-action-start:disabled{ background:rgba(255,255,255,0.28); color:rgba(255,255,255,0.85); }
   .folder-chip{
     border:none;
     background:transparent;
@@ -623,6 +668,84 @@
     cursor:pointer;
   }
   .folder-chip-add:hover{background:#FBEEDB;}
+  .folder-search-btn{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .folder-search-btn:hover{ background:#FBEEDB; color:var(--gold-dark); }
+  .folder-search-btn.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    border-color:transparent;
+  }
+  .folder-search-wrap{
+    display:flex;
+    align-items:center;
+    flex:1;
+    min-width:0;
+    gap:4px;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    padding:0 6px 0 14px;
+  }
+  .folder-search-wrap input{
+    flex:1;
+    min-width:0;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--brown);
+    padding:8px 0;
+  }
+  .folder-search-wrap input::placeholder{ color:var(--brown-faint); font-weight:500; }
+  .folder-search-clear{
+    border:none;
+    background:none;
+    color:var(--brown-faint);
+    cursor:pointer;
+    padding:6px;
+    display:flex;
+    flex-shrink:0;
+    border-radius:50%;
+  }
+  .folder-search-clear:hover{ color:var(--danger); background:#FBEAE4; }
+  .folder-search-empty{
+    padding:16px 4px;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--brown-faint);
+  }
+  .folder-priority-badge{
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+    color:var(--gold-dark);
+  }
+  .folder-pin-badge{
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+    color:var(--brown-soft);
+  }
+  .folder-section-label{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--brown-faint);
+    padding:12px 4px 4px;
+  }
+  .folder-section-label:first-child{ padding-top:2px; }
   .folder-badge{
     display:inline-block;
     font-size:10.5px;
@@ -862,6 +985,9 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <div class="wordmark" id="folder-detail-title" style="font-size:17px;">Semua</div>
+          <button class="icon-btn danger-btn" id="folder-delete-btn" type="button" title="Hapus folder">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
           <button class="icon-btn" id="folder-add-timer-btn" type="button" title="Tambah timer ke folder ini">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
@@ -1128,6 +1254,7 @@ const folderListViewEl = document.getElementById('folder-list-view');
 const folderDetailViewEl = document.getElementById('folder-detail-view');
 const folderBackBtn = document.getElementById('folder-back-btn');
 const folderAddTimerBtn = document.getElementById('folder-add-timer-btn');
+const folderDeleteBtn = document.getElementById('folder-delete-btn');
 const folderDetailTitle = document.getElementById('folder-detail-title');
 const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
 const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
@@ -1151,6 +1278,8 @@ const appHeaderTitle = document.getElementById('app-header-title');
 const TAB_TITLES = { dashboard: 'Dashboard', folders: 'Folder', history: 'Riwayat', settings: 'Setting' };
 let currentFolder = 'Semua';
 let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
+let folderSearchOpen = false;
+let folderSearchQuery = '';
 let knownFolderNames = ['Umum'];
 let editingId = null;
 const localTimers = new Map(); // id -> data
@@ -1462,7 +1591,10 @@ async function handleDeleteFolder(folderName){
     await Promise.all(timersInFolder.map(([id]) =>
       updateDoc(doc(db, 'users', user.uid, 'timers', id), { folder: 'Umum' })
     ));
-    if(currentFolder === folderName) currentFolder = 'Semua';
+    if(currentFolder === folderName){
+      currentFolder = 'Semua';
+      folderListView = true;
+    }
   }catch(err){
     console.error(err);
     alert('Gagal menghapus folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
@@ -1496,6 +1628,50 @@ async function handleDuplicateFolder(folderName){
   }catch(err){
     console.error(err);
     alert('Gagal menduplikat folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
+
+function isFolderPriority(folderName){
+  const entry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  return !!(entry && entry.priority);
+}
+
+async function toggleFolderPriority(folderName){
+  const user = auth.currentUser;
+  if(!user || !folderName || folderName === 'Semua') return;
+  const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === folderName);
+  const nextPriority = !(entry && entry[1].priority);
+  try{
+    if(entry){
+      await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), { priority: nextPriority });
+    }else{
+      await addDoc(collection(db, 'users', user.uid, 'folders'), { name: folderName, createdAt: serverTimestamp(), priority: nextPriority });
+    }
+  }catch(err){
+    console.error(err);
+    alert('Gagal menandai folder prioritas: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
+  }
+}
+
+function isFolderPinned(folderName){
+  const entry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  return !!(entry && entry.pinned);
+}
+
+async function toggleFolderPinned(folderName){
+  const user = auth.currentUser;
+  if(!user || !folderName || folderName === 'Semua') return;
+  const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === folderName);
+  const nextPinned = !(entry && entry[1].pinned);
+  try{
+    if(entry){
+      await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), { pinned: nextPinned });
+    }else{
+      await addDoc(collection(db, 'users', user.uid, 'folders'), { name: folderName, createdAt: serverTimestamp(), pinned: nextPinned });
+    }
+  }catch(err){
+    console.error(err);
+    alert('Gagal menyematkan folder: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'));
   }
 }
 
@@ -1559,6 +1735,10 @@ folderBackBtn.addEventListener('click', () => {
 folderAddTimerBtn.addEventListener('click', () => {
   const targetFolder = currentFolder === 'Semua' ? 'Umum' : currentFolder;
   openAddModalForFolder(targetFolder);
+});
+folderDeleteBtn.addEventListener('click', () => {
+  if(currentFolder === 'Semua') return;
+  handleDeleteFolder(currentFolder);
 });
 function openFolderDetail(folderName){
   if(folderName === 'Semua'){
@@ -1871,32 +2051,58 @@ function renderAll(){
   if(currentTab === 'folders'){
     folderListViewEl.style.display = folderListView ? '' : 'none';
     folderDetailViewEl.style.display = folderListView ? 'none' : '';
+    const searchedFolderNames = folderSearchQuery.trim()
+      ? folderNames.filter(f => f.toLowerCase().includes(folderSearchQuery.trim().toLowerCase()))
+      : folderNames;
+
     folderChipsRow.innerHTML =
       `<div class="folder-chips-top">` +
-        `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>` +
+        `<button class="folder-search-btn${folderSearchOpen ? ' active' : ''}" id="folder-search-btn" type="button" title="Cari folder">${iconSearchSmall()}</button>` +
+        (folderSearchOpen
+          ? `<div class="folder-search-wrap">
+               <input type="text" id="folder-search-input" placeholder="Cari folder..." value="${escapeHtml(folderSearchQuery)}">
+               <button class="folder-search-clear" id="folder-search-clear" type="button" title="Tutup">${iconCloseSmall()}</button>
+             </div>`
+          : `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>`
+        ) +
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
       `</div>` +
-      folderNames.map(f => {
-        const queue = getFolderQueue(f);
-        const anyRunning = queue.some(([, d]) => d.status === 'running');
-        const hasIdle = queue.some(([, d]) => d.status === 'idle');
-        const canStart = queue.length > 0 && hasIdle && !anyRunning;
-        const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
-        return `
-        <div class="folder-row${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}">
-          <div class="folder-row-main">
-            <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
-            <span class="folder-row-total">${fmt(totalSeconds)}</span>
-          </div>
-          <div class="folder-row-actions">
-            <button class="folder-row-action" title="Duplikat" data-folder-action="duplicate" data-folder="${escapeHtml(f)}" type="button">${iconDuplicateSmall()}</button>
-            <button class="folder-row-action" title="Edit" data-folder-action="edit" data-folder="${escapeHtml(f)}" type="button">${iconEditSmall()}</button>
-            <button class="folder-row-action danger" title="Hapus" data-folder-action="delete" data-folder="${escapeHtml(f)}" type="button">${iconDeleteSmall()}</button>
-            <button class="folder-row-action" title="${anyRunning ? 'Sedang berjalan' : 'Mulai urutan'}" data-folder-action="start" data-folder="${escapeHtml(f)}" type="button" ${canStart ? '' : 'disabled'}>${iconPlaySmall()}</button>
-          </div>
-        </div>
-      `;
-      }).join('');
+      (searchedFolderNames.length === 0
+        ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
+        : (() => {
+            const buildRow = (f) => {
+              const queue = getFolderQueue(f);
+              const anyRunning = queue.some(([, d]) => d.status === 'running');
+              const hasIdle = queue.some(([, d]) => d.status === 'idle');
+              const canStart = queue.length > 0 && hasIdle && !anyRunning;
+              const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
+              const priority = isFolderPriority(f);
+              const pinned = isFolderPinned(f);
+              return `
+              <div class="folder-row${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}">
+                <div class="folder-row-main">
+                  <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+                  <span class="folder-row-total">${fmt(totalSeconds)}</span>
+                </div>
+                <div class="folder-row-actions">
+                  <button class="folder-row-action pin-toggle${pinned ? ' active' : ''}" title="${pinned ? 'Lepas sematan' : 'Sematkan folder'}" data-folder-action="toggle-pin" data-folder="${escapeHtml(f)}" type="button">${iconPinSmall()}</button>
+                  <button class="folder-row-action star-toggle${priority ? ' active' : ''}" title="${priority ? 'Hapus dari prioritas' : 'Tandai prioritas'}" data-folder-action="toggle-priority" data-folder="${escapeHtml(f)}" type="button">${iconStarSmall()}</button>
+                  <button class="folder-row-action" title="Duplikat" data-folder-action="duplicate" data-folder="${escapeHtml(f)}" type="button">${iconDuplicateSmall()}</button>
+                  <button class="folder-row-action" title="Edit" data-folder-action="edit" data-folder="${escapeHtml(f)}" type="button">${iconEditSmall()}</button>
+                  <button class="folder-row-action-start" title="${anyRunning ? 'Sedang berjalan' : 'Mulai urutan'}" data-folder-action="start" data-folder="${escapeHtml(f)}" type="button" ${canStart ? '' : 'disabled'}>${iconPlaySmall()}<span>${anyRunning ? 'Berjalan' : 'Mulai'}</span></button>
+                </div>
+              </div>
+            `;
+            };
+            const pinnedFolders = searchedFolderNames.filter(f => isFolderPinned(f));
+            const priorityFolders = searchedFolderNames.filter(f => !isFolderPinned(f) && isFolderPriority(f));
+            const otherFolders = searchedFolderNames.filter(f => !isFolderPinned(f) && !isFolderPriority(f));
+            return (
+              (pinnedFolders.length ? `<div class="folder-section-label">Disematkan</div>` + pinnedFolders.map(buildRow).join('') : '') +
+              (priorityFolders.length ? `<div class="folder-section-label">Prioritas</div>` + priorityFolders.map(buildRow).join('') : '') +
+              (otherFolders.length ? ((pinnedFolders.length || priorityFolders.length) ? `<div class="folder-section-label">Semua folder</div>` : '') + otherFolders.map(buildRow).join('') : '')
+            );
+          })());
     folderChipsRow.querySelectorAll('.folder-chip').forEach(chip => {
       chip.addEventListener('click', () => openFolderDetail(chip.dataset.folder));
     });
@@ -1909,15 +2115,52 @@ function renderAll(){
         const action = btn.dataset.folderAction;
         const folderName = btn.dataset.folder;
         if(action === 'edit') openEditFolderModal(folderName);
-        else if(action === 'delete') handleDeleteFolder(folderName);
         else if(action === 'duplicate') handleDuplicateFolder(folderName);
         else if(action === 'start') runFolderSequence(folderName);
+        else if(action === 'toggle-pin') toggleFolderPinned(folderName);
+        else if(action === 'toggle-priority') toggleFolderPriority(folderName);
       });
     });
     document.getElementById('add-folder-chip').addEventListener('click', openNewFolderModal);
 
+    const folderSearchBtn = document.getElementById('folder-search-btn');
+    if(folderSearchBtn){
+      folderSearchBtn.addEventListener('click', () => {
+        folderSearchOpen = !folderSearchOpen;
+        if(!folderSearchOpen) folderSearchQuery = '';
+        renderAll();
+        if(folderSearchOpen){
+          const input = document.getElementById('folder-search-input');
+          if(input) input.focus();
+        }
+      });
+    }
+    const folderSearchInput = document.getElementById('folder-search-input');
+    if(folderSearchInput){
+      folderSearchInput.addEventListener('input', (e) => {
+        folderSearchQuery = e.target.value;
+        renderAll();
+        const refocused = document.getElementById('folder-search-input');
+        if(refocused){
+          refocused.focus();
+          const pos = refocused.value.length;
+          refocused.setSelectionRange(pos, pos);
+        }
+      });
+    }
+    const folderSearchClear = document.getElementById('folder-search-clear');
+    if(folderSearchClear){
+      folderSearchClear.addEventListener('click', () => {
+        folderSearchOpen = false;
+        folderSearchQuery = '';
+        renderAll();
+      });
+    }
+
     if(!folderListView){
       folderDetailTitle.textContent = currentFolder;
+      const isSemua = currentFolder === 'Semua';
+      folderDeleteBtn.style.display = isSemua ? 'none' : '';
       const visible = currentFolder === 'Semua'
         ? active
         : active.filter(([, d]) => (d.folder || 'Umum') === currentFolder);
@@ -2029,6 +2272,10 @@ function escapeHtml(str){
 function iconEditSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>`; }
 function iconDeleteSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`; }
 function iconDuplicateSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`; }
+function iconSearchSmall(){ return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`; }
+function iconCloseSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`; }
+function iconStarSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.25 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5"/></svg>`; }
+function iconPinSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s7-7.58 7-12A7 7 0 1 0 5 9c0 4.42 7 12 7 12z"/></svg>`; }
 function iconPlaySmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPlay(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPause(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
