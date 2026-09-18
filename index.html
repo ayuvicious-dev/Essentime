@@ -397,11 +397,11 @@
     box-shadow:0 12px 26px -16px rgba(181,83,60,0.35);
   }
   .timer-card .bar-bg{
-    position:absolute;left:0;top:0;height:3px;width:100%;
+    position:absolute;left:0;top:0;height:7px;width:100%;
     background:var(--line);
   }
   .timer-card .bar-fill{
-    position:absolute;left:0;top:0;height:3px;
+    position:absolute;left:0;top:0;height:7px;
     background:linear-gradient(90deg, var(--gold-light), var(--gold-dark));
     transition:width 1s linear;
   }
@@ -952,6 +952,100 @@
     margin-bottom:16px;
   }
 
+  /* ---------- timer detail modal ---------- */
+  .timer-detail-body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding:14px 4px 6px;
+  }
+  .timer-detail-name{
+    font-weight:600;
+    font-size:18px;
+    color:var(--brown);
+    word-break:break-word;
+    margin-bottom:18px;
+  }
+  .timer-detail-digits{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:56px;
+    color:var(--brown);
+    letter-spacing:0.5px;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:26px;
+  }
+  .timer-detail-card.finished .timer-detail-digits{color:var(--danger);}
+  .timer-detail-controls{display:flex;gap:14px;}
+  .timer-detail-controls .ctrl-btn{width:58px;height:58px;border-radius:17px;}
+  .timer-detail-controls .ctrl-btn svg{width:22px;height:22px;}
+
+  /* ---------- landscape fullscreen timer ---------- */
+  #landscape-fullscreen{display:none;}
+  body.landscape-fullscreen #landscape-fullscreen{
+    display:flex;
+    position:fixed;
+    inset:0;
+    z-index:200;
+    align-items:center;
+    justify-content:center;
+    background:var(--cream);
+    padding:24px;
+  }
+  body.landscape-fullscreen .app-header,
+  body.landscape-fullscreen .tab-screen,
+  body.landscape-fullscreen .bottom-nav,
+  body.landscape-fullscreen .modal-backdrop{
+    display:none !important;
+  }
+  .landscape-card{
+    width:100%;
+    max-width:640px;
+    background:var(--paper);
+    border-radius:28px;
+    box-shadow:0 24px 60px -18px var(--shadow);
+    padding:34px 30px 30px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .landscape-card .bar-bg{height:10px;}
+  .landscape-card .bar-fill{height:10px;}
+  .landscape-close-btn{
+    position:absolute;
+    top:14px;right:14px;
+    width:34px;height:34px;
+    border-radius:11px;
+    border:none;
+    background:var(--cream);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .landscape-close-btn:hover{color:var(--brown);}
+  .landscape-close-btn:active{transform:scale(0.94);}
+  .landscape-name{
+    font-weight:600;
+    font-size:20px;
+    color:var(--brown);
+    margin:10px 0 8px;
+    word-break:break-word;
+  }
+  .landscape-digits{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:min(18vw, 96px);
+    color:var(--brown);
+    letter-spacing:0.5px;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:22px;
+  }
+  .landscape-card.finished .landscape-digits{color:var(--danger);}
+  .landscape-controls{display:flex;gap:16px;justify-content:center;}
+  .landscape-controls .ctrl-btn{width:64px;height:64px;border-radius:18px;}
+  .landscape-controls .ctrl-btn svg{width:24px;height:24px;}
+
   /* ---------- bottom nav ---------- */
   .bottom-nav{
     position:fixed;
@@ -1009,6 +1103,18 @@
 </head>
 <body>
 
+<div id="landscape-fullscreen">
+  <div class="timer-card landscape-card" id="landscape-card">
+    <button class="landscape-close-btn" id="landscape-close-btn" type="button" title="Tutup">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="bar-bg"><div class="bar-fill" id="landscape-bar-fill" style="width:0%"></div></div>
+    <div class="landscape-name" id="landscape-name"></div>
+    <div class="landscape-digits" data-role="digits" id="landscape-digits"></div>
+    <div class="landscape-controls" id="landscape-controls"></div>
+  </div>
+</div>
+
 <div class="shell">
 
   <!-- AUTH SCREEN -->
@@ -1055,12 +1161,6 @@
 
     <!-- DASHBOARD -->
     <div class="tab-screen" id="tab-dashboard">
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total timer</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-running">0</div><div class="stat-label">Berjalan</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-finished">0</div><div class="stat-label">Selesai</div></div>
-      </div>
-      <h3 class="section-title">Sedang berjalan</h3>
       <div id="dashboard-running-list"></div>
     </div>
 
@@ -1126,6 +1226,18 @@
       </button>
     </div>
     <div id="folder-timer-list"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="timer-detail-backdrop">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <div class="wordmark" style="font-size:17px;">Detail timer</div>
+      <button class="icon-btn" id="close-timer-detail-modal" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="timer-detail-body"></div>
   </div>
 </div>
 
@@ -1392,9 +1504,6 @@ themeModeRow.querySelectorAll('.font-size-btn').forEach(btn => {
   });
 });
 applyThemeMode(localStorage.getItem('essentime-theme-mode') || 'light');
-const statTotal = document.getElementById('stat-total');
-const statRunning = document.getElementById('stat-running');
-const statFinished = document.getElementById('stat-finished');
 const dashboardRunningList = document.getElementById('dashboard-running-list');
 const folderChipsRow = document.getElementById('folder-chips');
 const folderTimerList = document.getElementById('folder-timer-list');
@@ -1404,6 +1513,16 @@ const folderBackBtn = document.getElementById('folder-back-btn');
 const folderAddTimerBtn = document.getElementById('folder-add-timer-btn');
 const folderDeleteBtn = document.getElementById('folder-delete-btn');
 const folderDetailTitle = document.getElementById('folder-detail-title');
+const timerDetailBackdrop = document.getElementById('timer-detail-backdrop');
+const closeTimerDetailBtn = document.getElementById('close-timer-detail-modal');
+const timerDetailBody = document.getElementById('timer-detail-body');
+let openTimerDetailId = null;
+const landscapeCard = document.getElementById('landscape-card');
+const landscapeName = document.getElementById('landscape-name');
+const landscapeDigits = document.getElementById('landscape-digits');
+const landscapeBarFill = document.getElementById('landscape-bar-fill');
+const landscapeControls = document.getElementById('landscape-controls');
+const landscapeCloseBtn = document.getElementById('landscape-close-btn');
 const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
 const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
 const newFolderNameInput = document.getElementById('new-folder-name');
@@ -2055,6 +2174,118 @@ folderBackBtn.addEventListener('click', closeFolderDetail);
 folderDetailBackdrop.addEventListener('click', (e) => {
   if(e.target === folderDetailBackdrop) closeFolderDetail();
 });
+
+/* ---------------- timer detail modal (dashboard) ---------------- */
+function openTimerDetail(id){
+  openTimerDetailId = id;
+  renderTimerDetail();
+  timerDetailBackdrop.classList.add('open');
+}
+function closeTimerDetail(){
+  openTimerDetailId = null;
+  timerDetailBackdrop.classList.remove('open');
+}
+function renderTimerDetail(){
+  if(!openTimerDetailId) return;
+  const data = localTimers.get(openTimerDetailId);
+  if(!data){ closeTimerDetail(); return; }
+  const id = openTimerDetailId;
+  const remaining = currentRemaining(data);
+  const finished = data.status === 'finished';
+
+  const controlsHtml = `
+    ${finished
+      ? `<button class="ctrl-btn reset" data-action="reset" title="Ulangi">${iconReset()}</button>`
+      : data.status === 'running'
+        ? `<button class="ctrl-btn pause" data-action="pause" title="Jeda">${iconPause()}</button>`
+        : `<button class="ctrl-btn play" data-action="play" title="Mulai">${iconPlay()}</button>`
+    }
+    ${finished ? '' : `<button class="ctrl-btn reset" data-action="reset" title="Atur ulang">${iconRotate()}</button>`}
+  `;
+
+  timerDetailBody.innerHTML = `
+    <div class="timer-card timer-detail-card${finished ? ' finished' : ''}" data-id="${id}">
+      <div class="timer-detail-name">${escapeHtml(data.name)}</div>
+      <div class="timer-detail-digits" data-role="digits">${fmt(remaining)}</div>
+      <div class="timer-detail-controls">${controlsHtml}</div>
+    </div>
+  `;
+
+  const playBtn = timerDetailBody.querySelector('[data-action="play"]');
+  if(playBtn) playBtn.addEventListener('click', () => handlePlay(id, data));
+  const pauseBtn = timerDetailBody.querySelector('[data-action="pause"]');
+  if(pauseBtn) pauseBtn.addEventListener('click', () => handlePause(id, data));
+  timerDetailBody.querySelectorAll('[data-action="reset"]').forEach(btn => btn.addEventListener('click', () => handleReset(id, data)));
+}
+closeTimerDetailBtn.addEventListener('click', closeTimerDetail);
+timerDetailBackdrop.addEventListener('click', (e) => {
+  if(e.target === timerDetailBackdrop) closeTimerDetail();
+});
+
+/* ---------------- landscape fullscreen timer ---------------- */
+let lastLandscapeId = null;
+let landscapeDismissed = false;
+let manualFullscreenRequested = false;
+function pickLandscapeTimer(){
+  if(lastLandscapeId && localTimers.has(lastLandscapeId)){
+    return [lastLandscapeId, localTimers.get(lastLandscapeId)];
+  }
+  const candidates = Array.from(localTimers.entries()).filter(([, d]) => d.status === 'running' || d.status === 'paused');
+  if(!candidates.length){ lastLandscapeId = null; return null; }
+  const pick = candidates.find(([, d]) => d.status === 'running') || candidates[0];
+  lastLandscapeId = pick[0];
+  return pick;
+}
+function renderLandscapeCard(id, data){
+  const remaining = currentRemaining(data);
+  const pct = data.durationSeconds > 0 ? Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) : 0;
+  const finished = data.status === 'finished';
+  landscapeCard.dataset.id = id;
+  landscapeCard.classList.toggle('finished', finished);
+  landscapeBarFill.style.width = pct + '%';
+  landscapeName.textContent = data.name;
+  landscapeDigits.textContent = fmt(remaining);
+  const controlsHtml = `
+    ${finished
+      ? `<button class="ctrl-btn reset" data-action="reset" title="Ulangi">${iconReset()}</button>`
+      : data.status === 'running'
+        ? `<button class="ctrl-btn pause" data-action="pause" title="Jeda">${iconPause()}</button>`
+        : `<button class="ctrl-btn play" data-action="play" title="Mulai">${iconPlay()}</button>`
+    }
+    ${finished ? '' : `<button class="ctrl-btn reset" data-action="reset" title="Atur ulang">${iconRotate()}</button>`}
+  `;
+  landscapeControls.innerHTML = controlsHtml;
+  const playBtn = landscapeControls.querySelector('[data-action="play"]');
+  if(playBtn) playBtn.addEventListener('click', () => handlePlay(id, data));
+  const pauseBtn = landscapeControls.querySelector('[data-action="pause"]');
+  if(pauseBtn) pauseBtn.addEventListener('click', () => handlePause(id, data));
+  landscapeControls.querySelectorAll('[data-action="reset"]').forEach(btn => btn.addEventListener('click', () => handleReset(id, data)));
+}
+function updateLandscapeMode(){
+  const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+  const wantFullscreen = isLandscape || manualFullscreenRequested;
+  if(!isLandscape && !manualFullscreenRequested) landscapeDismissed = false;
+  const candidate = (wantFullscreen && !landscapeDismissed) ? pickLandscapeTimer() : null;
+  if(candidate){
+    document.body.classList.add('landscape-fullscreen');
+    renderLandscapeCard(candidate[0], candidate[1]);
+  }else{
+    document.body.classList.remove('landscape-fullscreen');
+    manualFullscreenRequested = false;
+  }
+}
+function closeLandscapeMode(){
+  landscapeDismissed = true;
+  manualFullscreenRequested = false;
+  const id = landscapeCard.dataset.id;
+  const data = id ? localTimers.get(id) : null;
+  if(data) resetFolderQueue(data.folder || 'Umum');
+  lastLandscapeId = null;
+  document.body.classList.remove('landscape-fullscreen');
+}
+landscapeCloseBtn.addEventListener('click', closeLandscapeMode);
+window.addEventListener('orientationchange', updateLandscapeMode);
+window.addEventListener('resize', updateLandscapeMode);
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape' && folderDetailBackdrop.classList.contains('open') && !addModalBackdrop.classList.contains('open') && !newFolderModalBackdrop.classList.contains('open')){
     closeFolderDetail();
@@ -2375,12 +2606,8 @@ function renderAll(){
   const all = Array.from(localTimers.entries());
   const active = all.filter(([, d]) => d.status !== 'finished');
   const running = all.filter(([, d]) => d.status === 'running');
+  const runningOrPaused = all.filter(([, d]) => d.status === 'running' || d.status === 'paused');
   const finished = all.filter(([, d]) => d.status === 'finished');
-
-  /* dashboard stats */
-  statTotal.textContent = all.length;
-  statRunning.textContent = running.length;
-  statFinished.textContent = finished.length;
 
   /* folders: distinct folder names from active timers + explicitly-created empty folders */
   const explicitFolderNames = Array.from(localFolders.values()).map(f => f.name);
@@ -2399,8 +2626,17 @@ function renderAll(){
   populateFolderSelect();
 
   if(currentTab === 'dashboard'){
-    renderList(dashboardRunningList, running, '');
+    renderList(dashboardRunningList, runningOrPaused, '');
+    dashboardRunningList.querySelectorAll('.timer-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if(e.target.closest('button')) return;
+        openTimerDetail(card.dataset.id);
+      });
+    });
   }
+  if(openTimerDetailId) renderTimerDetail();
+  updateLandscapeMode();
   /* modal detail folder: hanya tampil di tab folder & saat folder dipilih */
   const showFolderDetail = currentTab === 'folders' && !folderListView;
   folderDetailBackdrop.classList.toggle('open', showFolderDetail);
@@ -2436,7 +2672,8 @@ function renderAll(){
               const queue = getFolderQueue(f);
               const anyRunning = queue.some(([, d]) => d.status === 'running');
               const hasIdle = queue.some(([, d]) => d.status === 'idle');
-              const canStart = queue.length > 0 && hasIdle && !anyRunning;
+              const hasPaused = queue.some(([, d]) => d.status === 'paused');
+              const canStart = queue.length > 0 && (hasIdle || hasPaused) && !anyRunning;
               const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
               const priority = isFolderPriority(f);
               const pinned = isFolderPinned(f);
@@ -2660,11 +2897,12 @@ async function handlePlay(id, data){
   });
 }
 
-/* start the next never-started timer in the same folder, in creation order */
-async function maybeStartNextInFolder(folderName, finishedData){
+/* start the next never-started timer in the same folder, following queue order */
+async function maybeStartNextInFolder(folderName, finishedId){
   const queue = getFolderQueue(folderName);
-  const finishedMs = timestampMs(finishedData);
-  const next = queue.find(([, d]) => timestampMs(d) > finishedMs && d.status === 'idle');
+  const idx = queue.findIndex(([id]) => id === finishedId);
+  if(idx === -1) return;
+  const next = queue.slice(idx + 1).find(([, d]) => d.status === 'idle');
   if(next) await handlePlay(next[0], next[1]);
 }
 
@@ -2672,8 +2910,19 @@ function runFolderSequence(folderName){
   const queue = getFolderQueue(folderName);
   const anyRunning = queue.some(([, d]) => d.status === 'running');
   if(anyRunning) return;
+  const paused = queue.find(([, d]) => d.status === 'paused');
+  if(paused){
+    manualFullscreenRequested = true;
+    landscapeDismissed = false;
+    handlePlay(paused[0], paused[1]);
+    return;
+  }
   const first = queue.find(([, d]) => d.status === 'idle');
-  if(first) handlePlay(first[0], first[1]);
+  if(first){
+    manualFullscreenRequested = true;
+    landscapeDismissed = false;
+    handlePlay(first[0], first[1]);
+  }
 }
 
 async function handlePause(id, data){
@@ -2695,6 +2944,18 @@ async function handleReset(id, data){
     endAt: null,
     remainingSeconds: data.durationSeconds
   });
+}
+
+/* reset seluruh step di satu folder kembali ke idle (dipakai saat menutup tampilan fullscreen) */
+async function resetFolderQueue(folderName){
+  const user = auth.currentUser;
+  if(!user) return;
+  const queue = getFolderQueue(folderName);
+  await Promise.all(queue.map(([id, d]) => updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+    status: 'idle',
+    endAt: null,
+    remainingSeconds: d.durationSeconds
+  })));
 }
 
 async function handleDelete(id){
@@ -2737,7 +2998,7 @@ async function tick(){
           endAt: null,
           remainingSeconds: 0
         });
-        await maybeStartNextInFolder(data.folder || 'Umum', data);
+        await maybeStartNextInFolder(data.folder || 'Umum', id);
       }catch(e){ /* will resync on next snapshot */ }
     }
   }
