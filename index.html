@@ -166,6 +166,13 @@
     transition:border-color .15s;
   }
   .field input:focus, .field select:focus{border-color:var(--gold-dark);}
+  .select-with-edit{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .select-with-edit select{flex:1;min-width:0;}
+  .select-with-edit .icon-btn{width:44px;height:44px;flex-shrink:0;}
 
   .btn{
     display:inline-flex;
@@ -550,14 +557,15 @@
     border-bottom:none;
   }
   .folder-row.active{
-    border-radius:999px;
-    padding:8px 8px 8px 14px;
-    border-bottom:none;
-    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    border-radius:0;
+    padding:10px 4px 10px 11px;
+    border-bottom:1px solid var(--line);
+    background:none;
+    border-left:3px solid var(--gold-dark);
   }
-  .folder-row.active .folder-chip-label{ color:#fff; }
-  .folder-row.active .folder-row-action{ color:rgba(255,255,255,0.85); }
-  .folder-row.active .folder-row-action:hover{ color:#fff; }
+  .folder-row.active .folder-chip-label{ color:var(--brown); }
+  .folder-row.active .folder-row-action{ color:var(--brown-soft); }
+  .folder-row.active .folder-row-action:hover{ color:var(--gold-dark); }
   .folder-chip-label{
     border:none;
     background:transparent;
@@ -580,6 +588,19 @@
     flex:1;
     min-width:0;
   }
+  .folder-chip-textwrap{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+    flex:1;
+  }
+  .folder-chip-textwrap .category-badge{
+    font-size:9.5px;
+    padding:1px 7px;
+    margin:0;
+    width:fit-content;
+  }
   .folder-row-total{
     font-size:12px;
     font-weight:500;
@@ -587,7 +608,7 @@
     flex-shrink:0;
     font-variant-numeric:tabular-nums;
   }
-  .folder-row.active .folder-row-total{ color:rgba(255,255,255,0.85); }
+  .folder-row.active .folder-row-total{ color:var(--brown-soft); }
   .folder-row-actions{
     display:flex;
     align-items:center;
@@ -610,7 +631,7 @@
   .folder-row-action.pin-toggle.active{ color:var(--brown); background:#EFE2CD; }
   .folder-row-action.star-toggle.active{ color:var(--gold-dark); background:#FBEEDB; }
   .folder-row.active .folder-row-action.pin-toggle.active,
-  .folder-row.active .folder-row-action.star-toggle.active{ color:#fff; background:rgba(255,255,255,0.28); }
+  .folder-row.active .folder-row-action.star-toggle.active{ color:var(--gold-dark); background:#FBEEDB; }
   .folder-row-action-start{
     display:flex;
     align-items:center;
@@ -638,7 +659,12 @@
     cursor:default;
     transform:none;
   }
-  .folder-row.active .folder-row-action-start:disabled{ background:rgba(255,255,255,0.28); color:rgba(255,255,255,0.85); }
+  .folder-row.active .folder-row-action-start{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+  }
+  .folder-row.active .folder-row-action-start:hover{ transform:scale(1.04); }
+  .folder-row.active .folder-row-action-start:disabled{ background:var(--line); color:var(--brown-faint); }
   .folder-chip{
     border:none;
     background:transparent;
@@ -725,6 +751,31 @@
     font-size:12.5px;
     color:var(--brown-faint);
   }
+  .category-filter-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding-bottom:14px;
+    margin-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .category-filter-chip{
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    font-size:11.5px;
+    font-weight:600;
+    padding:6px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .category-filter-chip:hover{ border-color:var(--gold-mid); color:var(--gold-dark); }
+  .category-filter-chip.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    border-color:transparent;
+  }
   .folder-priority-badge{
     display:flex;
     align-items:center;
@@ -757,6 +808,23 @@
     margin-top:4px;
     margin-right:6px;
   }
+  .category-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--ok);
+    background:#F0F6EC;
+    padding:2px 8px;
+    border-radius:999px;
+    margin-top:4px;
+    margin-right:6px;
+  }
+  .timer-card-compact .category-badge{
+    display:block;
+    width:fit-content;
+    margin-top:3px;
+    margin-right:0;
+  }
   .step-number{
     font-family:var(--serif);
     font-weight:700;
@@ -779,10 +847,32 @@
   .folder-detail-head{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-bottom:16px;
+    gap:8px;
+    margin-bottom:14px;
   }
   .folder-detail-head #folder-detail-title{ flex:1; min-width:0; }
+  #folder-detail-backdrop{ z-index:55; }
+  #folder-detail-backdrop.behind{ background:transparent; }
+  .folder-detail-sheet{
+    display:flex;
+    flex-direction:column;
+    max-height:82vh;
+    padding:20px 18px 16px;
+    overflow:hidden;
+  }
+  .folder-detail-sheet .folder-detail-head{
+    flex-shrink:0;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+  #folder-timer-list{
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-top:4px;
+    margin:0 -4px;
+    padding-left:4px;
+    padding-right:4px;
+  }
 
   /* settings */
   .settings-card{
@@ -979,21 +1069,6 @@
       <div id="folder-list-view">
         <div class="folder-chips" id="folder-chips"></div>
       </div>
-      <div id="folder-detail-view" style="display:none;">
-        <div class="folder-detail-head">
-          <button class="icon-btn" id="folder-back-btn" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <div class="wordmark" id="folder-detail-title" style="font-size:17px;">Semua</div>
-          <button class="icon-btn danger-btn" id="folder-delete-btn" type="button" title="Hapus folder">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          </button>
-          <button class="icon-btn" id="folder-add-timer-btn" type="button" title="Tambah timer ke folder ini">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </button>
-        </div>
-        <div id="folder-timer-list"></div>
-      </div>
     </div>
 
     <!-- RIWAYAT TIMER -->
@@ -1036,6 +1111,24 @@
 </div>
 
 <!-- ADD TIMER MODAL -->
+<div class="modal-backdrop" id="folder-detail-backdrop">
+  <div class="modal-sheet folder-detail-sheet">
+    <div class="folder-detail-head">
+      <div class="wordmark" id="folder-detail-title" style="font-size:17px;"></div>
+      <button class="icon-btn danger-btn" id="folder-delete-btn" type="button" title="Hapus folder">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+      <button class="icon-btn" id="folder-add-timer-btn" type="button" title="Tambah timer ke folder ini">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+      <button class="icon-btn" id="folder-back-btn" type="button" title="Tutup">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="folder-timer-list"></div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="add-modal-backdrop">
   <div class="modal-sheet">
     <div class="modal-head">
@@ -1062,6 +1155,22 @@
     <div class="field">
       <label for="timer-name">Nama timer</label>
       <input id="timer-name" type="text" maxlength="40">
+    </div>
+    <div class="field" id="category-select-field">
+      <label for="timer-category-select">Jenis kategori (opsional)</label>
+      <div class="select-with-edit">
+        <select id="timer-category-select">
+          <option value="">Tanpa kategori</option>
+          <option value="__new__">+ Tambah kategori baru...</option>
+        </select>
+        <button class="icon-btn" id="edit-category-btn" type="button" title="Ubah nama kategori" style="display:none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="field" id="new-category-field" style="display:none;">
+      <label for="timer-category-new">Nama kategori baru</label>
+      <input id="timer-category-new" type="text" placeholder="mis. Persiapan, Memasak, Menunggu" maxlength="24">
     </div>
     <div class="duration-row">
       <div class="field">
@@ -1095,8 +1204,37 @@
       <label for="new-folder-name">Nama folder</label>
       <input id="new-folder-name" type="text" placeholder="mis. Pagi, Kerja, Masak" maxlength="24">
     </div>
+    <div class="field" id="new-folder-category-field">
+      <label for="new-folder-category-select">Jenis kategori (opsional)</label>
+      <select id="new-folder-category-select">
+        <option value="">Tanpa kategori</option>
+        <option value="__new__">+ Tambah kategori baru...</option>
+      </select>
+    </div>
+    <div class="field" id="new-folder-category-new-field" style="display:none;">
+      <label for="new-folder-category-new">Nama kategori baru</label>
+      <input id="new-folder-category-new" type="text" placeholder="mis. Persiapan, Memasak, Menunggu" maxlength="24">
+    </div>
     <button class="btn btn-primary" id="create-folder-btn" type="button">Buat folder</button>
     <div class="auth-msg" id="new-folder-msg"></div>
+  </div>
+</div>
+
+<!-- CATEGORY RENAME MODAL -->
+<div class="modal-backdrop" id="category-modal-backdrop">
+  <div class="modal-sheet" style="max-width:340px;">
+    <div class="modal-head">
+      <div class="wordmark" style="font-size:17px;">Ubah nama kategori</div>
+      <button class="icon-btn" id="close-category-modal" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label for="category-modal-name">Nama kategori</label>
+      <input id="category-modal-name" type="text" placeholder="mis. Persiapan, Memasak, Menunggu" maxlength="24">
+    </div>
+    <button class="btn btn-primary" id="category-modal-save" type="button">Simpan</button>
+    <div class="auth-msg" id="category-modal-msg"></div>
   </div>
 </div>
 
@@ -1166,6 +1304,16 @@ const timerFolderSelect = document.getElementById('timer-folder-select');
 const folderSelectField = document.getElementById('folder-select-field');
 const newFolderField = document.getElementById('new-folder-field');
 const timerFolderNewInput = document.getElementById('timer-folder-new');
+const timerCategorySelect = document.getElementById('timer-category-select');
+const categorySelectField = document.getElementById('category-select-field');
+const newCategoryField = document.getElementById('new-category-field');
+const timerCategoryNewInput = document.getElementById('timer-category-new');
+const editCategoryBtn = document.getElementById('edit-category-btn');
+const categoryModalBackdrop = document.getElementById('category-modal-backdrop');
+const closeCategoryModalBtn = document.getElementById('close-category-modal');
+const categoryModalNameInput = document.getElementById('category-modal-name');
+const categoryModalSaveBtn = document.getElementById('category-modal-save');
+const categoryModalMsg = document.getElementById('category-modal-msg');
 const addTimerBtn = document.getElementById('add-timer-btn');
 const modalTitle = document.getElementById('modal-title');
 const stepOrderField = document.getElementById('step-order-field');
@@ -1251,7 +1399,7 @@ const dashboardRunningList = document.getElementById('dashboard-running-list');
 const folderChipsRow = document.getElementById('folder-chips');
 const folderTimerList = document.getElementById('folder-timer-list');
 const folderListViewEl = document.getElementById('folder-list-view');
-const folderDetailViewEl = document.getElementById('folder-detail-view');
+const folderDetailBackdrop = document.getElementById('folder-detail-backdrop');
 const folderBackBtn = document.getElementById('folder-back-btn');
 const folderAddTimerBtn = document.getElementById('folder-add-timer-btn');
 const folderDeleteBtn = document.getElementById('folder-delete-btn');
@@ -1261,6 +1409,10 @@ const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal')
 const newFolderNameInput = document.getElementById('new-folder-name');
 const createFolderBtn = document.getElementById('create-folder-btn');
 const newFolderMsg = document.getElementById('new-folder-msg');
+const newFolderCategorySelect = document.getElementById('new-folder-category-select');
+const newFolderCategoryField = document.getElementById('new-folder-category-field');
+const newFolderCategoryNewField = document.getElementById('new-folder-category-new-field');
+const newFolderCategoryNewInput = document.getElementById('new-folder-category-new');
 const historyList = document.getElementById('history-list');
 const tabScreens = {
   dashboard: document.getElementById('tab-dashboard'),
@@ -1272,18 +1424,22 @@ const tabScreens = {
 let mode = 'login';
 let unsubscribeTimers = null;
 let unsubscribeFolders = null;
+let unsubscribeCategories = null;
 let tickHandle = null;
 let currentTab = 'dashboard';
 const appHeaderTitle = document.getElementById('app-header-title');
 const TAB_TITLES = { dashboard: 'Dashboard', folders: 'Folder', history: 'Riwayat', settings: 'Setting' };
-let currentFolder = 'Semua';
+let currentFolder = '';
 let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
 let folderSearchOpen = false;
 let folderSearchQuery = '';
+let categoryFilter = '';
 let knownFolderNames = ['Umum'];
+let knownCategoryNames = [];
 let editingId = null;
 const localTimers = new Map(); // id -> data
 const localFolders = new Map(); // id -> {name}
+const localCategories = new Map(); // id -> {name}
 
 /* ---------------- simple beep (no external audio file) ---------------- */
 function playChime(){
@@ -1416,10 +1572,98 @@ timerFolderSelect.addEventListener('change', () => {
   if(isNew) timerFolderNewInput.focus();
 });
 
+function populateCategorySelect(){
+  const current = timerCategorySelect.value;
+  const options = knownCategoryNames.map(c =>
+    `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`
+  ).join('');
+  timerCategorySelect.innerHTML = `<option value="">Tanpa kategori</option>` + options + `<option value="__new__">+ Tambah kategori baru...</option>`;
+  if(current === '__new__' || knownCategoryNames.includes(current)){
+    timerCategorySelect.value = current;
+  }
+}
+timerCategorySelect.addEventListener('change', () => {
+  const isNew = timerCategorySelect.value === '__new__';
+  newCategoryField.style.display = isNew ? '' : 'none';
+  if(isNew) timerCategoryNewInput.focus();
+  editCategoryBtn.style.display = (timerCategorySelect.value && !isNew) ? '' : 'none';
+});
+
+function showCategoryModalMsg(text, type){
+  categoryModalMsg.textContent = text;
+  categoryModalMsg.className = 'auth-msg ' + type;
+}
+function hideCategoryModalMsg(){
+  categoryModalMsg.className = 'auth-msg';
+  categoryModalMsg.textContent = '';
+}
+let renamingCategoryOldName = null;
+function openEditCategoryModal(categoryName){
+  if(!categoryName) return;
+  renamingCategoryOldName = categoryName;
+  hideCategoryModalMsg();
+  categoryModalNameInput.value = categoryName;
+  categoryModalBackdrop.classList.add('open');
+  setTimeout(() => { categoryModalNameInput.focus(); categoryModalNameInput.select(); }, 50);
+}
+function closeCategoryModal(){
+  categoryModalBackdrop.classList.remove('open');
+  renamingCategoryOldName = null;
+}
+editCategoryBtn.addEventListener('click', () => openEditCategoryModal(timerCategorySelect.value));
+closeCategoryModalBtn.addEventListener('click', closeCategoryModal);
+categoryModalBackdrop.addEventListener('click', (e) => {
+  if(e.target === categoryModalBackdrop) closeCategoryModal();
+});
+categoryModalSaveBtn.addEventListener('click', async () => {
+  hideCategoryModalMsg();
+  const user = auth.currentUser;
+  if(!user || !renamingCategoryOldName) return;
+  const name = categoryModalNameInput.value.trim();
+  if(!name){
+    showCategoryModalMsg('Isi nama kategori dulu.', 'error');
+    categoryModalNameInput.focus();
+    return;
+  }
+  const clash = knownCategoryNames.some(c =>
+    c.toLowerCase() === name.toLowerCase() && c.toLowerCase() !== renamingCategoryOldName.toLowerCase()
+  );
+  if(clash){
+    showCategoryModalMsg('Kategori dengan nama itu sudah ada.', 'error');
+    return;
+  }
+  categoryModalSaveBtn.disabled = true;
+  try{
+    await renameCategory(renamingCategoryOldName, name);
+    timerCategorySelect.value = name;
+    closeCategoryModal();
+  }catch(err){
+    console.error(err);
+    showCategoryModalMsg('Gagal mengubah kategori: ' + (err && err.message ? err.message : 'kesalahan tidak diketahui'), 'error');
+  }finally{
+    categoryModalSaveBtn.disabled = false;
+  }
+});
+async function renameCategory(oldName, newName){
+  const user = auth.currentUser;
+  if(!user) return;
+  const entry = Array.from(localCategories.entries()).find(([, d]) => d.name === oldName);
+  if(entry){
+    await updateDoc(doc(db, 'users', user.uid, 'categories', entry[0]), { name: newName });
+  }else{
+    await addDoc(collection(db, 'users', user.uid, 'categories'), { name: newName, createdAt: serverTimestamp() });
+  }
+  const timersInCategory = Array.from(localTimers.entries()).filter(([, d]) => d.category === oldName);
+  await Promise.all(timersInCategory.map(([id]) =>
+    updateDoc(doc(db, 'users', user.uid, 'timers', id), { category: newName })
+  ));
+}
+
 function openAddModal(){
   editingId = null;
   hideComposerMsg();
   populateFolderSelect();
+  populateCategorySelect();
   modalTitle.textContent = 'Timer baru';
   stepOrderField.style.display = 'none';
   stepOrderInput.value = '';
@@ -1430,9 +1674,14 @@ function openAddModal(){
   timerFolderSelect.value = 'Umum';
   newFolderField.style.display = 'none';
   timerFolderNewInput.value = '';
+  timerCategorySelect.value = '';
+  newCategoryField.style.display = 'none';
+  timerCategoryNewInput.value = '';
+  editCategoryBtn.style.display = 'none';
   rentetanSection.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
+  setFolderModalBehind(true);
 }
 function openAddModalForFolder(folderName){
   openAddModal();
@@ -1454,6 +1703,7 @@ function openEditModal(id, data){
   editingId = id;
   hideComposerMsg();
   populateFolderSelect();
+  populateCategorySelect();
   modalTitle.textContent = 'Edit timer';
   stepOrderField.style.display = 'none';
   stepOrderInput.value = '';
@@ -1470,11 +1720,21 @@ function openEditModal(id, data){
   timerFolderSelect.value = folder;
   newFolderField.style.display = 'none';
   timerFolderNewInput.value = '';
+  const category = data.category || '';
+  if(category && !knownCategoryNames.includes(category)){
+    timerCategorySelect.insertAdjacentHTML('afterbegin', `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`);
+  }
+  timerCategorySelect.value = category;
+  newCategoryField.style.display = 'none';
+  timerCategoryNewInput.value = '';
+  editCategoryBtn.style.display = category ? '' : 'none';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
+  setFolderModalBehind(true);
 }
 function closeAddModal(){
   addModalBackdrop.classList.remove('open');
+  setFolderModalBehind(false);
   editingId = null;
 }
 navAddBtn.addEventListener('click', openAddModal);
@@ -1496,6 +1756,22 @@ const newFolderModalTitle = document.getElementById('new-folder-modal-title');
 let folderModalMode = 'create'; // 'create' | 'rename'
 let renamingFolderOldName = null;
 
+function populateFolderCategorySelect(){
+  const current = newFolderCategorySelect.value;
+  const options = knownCategoryNames.map(c =>
+    `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`
+  ).join('');
+  newFolderCategorySelect.innerHTML = `<option value="">Tanpa kategori</option>` + options + `<option value="__new__">+ Tambah kategori baru...</option>`;
+  if(current === '__new__' || knownCategoryNames.includes(current)){
+    newFolderCategorySelect.value = current;
+  }
+}
+newFolderCategorySelect.addEventListener('change', () => {
+  const isNew = newFolderCategorySelect.value === '__new__';
+  newFolderCategoryNewField.style.display = isNew ? '' : 'none';
+  if(isNew) newFolderCategoryNewInput.focus();
+});
+
 function openNewFolderModal(){
   folderModalMode = 'create';
   renamingFolderOldName = null;
@@ -1503,7 +1779,12 @@ function openNewFolderModal(){
   createFolderBtn.textContent = 'Buat folder';
   hideNewFolderMsg();
   newFolderNameInput.value = '';
+  populateFolderCategorySelect();
+  newFolderCategorySelect.value = '';
+  newFolderCategoryNewField.style.display = 'none';
+  newFolderCategoryNewInput.value = '';
   newFolderModalBackdrop.classList.add('open');
+  setFolderModalBehind(true);
   setTimeout(() => newFolderNameInput.focus(), 50);
 }
 function openEditFolderModal(folderName){
@@ -1513,11 +1794,22 @@ function openEditFolderModal(folderName){
   createFolderBtn.textContent = 'Simpan';
   hideNewFolderMsg();
   newFolderNameInput.value = folderName;
+  populateFolderCategorySelect();
+  const folderEntry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  const currentCategory = (folderEntry && folderEntry.category) || '';
+  if(currentCategory && !knownCategoryNames.includes(currentCategory)){
+    newFolderCategorySelect.insertAdjacentHTML('afterbegin', `<option value="${escapeHtml(currentCategory)}">${escapeHtml(currentCategory)}</option>`);
+  }
+  newFolderCategorySelect.value = currentCategory;
+  newFolderCategoryNewField.style.display = 'none';
+  newFolderCategoryNewInput.value = '';
   newFolderModalBackdrop.classList.add('open');
+  setFolderModalBehind(true);
   setTimeout(() => { newFolderNameInput.focus(); newFolderNameInput.select(); }, 50);
 }
 function closeNewFolderModal(){
   newFolderModalBackdrop.classList.remove('open');
+  setFolderModalBehind(false);
 }
 closeNewFolderModalBtn.addEventListener('click', closeNewFolderModal);
 newFolderModalBackdrop.addEventListener('click', (e) => {
@@ -1542,13 +1834,28 @@ createFolderBtn.addEventListener('click', async () => {
     showNewFolderMsg('Folder dengan nama itu sudah ada.', 'error');
     return;
   }
+  let category = '';
+  if(newFolderCategorySelect.value === '__new__'){
+    category = newFolderCategoryNewInput.value.trim();
+    if(!category){
+      showNewFolderMsg('Isi nama kategori baru dulu, atau pilih kategori yang sudah ada.', 'error');
+      newFolderCategoryNewInput.focus();
+      return;
+    }
+  }else{
+    category = newFolderCategorySelect.value || '';
+  }
   createFolderBtn.disabled = true;
   try{
+    if(category && !knownCategoryNames.includes(category)){
+      await addDoc(collection(db, 'users', user.uid, 'categories'), { name: category, createdAt: serverTimestamp() });
+    }
     if(folderModalMode === 'rename'){
-      await renameFolder(renamingFolderOldName, name);
+      await renameFolder(renamingFolderOldName, name, category);
     }else{
       await addDoc(collection(db, 'users', user.uid, 'folders'), {
         name,
+        category,
         createdAt: serverTimestamp()
       });
     }
@@ -1562,14 +1869,15 @@ createFolderBtn.addEventListener('click', async () => {
   }
 });
 
-async function renameFolder(oldName, newName){
+async function renameFolder(oldName, newName, category){
   const user = auth.currentUser;
   if(!user) return;
   const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === oldName);
+  const fields = category === undefined ? { name: newName } : { name: newName, category };
   if(entry){
-    await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), { name: newName });
+    await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), fields);
   }else{
-    await addDoc(collection(db, 'users', user.uid, 'folders'), { name: newName, createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'users', user.uid, 'folders'), { ...fields, createdAt: serverTimestamp() });
   }
   const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === oldName);
   await Promise.all(timersInFolder.map(([id]) =>
@@ -1592,7 +1900,7 @@ async function handleDeleteFolder(folderName){
       updateDoc(doc(db, 'users', user.uid, 'timers', id), { folder: 'Umum' })
     ));
     if(currentFolder === folderName){
-      currentFolder = 'Semua';
+      currentFolder = '';
       folderListView = true;
     }
   }catch(err){
@@ -1634,6 +1942,10 @@ async function handleDuplicateFolder(folderName){
 function isFolderPriority(folderName){
   const entry = Array.from(localFolders.values()).find(f => f.name === folderName);
   return !!(entry && entry.priority);
+}
+function getFolderCategory(folderName){
+  const entry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  return (entry && entry.category) || '';
 }
 
 async function toggleFolderPriority(folderName){
@@ -1706,6 +2018,7 @@ onAuthStateChanged(auth, (user) => {
     }
     subscribeTimers(user.uid);
     subscribeFolders(user.uid);
+    subscribeCategories(user.uid);
     startTicker();
   }else{
     appScreen.style.display = 'none';
@@ -1715,8 +2028,10 @@ onAuthStateChanged(auth, (user) => {
     closeNewFolderModal();
     if(unsubscribeTimers){ unsubscribeTimers(); unsubscribeTimers = null; }
     if(unsubscribeFolders){ unsubscribeFolders(); unsubscribeFolders = null; }
+    if(unsubscribeCategories){ unsubscribeCategories(); unsubscribeCategories = null; }
     localTimers.clear();
     localFolders.clear();
+    localCategories.clear();
     stopTicker();
     dashboardRunningList.innerHTML = '';
     folderTimerList.innerHTML = '';
@@ -1728,25 +2043,31 @@ onAuthStateChanged(auth, (user) => {
 
 /* ---------------- timer composer ---------------- */
 
-folderBackBtn.addEventListener('click', () => {
+function closeFolderDetail(){
   folderListView = true;
   renderAll();
+}
+/* saat modal lain dibuka di atas modal folder, matikan dim ganda */
+function setFolderModalBehind(on){
+  folderDetailBackdrop.classList.toggle('behind', !!on && folderDetailBackdrop.classList.contains('open'));
+}
+folderBackBtn.addEventListener('click', closeFolderDetail);
+folderDetailBackdrop.addEventListener('click', (e) => {
+  if(e.target === folderDetailBackdrop) closeFolderDetail();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && folderDetailBackdrop.classList.contains('open') && !addModalBackdrop.classList.contains('open') && !newFolderModalBackdrop.classList.contains('open')){
+    closeFolderDetail();
+  }
 });
 folderAddTimerBtn.addEventListener('click', () => {
-  const targetFolder = currentFolder === 'Semua' ? 'Umum' : currentFolder;
+  const targetFolder = currentFolder || 'Umum';
   openAddModalForFolder(targetFolder);
 });
 folderDeleteBtn.addEventListener('click', () => {
-  if(currentFolder === 'Semua') return;
   handleDeleteFolder(currentFolder);
 });
 function openFolderDetail(folderName){
-  if(folderName === 'Semua'){
-    currentFolder = 'Semua';
-    folderListView = true;
-    renderAll();
-    return;
-  }
   currentFolder = folderName;
   folderListView = false;
   renderAll();
@@ -1860,6 +2181,17 @@ addTimerBtn.addEventListener('click', async () => {
   }else{
     folder = timerFolderSelect.value || 'Umum';
   }
+  let category = '';
+  if(timerCategorySelect.value === '__new__'){
+    category = timerCategoryNewInput.value.trim();
+    if(!category){
+      showComposerMsg('Isi nama kategori baru dulu, atau pilih kategori yang sudah ada.', 'error');
+      timerCategoryNewInput.focus();
+      return;
+    }
+  }else{
+    category = timerCategorySelect.value || '';
+  }
   const rentetanSteps = Array.from(rentetanList.querySelectorAll('.rentetan-item')).map((item, i) => {
     const stepMin = Math.max(0, parseInt(item.querySelector('.rentetan-minutes-input').value, 10) || 0);
     const stepName = item.querySelector('.rentetan-name-input').value.trim() || `Rentetan ${i + 1}`;
@@ -1870,6 +2202,9 @@ addTimerBtn.addEventListener('click', async () => {
   const startsIdle = isChain || isFolderInsert; // rentetan/antrean folder: semua antre dulu, dimulai manual lewat "Mulai urutan"
   addTimerBtn.disabled = true;
   try{
+    if(category && !knownCategoryNames.includes(category)){
+      await addDoc(collection(db, 'users', user.uid, 'categories'), { name: category, createdAt: serverTimestamp() });
+    }
     let insertOrder = null;
     if(isFolderInsert){
       const totalNew = 1 + rentetanSteps.length;
@@ -1880,6 +2215,7 @@ addTimerBtn.addEventListener('click', async () => {
       await updateDoc(doc(db, 'users', user.uid, 'timers', editingId), {
         name,
         folder,
+        category,
         durationSeconds: totalSec,
         remainingSeconds: totalSec,
         status: 'idle',
@@ -1889,6 +2225,7 @@ addTimerBtn.addEventListener('click', async () => {
       await addDoc(collection(db, 'users', user.uid, 'timers'), {
         name,
         folder,
+        category,
         durationSeconds: totalSec,
         remainingSeconds: totalSec,
         status: startsIdle ? 'idle' : 'running',
@@ -1902,6 +2239,7 @@ addTimerBtn.addEventListener('click', async () => {
       await addDoc(collection(db, 'users', user.uid, 'timers'), {
         name: step.name,
         folder,
+        category,
         durationSeconds: step.durationSeconds,
         remainingSeconds: step.durationSeconds,
         status: 'idle', // menunggu giliran, otomatis lanjut lewat maybeStartNextInFolder
@@ -1913,6 +2251,7 @@ addTimerBtn.addEventListener('click', async () => {
     }
     timerNameInput.value = '';
     timerFolderNewInput.value = '';
+    timerCategoryNewInput.value = '';
     resetRentetanList();
     currentFolder = folder;
     closeAddModal();
@@ -1951,6 +2290,20 @@ function subscribeFolders(uid){
       localFolders.set(docSnap.id, docSnap.data());
     });
     renderAll();
+  }, (err) => {
+    console.error(err);
+  });
+}
+
+function subscribeCategories(uid){
+  const q = collection(db, 'users', uid, 'categories');
+  unsubscribeCategories = onSnapshot(q, (snap) => {
+    localCategories.clear();
+    snap.forEach(docSnap => {
+      localCategories.set(docSnap.id, docSnap.data());
+    });
+    knownCategoryNames = Array.from(localCategories.values()).map(c => c.name).sort();
+    populateCategorySelect();
   }, (err) => {
     console.error(err);
   });
@@ -2035,8 +2388,8 @@ function renderAll(){
     ...active.map(([, d]) => d.folder || 'Umum'),
     ...explicitFolderNames
   ])).sort();
-  if(!folderNames.includes(currentFolder) && currentFolder !== 'Semua'){
-    currentFolder = 'Semua';
+  if(!folderNames.includes(currentFolder)){
+    currentFolder = '';
     folderListView = true;
   }
   knownFolderNames = Array.from(new Set([
@@ -2048,12 +2401,17 @@ function renderAll(){
   if(currentTab === 'dashboard'){
     renderList(dashboardRunningList, running, '');
   }
+  /* modal detail folder: hanya tampil di tab folder & saat folder dipilih */
+  const showFolderDetail = currentTab === 'folders' && !folderListView;
+  folderDetailBackdrop.classList.toggle('open', showFolderDetail);
+  if(!showFolderDetail) folderDetailBackdrop.classList.remove('behind');
+
   if(currentTab === 'folders'){
-    folderListViewEl.style.display = folderListView ? '' : 'none';
-    folderDetailViewEl.style.display = folderListView ? 'none' : '';
-    const searchedFolderNames = folderSearchQuery.trim()
+    folderListViewEl.style.display = '';
+    const searchedFolderNames = (folderSearchQuery.trim()
       ? folderNames.filter(f => f.toLowerCase().includes(folderSearchQuery.trim().toLowerCase()))
-      : folderNames;
+      : folderNames
+    ).filter(f => !categoryFilter || getFolderCategory(f) === categoryFilter);
 
     folderChipsRow.innerHTML =
       `<div class="folder-chips-top">` +
@@ -2063,10 +2421,14 @@ function renderAll(){
                <input type="text" id="folder-search-input" placeholder="Cari folder..." value="${escapeHtml(folderSearchQuery)}">
                <button class="folder-search-clear" id="folder-search-clear" type="button" title="Tutup">${iconCloseSmall()}</button>
              </div>`
-          : `<button class="folder-chip${currentFolder === 'Semua' ? ' active' : ''}" data-folder="Semua" type="button">Semua</button>`
+          : ''
         ) +
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
       `</div>` +
+      `<div class="category-filter-row">
+         <button class="category-filter-chip${!categoryFilter ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
+         ${knownCategoryNames.map(c => `<button class="category-filter-chip${categoryFilter === c ? ' active' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}</button>`).join('')}
+       </div>` +
       (searchedFolderNames.length === 0
         ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
         : (() => {
@@ -2078,10 +2440,14 @@ function renderAll(){
               const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
               const priority = isFolderPriority(f);
               const pinned = isFolderPinned(f);
+              const folderCategory = getFolderCategory(f);
               return `
               <div class="folder-row${f === currentFolder ? ' active' : ''}" data-folder="${escapeHtml(f)}">
                 <div class="folder-row-main">
-                  <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+                  <div class="folder-chip-textwrap">
+                    <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
+                    ${folderCategory ? `<span class="category-badge">${escapeHtml(folderCategory)}</span>` : ''}
+                  </div>
                   <span class="folder-row-total">${fmt(totalSeconds)}</span>
                 </div>
                 <div class="folder-row-actions">
@@ -2123,6 +2489,13 @@ function renderAll(){
     });
     document.getElementById('add-folder-chip').addEventListener('click', openNewFolderModal);
 
+    folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        categoryFilter = chip.dataset.category;
+        renderAll();
+      });
+    });
+
     const folderSearchBtn = document.getElementById('folder-search-btn');
     if(folderSearchBtn){
       folderSearchBtn.addEventListener('click', () => {
@@ -2159,20 +2532,11 @@ function renderAll(){
 
     if(!folderListView){
       folderDetailTitle.textContent = currentFolder;
-      const isSemua = currentFolder === 'Semua';
-      folderDeleteBtn.style.display = isSemua ? 'none' : '';
-      const visible = currentFolder === 'Semua'
-        ? active
-        : active.filter(([, d]) => (d.folder || 'Umum') === currentFolder);
-
-      if(currentFolder === 'Semua'){
-        renderList(folderTimerList, visible, '');
-      }else{
-        const queue = getFolderQueue(currentFolder);
-        const stepMap = new Map(queue.map(([id], i) => [id, i + 1]));
-        const orderedVisible = queue.filter(([, d]) => d.status !== 'finished');
-        renderList(folderTimerList, orderedVisible, '', stepMap);
-      }
+      folderDeleteBtn.style.display = '';
+      const queue = getFolderQueue(currentFolder);
+      const stepMap = new Map(queue.map(([id], i) => [id, i + 1]));
+      const orderedVisible = queue.filter(([, d]) => d.status !== 'finished');
+      renderList(folderTimerList, orderedVisible, '', stepMap);
     }
   }
   if(currentTab === 'history'){
@@ -2235,7 +2599,7 @@ function buildCard(id, data, stepLabel){
     <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
     <div class="timer-top compact">
       ${stepLabel ? `<span class="step-number">${escapeHtml(stepLabel)}</span>` : ''}
-      <div class="timer-name">${escapeHtml(data.name)}${statusLabel ? `<span class="status">${statusLabel}</span>` : ''}</div>
+      <div class="timer-name">${escapeHtml(data.name)}${data.category ? `<span class="category-badge">${escapeHtml(data.category)}</span>` : ''}${statusLabel ? `<span class="status">${statusLabel}</span>` : ''}</div>
       <div class="timer-digits-wrap">${digitsWrapHtml}</div>
       <div class="card-actions">${editDeleteHtml}</div>
     </div>
@@ -2243,7 +2607,7 @@ function buildCard(id, data, stepLabel){
   ` : `
     <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
     <div class="timer-top">
-      <div class="timer-name">${escapeHtml(data.name)}<span class="status"><span class="folder-badge">${escapeHtml(data.folder || 'Umum')}</span>${statusLabel}</span></div>
+      <div class="timer-name">${escapeHtml(data.name)}<span class="status"><span class="folder-badge">${escapeHtml(data.folder || 'Umum')}</span>${data.category ? `<span class="category-badge">${escapeHtml(data.category)}</span>` : ''}${statusLabel}</span></div>
       <div class="card-actions">${editDeleteHtml}</div>
     </div>
     <div class="timer-mid">
@@ -2273,6 +2637,7 @@ function iconEditSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24
 function iconDeleteSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`; }
 function iconDuplicateSmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`; }
 function iconSearchSmall(){ return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`; }
+function iconFilterSmall(){ return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`; }
 function iconCloseSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`; }
 function iconStarSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.25 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5"/></svg>`; }
 function iconPinSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s7-7.58 7-12A7 7 0 1 0 5 9c0 4.42 7 12 7 12z"/></svg>`; }
