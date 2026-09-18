@@ -711,6 +711,78 @@
     color:#fff;
     border-color:transparent;
   }
+  .folder-multitask-btn{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .folder-multitask-btn:hover{ background:#FBEEDB; color:var(--gold-dark); }
+  .folder-row-check{
+    width:22px;height:22px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--brown-faint);
+    background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    color:transparent;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .folder-row-check svg{width:12px;height:12px;}
+  .folder-row-check.checked{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    border-color:transparent;
+    color:#fff;
+  }
+  .multitask-modal-list{
+    max-height:340px;
+    overflow-y:auto;
+    margin:2px -4px 0;
+  }
+  .multitask-modal-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 4px;
+    border-bottom:1px solid var(--line);
+    cursor:pointer;
+  }
+  .multitask-modal-row:last-child{ border-bottom:none; }
+  .multitask-modal-row.checked{ background:#FBEEDB; border-radius:10px; }
+  .multitask-modal-name{
+    flex:1;
+    min-width:0;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--brown);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .landscape-combo-note{
+    display:none;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.28);
+    border-radius:999px;
+    padding:8px 16px;
+    font-size:13px;
+    font-weight:600;
+    color:#fff;
+    margin-top:10px;
+  }
+  .landscape-combo-note.show{ display:inline-flex; }
+  .landscape-combo-note .combo-time{
+    font-variant-numeric:tabular-nums;
+    opacity:0.85;
+  }
   .folder-search-wrap{
     display:flex;
     align-items:center;
@@ -1081,19 +1153,6 @@
   }
   .nav-item svg{width:19px;height:19px;}
   .nav-item.active{color:var(--gold-dark);background:#FBEEDB;}
-  .nav-fab{
-    width:50px;height:50px;
-    flex-shrink:0;
-    border-radius:50%;
-    border:none;
-    margin-top:-28px;
-    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-    color:#fff;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 12px 24px -8px rgba(184,118,62,0.65);
-    cursor:pointer;
-  }
-  .nav-fab:active{transform:scale(0.94);}
 
   @media (prefers-reduced-motion: reduce){
     .bar-fill{transition:none;}
@@ -1111,6 +1170,7 @@
     <div class="bar-bg"><div class="bar-fill" id="landscape-bar-fill" style="width:0%"></div></div>
     <div class="landscape-name" id="landscape-name"></div>
     <div class="landscape-digits" data-role="digits" id="landscape-digits"></div>
+    <div class="landscape-combo-note" id="landscape-combo-note"></div>
     <div class="landscape-controls" id="landscape-controls"></div>
   </div>
 </div>
@@ -1155,26 +1215,15 @@
   <section id="app-screen">
     <div class="app-header">
       <div class="brandmark">
-        <div class="wordmark" id="app-header-title" style="font-size:20px;">Dashboard</div>
+        <div class="wordmark" id="app-header-title" style="font-size:20px;">Folder</div>
       </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div class="tab-screen" id="tab-dashboard">
-      <div id="dashboard-running-list"></div>
     </div>
 
     <!-- FOLDER TIMER -->
-    <div class="tab-screen" id="tab-folders" style="display:none;">
+    <div class="tab-screen" id="tab-folders">
       <div id="folder-list-view">
         <div class="folder-chips" id="folder-chips"></div>
       </div>
-    </div>
-
-    <!-- RIWAYAT TIMER -->
-    <div class="tab-screen" id="tab-history" style="display:none;">
-      <h3 class="section-title">Riwayat timer selesai</h3>
-      <div id="history-list"></div>
     </div>
 
     <!-- SETTING -->
@@ -1226,18 +1275,6 @@
       </button>
     </div>
     <div id="folder-timer-list"></div>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="timer-detail-backdrop">
-  <div class="modal-sheet">
-    <div class="modal-head">
-      <div class="wordmark" style="font-size:17px;">Detail timer</div>
-      <button class="icon-btn" id="close-timer-detail-modal" type="button">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div id="timer-detail-body"></div>
   </div>
 </div>
 
@@ -1350,22 +1387,32 @@
   </div>
 </div>
 
+<!-- MULTITASK (GABUNG TIMER) MODAL -->
+<div class="modal-backdrop" id="multitask-modal-backdrop">
+  <div class="modal-sheet" style="max-width:380px;">
+    <div class="modal-head">
+      <div class="wordmark" style="font-size:17px;">Gabung timer</div>
+      <button class="icon-btn" id="close-multitask-modal" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <input type="text" id="multitask-search-input" placeholder="Cari atau ketik nama folder...">
+    </div>
+    <div class="multitask-modal-list" id="multitask-folder-list"></div>
+    <button class="btn btn-primary" id="multitask-go-btn" type="button" disabled style="margin-top:14px;">Go</button>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav" style="display:none;">
-  <button class="nav-item active" data-tab="dashboard" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
-    <span>Dashboard</span>
-  </button>
-  <button class="nav-item" data-tab="folders" type="button">
+  <button class="nav-item active" data-tab="folders" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     <span>Folder</span>
   </button>
-  <button class="nav-fab" id="nav-add-btn" type="button" title="Tambah timer">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="nav-item" data-tab="history" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
-    <span>Riwayat</span>
+  <button class="nav-item" id="nav-add-btn" type="button" title="Tambah timer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span>Tambah</span>
   </button>
   <button class="nav-item" data-tab="settings" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1426,6 +1473,11 @@ const closeCategoryModalBtn = document.getElementById('close-category-modal');
 const categoryModalNameInput = document.getElementById('category-modal-name');
 const categoryModalSaveBtn = document.getElementById('category-modal-save');
 const categoryModalMsg = document.getElementById('category-modal-msg');
+const multitaskModalBackdrop = document.getElementById('multitask-modal-backdrop');
+const closeMultitaskModalBtn = document.getElementById('close-multitask-modal');
+const multitaskSearchInput = document.getElementById('multitask-search-input');
+const multitaskFolderListEl = document.getElementById('multitask-folder-list');
+const multitaskGoBtnEl = document.getElementById('multitask-go-btn');
 const addTimerBtn = document.getElementById('add-timer-btn');
 const modalTitle = document.getElementById('modal-title');
 const stepOrderField = document.getElementById('step-order-field');
@@ -1504,7 +1556,6 @@ themeModeRow.querySelectorAll('.font-size-btn').forEach(btn => {
   });
 });
 applyThemeMode(localStorage.getItem('essentime-theme-mode') || 'light');
-const dashboardRunningList = document.getElementById('dashboard-running-list');
 const folderChipsRow = document.getElementById('folder-chips');
 const folderTimerList = document.getElementById('folder-timer-list');
 const folderListViewEl = document.getElementById('folder-list-view');
@@ -1513,15 +1564,12 @@ const folderBackBtn = document.getElementById('folder-back-btn');
 const folderAddTimerBtn = document.getElementById('folder-add-timer-btn');
 const folderDeleteBtn = document.getElementById('folder-delete-btn');
 const folderDetailTitle = document.getElementById('folder-detail-title');
-const timerDetailBackdrop = document.getElementById('timer-detail-backdrop');
-const closeTimerDetailBtn = document.getElementById('close-timer-detail-modal');
-const timerDetailBody = document.getElementById('timer-detail-body');
-let openTimerDetailId = null;
 const landscapeCard = document.getElementById('landscape-card');
 const landscapeName = document.getElementById('landscape-name');
 const landscapeDigits = document.getElementById('landscape-digits');
 const landscapeBarFill = document.getElementById('landscape-bar-fill');
 const landscapeControls = document.getElementById('landscape-controls');
+const landscapeComboNote = document.getElementById('landscape-combo-note');
 const landscapeCloseBtn = document.getElementById('landscape-close-btn');
 const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
 const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
@@ -1532,11 +1580,8 @@ const newFolderCategorySelect = document.getElementById('new-folder-category-sel
 const newFolderCategoryField = document.getElementById('new-folder-category-field');
 const newFolderCategoryNewField = document.getElementById('new-folder-category-new-field');
 const newFolderCategoryNewInput = document.getElementById('new-folder-category-new');
-const historyList = document.getElementById('history-list');
 const tabScreens = {
-  dashboard: document.getElementById('tab-dashboard'),
   folders: document.getElementById('tab-folders'),
-  history: document.getElementById('tab-history'),
   settings: document.getElementById('tab-settings')
 };
 
@@ -1545,9 +1590,9 @@ let unsubscribeTimers = null;
 let unsubscribeFolders = null;
 let unsubscribeCategories = null;
 let tickHandle = null;
-let currentTab = 'dashboard';
+let currentTab = 'folders';
 const appHeaderTitle = document.getElementById('app-header-title');
-const TAB_TITLES = { dashboard: 'Dashboard', folders: 'Folder', history: 'Riwayat', settings: 'Setting' };
+const TAB_TITLES = { folders: 'Folder', settings: 'Setting' };
 let currentFolder = '';
 let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
 let folderSearchOpen = false;
@@ -1556,6 +1601,10 @@ let categoryFilter = '';
 let knownFolderNames = ['Umum'];
 let knownCategoryNames = [];
 let editingId = null;
+let multitaskMode = false; // true = modal gabung timer sedang terbuka
+let multitaskSelected = new Set();
+let multitaskSearchQuery = '';
+let comboFolders = new Set(); // folder names currently running together as a combined ("multitask") session
 const localTimers = new Map(); // id -> data
 const localFolders = new Map(); // id -> {name}
 const localCategories = new Map(); // id -> {name}
@@ -1668,6 +1717,7 @@ function switchToTab(tabName){
   renderAll();
 }
 bottomNav.querySelectorAll('.nav-item').forEach(btn => {
+  if(!btn.dataset.tab) return;
   btn.addEventListener('click', () => {
     if(btn.dataset.tab === 'folders') folderListView = true;
     switchToTab(btn.dataset.tab);
@@ -2152,9 +2202,7 @@ onAuthStateChanged(auth, (user) => {
     localFolders.clear();
     localCategories.clear();
     stopTicker();
-    dashboardRunningList.innerHTML = '';
     folderTimerList.innerHTML = '';
-    historyList.innerHTML = '';
     authForm.reset();
     hideMsg();
   }
@@ -2173,53 +2221,6 @@ function setFolderModalBehind(on){
 folderBackBtn.addEventListener('click', closeFolderDetail);
 folderDetailBackdrop.addEventListener('click', (e) => {
   if(e.target === folderDetailBackdrop) closeFolderDetail();
-});
-
-/* ---------------- timer detail modal (dashboard) ---------------- */
-function openTimerDetail(id){
-  openTimerDetailId = id;
-  renderTimerDetail();
-  timerDetailBackdrop.classList.add('open');
-}
-function closeTimerDetail(){
-  openTimerDetailId = null;
-  timerDetailBackdrop.classList.remove('open');
-}
-function renderTimerDetail(){
-  if(!openTimerDetailId) return;
-  const data = localTimers.get(openTimerDetailId);
-  if(!data){ closeTimerDetail(); return; }
-  const id = openTimerDetailId;
-  const remaining = currentRemaining(data);
-  const finished = data.status === 'finished';
-
-  const controlsHtml = `
-    ${finished
-      ? `<button class="ctrl-btn reset" data-action="reset" title="Ulangi">${iconReset()}</button>`
-      : data.status === 'running'
-        ? `<button class="ctrl-btn pause" data-action="pause" title="Jeda">${iconPause()}</button>`
-        : `<button class="ctrl-btn play" data-action="play" title="Mulai">${iconPlay()}</button>`
-    }
-    ${finished ? '' : `<button class="ctrl-btn reset" data-action="reset" title="Atur ulang">${iconRotate()}</button>`}
-  `;
-
-  timerDetailBody.innerHTML = `
-    <div class="timer-card timer-detail-card${finished ? ' finished' : ''}" data-id="${id}">
-      <div class="timer-detail-name">${escapeHtml(data.name)}</div>
-      <div class="timer-detail-digits" data-role="digits">${fmt(remaining)}</div>
-      <div class="timer-detail-controls">${controlsHtml}</div>
-    </div>
-  `;
-
-  const playBtn = timerDetailBody.querySelector('[data-action="play"]');
-  if(playBtn) playBtn.addEventListener('click', () => handlePlay(id, data));
-  const pauseBtn = timerDetailBody.querySelector('[data-action="pause"]');
-  if(pauseBtn) pauseBtn.addEventListener('click', () => handlePause(id, data));
-  timerDetailBody.querySelectorAll('[data-action="reset"]').forEach(btn => btn.addEventListener('click', () => handleReset(id, data)));
-}
-closeTimerDetailBtn.addEventListener('click', closeTimerDetail);
-timerDetailBackdrop.addEventListener('click', (e) => {
-  if(e.target === timerDetailBackdrop) closeTimerDetail();
 });
 
 /* ---------------- landscape fullscreen timer ---------------- */
@@ -2245,6 +2246,21 @@ function renderLandscapeCard(id, data){
   landscapeBarFill.style.width = pct + '%';
   landscapeName.textContent = data.name;
   landscapeDigits.textContent = fmt(remaining);
+
+  /* fitur multitasking: di 1 menit terakhir, tunjukkan langkah folder lain yang digabung bareng */
+  const folderName = data.folder || 'Umum';
+  let comboNoteHtml = '';
+  if(comboFolders.size > 1 && comboFolders.has(folderName) && remaining > 0 && remaining <= 60){
+    const coStep = Array.from(localTimers.entries())
+      .filter(([cid, cd]) => cid !== id && comboFolders.has(cd.folder || 'Umum') && (cd.status === 'running' || cd.status === 'paused'))
+      .sort((a, b) => currentRemaining(a[1]) - currentRemaining(b[1]))[0];
+    if(coStep){
+      comboNoteHtml = `<span>Bareng:</span> <strong>${escapeHtml(coStep[1].name)}</strong> <span class="combo-time">${fmt(currentRemaining(coStep[1]))}</span>`;
+    }
+  }
+  landscapeComboNote.innerHTML = comboNoteHtml;
+  landscapeComboNote.classList.toggle('show', !!comboNoteHtml);
+
   const controlsHtml = `
     ${finished
       ? `<button class="ctrl-btn reset" data-action="reset" title="Ulangi">${iconReset()}</button>`
@@ -2279,7 +2295,12 @@ function closeLandscapeMode(){
   manualFullscreenRequested = false;
   const id = landscapeCard.dataset.id;
   const data = id ? localTimers.get(id) : null;
-  if(data) resetFolderQueue(data.folder || 'Umum');
+  if(comboFolders.size){
+    comboFolders.forEach(f => resetFolderQueue(f));
+    comboFolders = new Set();
+  }else if(data){
+    resetFolderQueue(data.folder || 'Umum');
+  }
   lastLandscapeId = null;
   document.body.classList.remove('landscape-fullscreen');
 }
@@ -2606,8 +2627,6 @@ function renderAll(){
   const all = Array.from(localTimers.entries());
   const active = all.filter(([, d]) => d.status !== 'finished');
   const running = all.filter(([, d]) => d.status === 'running');
-  const runningOrPaused = all.filter(([, d]) => d.status === 'running' || d.status === 'paused');
-  const finished = all.filter(([, d]) => d.status === 'finished');
 
   /* folders: distinct folder names from active timers + explicitly-created empty folders */
   const explicitFolderNames = Array.from(localFolders.values()).map(f => f.name);
@@ -2625,17 +2644,6 @@ function renderAll(){
   ])).sort();
   populateFolderSelect();
 
-  if(currentTab === 'dashboard'){
-    renderList(dashboardRunningList, runningOrPaused, '');
-    dashboardRunningList.querySelectorAll('.timer-card').forEach(card => {
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', (e) => {
-        if(e.target.closest('button')) return;
-        openTimerDetail(card.dataset.id);
-      });
-    });
-  }
-  if(openTimerDetailId) renderTimerDetail();
   updateLandscapeMode();
   /* modal detail folder: hanya tampil di tab folder & saat folder dipilih */
   const showFolderDetail = currentTab === 'folders' && !folderListView;
@@ -2660,6 +2668,7 @@ function renderAll(){
           : ''
         ) +
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
+        `<button class="folder-multitask-btn" id="multitask-toggle-btn" type="button" title="Gabung timer (multitasking)">${iconLayersSmall()}</button>` +
       `</div>` +
       `<div class="category-filter-row">
          <button class="category-filter-chip${!categoryFilter ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
@@ -2725,6 +2734,10 @@ function renderAll(){
       });
     });
     document.getElementById('add-folder-chip').addEventListener('click', openNewFolderModal);
+    const multitaskToggleBtn = document.getElementById('multitask-toggle-btn');
+    if(multitaskToggleBtn){
+      multitaskToggleBtn.addEventListener('click', openMultitaskModal);
+    }
 
     folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -2775,9 +2788,6 @@ function renderAll(){
       const orderedVisible = queue.filter(([, d]) => d.status !== 'finished');
       renderList(folderTimerList, orderedVisible, '', stepMap);
     }
-  }
-  if(currentTab === 'history'){
-    renderList(historyList, finished, '');
   }
 }
 
@@ -2878,6 +2888,8 @@ function iconFilterSmall(){ return `<svg width="15" height="15" viewBox="0 0 24 
 function iconCloseSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`; }
 function iconStarSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.25 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5"/></svg>`; }
 function iconPinSmall(){ return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s7-7.58 7-12A7 7 0 1 0 5 9c0 4.42 7 12 7 12z"/></svg>`; }
+function iconLayersSmall(){ return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`; }
+function iconCheckSmall(){ return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`; }
 function iconPlaySmall(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPlay(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>`; }
 function iconPause(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
@@ -2924,6 +2936,78 @@ function runFolderSequence(folderName){
     handlePlay(first[0], first[1]);
   }
 }
+
+/* ---------------- multitasking: gabung beberapa folder berjalan bersamaan ---------------- */
+function openMultitaskModal(){
+  multitaskMode = true;
+  multitaskSelected.clear();
+  multitaskSearchQuery = '';
+  if(multitaskSearchInput) multitaskSearchInput.value = '';
+  multitaskModalBackdrop.classList.add('open');
+  renderMultitaskList();
+}
+function closeMultitaskModal(){
+  multitaskMode = false;
+  multitaskModalBackdrop.classList.remove('open');
+}
+function renderMultitaskList(){
+  const q = multitaskSearchQuery.trim().toLowerCase();
+  const names = knownFolderNames.filter(f => !q || f.toLowerCase().includes(q));
+  multitaskFolderListEl.innerHTML = names.length === 0
+    ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
+    : names.map(f => {
+        const checked = multitaskSelected.has(f);
+        const queue = getFolderQueue(f);
+        const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
+        return `
+        <div class="multitask-modal-row${checked ? ' checked' : ''}" data-folder="${escapeHtml(f)}">
+          <span class="folder-row-check${checked ? ' checked' : ''}">${checked ? iconCheckSmall() : ''}</span>
+          <span class="multitask-modal-name">${escapeHtml(f)}</span>
+          <span class="folder-row-total">${fmt(totalSeconds)}</span>
+        </div>`;
+      }).join('');
+  multitaskFolderListEl.querySelectorAll('.multitask-modal-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const f = row.dataset.folder;
+      if(multitaskSelected.has(f)) multitaskSelected.delete(f);
+      else multitaskSelected.add(f);
+      renderMultitaskList();
+    });
+  });
+  multitaskGoBtnEl.disabled = multitaskSelected.size < 2;
+  multitaskGoBtnEl.textContent = multitaskSelected.size ? `Go (${multitaskSelected.size})` : 'Go';
+}
+
+function startMultitaskCombo(){
+  if(multitaskSelected.size < 2) return;
+  const folders = Array.from(multitaskSelected);
+  comboFolders = new Set(folders);
+  lastLandscapeId = null;
+  folders.forEach(f => {
+    const queue = getFolderQueue(f);
+    const anyRunning = queue.some(([, d]) => d.status === 'running');
+    if(anyRunning) return;
+    const paused = queue.find(([, d]) => d.status === 'paused');
+    const next = paused || queue.find(([, d]) => d.status === 'idle');
+    if(next) handlePlay(next[0], next[1]);
+  });
+  multitaskSelected.clear();
+  closeMultitaskModal();
+  manualFullscreenRequested = true;
+  landscapeDismissed = false;
+  renderAll();
+}
+closeMultitaskModalBtn.addEventListener('click', closeMultitaskModal);
+multitaskModalBackdrop.addEventListener('click', (e) => {
+  if(e.target === multitaskModalBackdrop) closeMultitaskModal();
+});
+if(multitaskSearchInput){
+  multitaskSearchInput.addEventListener('input', (e) => {
+    multitaskSearchQuery = e.target.value;
+    renderMultitaskList();
+  });
+}
+multitaskGoBtnEl.addEventListener('click', startMultitaskCombo);
 
 async function handlePause(id, data){
   const user = auth.currentUser;
