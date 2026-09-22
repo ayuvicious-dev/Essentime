@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Essensiana — Baca & Renungkan</title>
+<meta name="theme-color" content="#1652F0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<style>
+:root{
+  --navy:#0B1220;
+  --navy-2:#111a2e;
+  --blue:#1652F0;
+  --cyan:#22C7E8;
+  --paper:#FBF9F3;
+  --paper-2:#F3EFE3;
+  --ink:#1B2333;
+  --ink-soft:#5B6478;
+  --line:#E4DFD0;
+  --danger:#D6473E;
+  --ok:#3E9A5F;
+  --radius:14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;background:var(--navy);color:var(--ink);}
+body{display:flex;flex-direction:column;}
+button{font-family:inherit;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+.hidden{display:none !important;}
+
+/* ---------- Layout shells ---------- */
+#app{flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  background:#fff;
+  color:var(--ink);position:sticky;top:0;z-index:20;
+  border-bottom:1px solid var(--line);
+}
+.topbar-title{font-weight:700;letter-spacing:.2px;font-size:16px;color:var(--ink);}
+.topbar .spacer{flex:1;}
+.iconbtn{
+  background:rgba(255,255,255,.08);border:none;color:#fff;
+  width:34px;height:34px;border-radius:10px;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+}
+.iconbtn:hover{background:rgba(255,255,255,.16);}
+.topbar .iconbtn{background:var(--paper-2);color:var(--ink);}
+.topbar .iconbtn:hover{background:var(--line);}
+.textbtn{background:transparent;border:none;color:rgba(255,255,255,.85);font-size:13px;padding:6px 8px;}
+
+/* ---------- Auth screen ---------- */
+#authScreen{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(1200px 600px at 50% -10%, #16305e 0%, var(--navy) 60%);
+  padding:24px;
+}
+.auth-card{
+  width:100%;max-width:380px;background:var(--paper);border-radius:20px;
+  padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.auth-logo{width:56px;height:56px;margin:0 auto 14px;border-radius:16px;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:22px;}
+.auth-title{text-align:center;font-size:20px;font-weight:800;color:var(--ink);margin:0 0 2px;}
+.auth-sub{text-align:center;font-size:12.5px;color:var(--ink-soft);margin:0 0 20px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;letter-spacing:.2px;}
+.field input{width:100%;padding:11px 12px;border-radius:10px;border:1.4px solid var(--line);background:#fff;font-size:14px;color:var(--ink);}
+.field input:focus{outline:none;border-color:var(--blue);}
+.btn{
+  width:100%;padding:12px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;
+  font-weight:700;font-size:14px;margin-top:4px;
+}
+.btn:disabled{opacity:.6;}
+.btn-secondary{background:#fff;color:var(--ink);border:1.4px solid var(--line);}
+.auth-switch{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:16px;}
+.auth-switch a{color:var(--blue);font-weight:600;text-decoration:none;cursor:pointer;}
+.auth-error{background:#FCE9E8;color:var(--danger);font-size:12.5px;padding:9px 11px;border-radius:9px;margin-bottom:12px;display:none;}
+.auth-note{background:#EAF2FF;color:#12408F;font-size:12px;padding:9px 11px;border-radius:9px;margin-bottom:12px;display:none;}
+
+/* ---------- Library screen ---------- */
+#libraryScreen{flex:1;background:var(--paper);display:flex;flex-direction:column;}
+.view{max-width:760px;margin:0 auto;width:100%;padding:18px 16px calc(130px + env(safe-area-inset-bottom,0px));}
+.library-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.library-header h1{font-size:19px;margin:0;color:var(--ink);}
+.library-header p{font-size:12.5px;color:var(--ink-soft);margin:2px 0 0;}
+.grid-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.book-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;
+  display:flex;flex-direction:column;gap:8px;position:relative;
+}
+.book-cover{
+  aspect-ratio:3/4;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:26px;
+  overflow:hidden;
+}
+.book-cover img{width:100%;height:100%;object-fit:contain;object-position:center;background:#fff;}
+.book-title{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+.title-sub{display:block;font-weight:400;font-size:.82em;opacity:.55;}
+.book-meta{font-size:11px;color:var(--ink-soft);}
+.book-progress{height:4px;border-radius:3px;background:var(--paper-2);overflow:hidden;}
+.book-progress i{display:block;height:100%;background:var(--ok);}
+.book-actions{display:flex;gap:6px;margin-top:2px;}
+.chip{font-size:10.5px;padding:3px 8px;border-radius:99px;background:var(--paper-2);color:var(--ink-soft);}
+.book-del{background:transparent;border:none;
+  width:22px;height:22px;padding:0;color:var(--danger);display:flex;align-items:center;justify-content:center;}
+.book-del svg{width:16px;height:16px;}
+.book-del:hover{opacity:.7;}
+.book-actions-row{display:flex;align-items:center;justify-content:space-between;}
+.book-reset{background:transparent;border:none;
+  width:22px;height:22px;padding:0;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;}
+.book-reset svg{width:16px;height:16px;}
+.book-reset:hover{color:var(--ink);}
+
+.empty-state{
+  border:1.6px dashed var(--line);border-radius:16px;padding:34px 18px;text-align:center;color:var(--ink-soft);
+}
+.empty-state .big{font-size:30px;margin-bottom:6px;}
+
+.demo-banner{background:#FFF4D6;color:#7A5B00;font-size:12px;padding:8px 14px;text-align:center;border-bottom:1px solid #F0DFA8;}
+
+/* ---------- Bottom navigation ---------- */
+.bottom-nav{
+  position:fixed;left:0;right:0;margin:0 auto;
+  bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  width:calc(100% - 20px);max-width:560px;z-index:30;
+  display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;
+  background:#fff;border:1px solid var(--line);border-radius:24px;padding:6px;
+  box-shadow:0 10px 30px rgba(11,18,32,.14);
+}
+.bn-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:8px 2px;margin:0 2px;border:none;background:transparent;border-radius:16px;
+  color:var(--ink-soft);-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;
+}
+.bn-item svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.bn-lbl{font-size:10.5px;font-weight:700;white-space:nowrap;line-height:1.1;}
+.bn-item.active{background:#EAF2FF;color:var(--blue);}
+.bn-item:active{transform:scale(.96);}
+.bn-center{display:flex;justify-content:center;align-items:flex-start;}
+.bn-add{
+  width:58px;height:58px;margin-top:-30px;border-radius:50%;border:none;color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 24px rgba(22,82,240,.45);-webkit-tap-highlight-color:transparent;
+}
+.bn-add svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;}
+.bn-add:active{transform:scale(.94);}
+
+/* ---------- Dashboard ---------- */
+.greet h1{font-size:20px;margin:0;color:var(--ink);}
+.greet p{font-size:12.5px;color:var(--ink-soft);margin:3px 0 16px;}
+.continue-card{
+  background:linear-gradient(135deg,var(--navy),#16305e);color:#fff;border-radius:20px;padding:18px;
+  display:flex;flex-direction:column;gap:9px;box-shadow:0 12px 30px rgba(11,18,32,.18);
+}
+.continue-kicker{font-size:10.5px;letter-spacing:1.5px;font-weight:800;color:var(--cyan);}
+.continue-title{font-size:17px;font-weight:800;line-height:1.3;}
+.continue-meta{font-size:12px;color:rgba(255,255,255,.7);}
+.continue-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden;}
+.continue-bar i{display:block;height:100%;background:var(--cyan);}
+.continue-btn{align-self:flex-start;margin-top:4px;padding:10px 16px;border-radius:11px;border:none;background:#fff;color:var(--ink);font-weight:700;font-size:13px;}
+.continue-btn.dark{background:var(--ink);color:#fff;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 8px;text-align:center;}
+.stat b{display:block;font-size:22px;color:var(--ink);}
+.stat span{font-size:11px;color:var(--ink-soft);}
+
+/* ---------- Riwayat baca ---------- */
+.hist-item{
+  display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);
+  border-radius:16px;padding:12px;margin-bottom:10px;cursor:pointer;
+}
+.hist-cover{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;color:#fff;font-weight:800;font-size:15px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hist-cover img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.hist-body{flex:1;min-width:0;}
+.hist-title{font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-meta{font-size:11.5px;color:var(--ink-soft);margin:2px 0 6px;}
+.hist-chev{color:var(--ink-soft);font-size:20px;}
+
+/* ---------- Setting ---------- */
+.set-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;}
+.set-account{display:flex;align-items:center;gap:12px;}
+.set-avatar{
+  width:46px;height:46px;border-radius:14px;flex-shrink:0;color:#fff;font-weight:800;font-size:18px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;
+}
+.set-name{font-size:14.5px;font-weight:700;color:var(--ink);}
+.set-email{font-size:12px;color:var(--ink-soft);word-break:break-all;}
+.set-label{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.seg{display:flex;gap:6px;background:var(--paper-2);padding:4px;border-radius:11px;}
+.seg button{flex:1;padding:8px 6px;border:none;border-radius:8px;background:transparent;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+.seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.set-preview{margin-top:10px;font-size:var(--read-size,15px);line-height:1.7;color:#2c3346;}
+.set-row{
+  display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;
+  font-size:13.5px;font-weight:600;color:var(--ink);
+}
+.set-row.danger{color:var(--danger);}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(10,14,26,.55);display:flex;align-items:flex-end;
+  justify-content:center;z-index:50;
+}
+@media (min-width:640px){ .modal-backdrop{align-items:center;} }
+.modal{
+  background:var(--paper);width:100%;max-width:520px;max-height:88vh;overflow:auto;
+  border-radius:20px 20px 0 0;padding:20px;
+}
+@media (min-width:640px){ .modal{border-radius:20px;} }
+.modal h2{margin:0 0 4px;font-size:18px;color:var(--ink);}
+.modal .sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;}
+.modal-close{float:right;background:none;border:none;font-size:20px;color:var(--ink-soft);}
+
+/* ---------- Confirm dialog kustom (pengganti confirm() bawaan browser) ---------- */
+.confirm-backdrop{
+  position:fixed;inset:0;background:rgba(20,24,34,.35);display:flex;align-items:center;
+  justify-content:center;z-index:80;padding:20px;
+}
+.confirm-box{
+  background:#F6F1E7;color:#4A4536;width:100%;max-width:340px;border-radius:18px;
+  padding:20px 20px 16px;box-shadow:0 12px 32px rgba(0,0,0,.18);
+  text-align:center;
+}
+.confirm-box p{margin:0 0 18px;font-size:14px;line-height:1.5;}
+.confirm-actions{display:flex;gap:10px;}
+.confirm-actions button{
+  flex:1;padding:10px 12px;border-radius:12px;border:none;font-size:13.5px;font-weight:600;
+}
+.confirm-cancel{background:#EAE3D2;color:#4A4536;}
+.confirm-ok{background:#F3C6C6;color:#7A2E2E;}
+.confirm-cancel:hover{background:#E1D8C1;}
+.confirm-ok:hover{background:#EDB3B3;}
+@media (prefers-color-scheme:dark){
+  .confirm-box{background:#2E2A3D;color:#E6E1F0;box-shadow:0 12px 32px rgba(0,0,0,.45);}
+  .confirm-cancel{background:#443F58;color:#E6E1F0;}
+  .confirm-cancel:hover{background:#4F4A66;}
+  .confirm-ok{background:#5A3A4A;color:#F3C6D6;}
+  .confirm-ok:hover{background:#6B4457;}
+}
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--paper-2);padding:4px;border-radius:11px;}
+.tab{flex:1;text-align:center;padding:8px 6px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-soft);border:none;background:transparent;}
+.tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+textarea.rawpaste{width:100%;min-height:180px;border-radius:12px;border:1.4px solid var(--line);padding:12px;font-size:13px;line-height:1.6;resize:vertical;}
+.dropzone{
+  border:1.8px dashed var(--line);border-radius:14px;padding:26px 14px;text-align:center;color:var(--ink-soft);
+  font-size:13px;margin-bottom:12px;
+}
+.dropzone input{display:none;}
+.dropzone label{color:var(--blue);font-weight:700;cursor:pointer;}
+.file-picked{font-size:12.5px;color:var(--ink);background:var(--paper-2);padding:8px 10px;border-radius:9px;margin-top:8px;display:none;}
+.hint-box{background:#EAF2FF;color:#12408F;font-size:12px;padding:10px 12px;border-radius:10px;line-height:1.55;margin-top:10px;}
+.hint-box b{display:block;margin-bottom:3px;}
+.checkline{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--ink-soft);margin-top:10px;}
+.checkline input{margin-top:2px;}
+
+/* ---------- Help / format guide modal content ---------- */
+.rec-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.rec-table th,.rec-table td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);}
+.rec-table th{color:var(--ink-soft);font-weight:600;}
+.tag-good{color:var(--ok);font-weight:700;}
+.tag-ok{color:#B8860B;font-weight:700;}
+.tag-bad{color:var(--danger);font-weight:700;}
+.help-section{margin-top:16px;}
+.help-section h3{font-size:13.5px;margin:0 0 6px;color:var(--ink);}
+.help-section p, .help-section li{font-size:12.5px;color:var(--ink-soft);line-height:1.6;}
+code.inline{background:var(--paper-2);padding:1px 5px;border-radius:5px;font-size:11.5px;}
+pre.codeblock{background:#111a2e;color:#dce6ff;padding:10px 12px;border-radius:10px;font-size:11.5px;overflow:auto;line-height:1.6;}
+
+/* ---------- Reader screen ---------- */
+#readerScreen{flex:1;display:flex;flex-direction:column;background:var(--paper);}
+.reader-top{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  background:var(--navy);color:#fff;position:sticky;top:0;z-index:15;
+}
+.reader-top .rt-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;font-weight:600;}
+.reader-body{flex:1;display:flex;max-width:900px;margin:0 auto;width:100%;}
+.toc-panel{
+  width:230px;flex-shrink:0;border-right:1px solid var(--line);padding:14px 10px;
+  overflow-y:auto;display:none;
+}
+@media (min-width:820px){ .toc-panel{display:block;} }
+.toc-panel h4{font-size:11px;letter-spacing:.4px;color:var(--ink-soft);text-transform:uppercase;margin:4px 8px 8px;}
+.toc-item{
+  display:block;width:100%;text-align:left;background:none;border:none;padding:9px 9px;
+  border-radius:9px;font-size:12.5px;color:var(--ink-soft);margin-bottom:2px;line-height:1.4;
+}
+.toc-item.active{background:var(--paper-2);color:var(--ink);font-weight:700;}
+.reader-content{flex:1;padding:26px 20px 90px;max-width:640px;overflow-y:auto;}
+.mod-kicker{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:700;margin-bottom:6px;}
+.mod-title{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:var(--ink);margin:0 0 18px;line-height:1.3;}
+.block-p{font-size:var(--read-size,15px);line-height:1.85;color:#2c3346;margin:0 0 14px;}
+.block-quote{border-left:3px solid var(--cyan);padding:2px 0 2px 14px;color:var(--ink-soft);font-style:italic;margin:0 0 14px;}
+.block-list{margin:0 0 14px;padding-left:20px;}
+.block-list li{font-size:var(--read-size,15px);line-height:1.8;color:#2c3346;margin-bottom:4px;}
+.reflect-box{
+  background:#fff;border:1.4px solid var(--line);border-radius:16px;padding:16px;margin:22px 0;
+}
+.reflect-kicker{font-size:10.5px;letter-spacing:1.5px;color:var(--cyan);font-weight:800;margin-bottom:4px;}
+.reflect-title{font-size:14.5px;font-weight:700;color:var(--ink);margin:0 0 12px;font-style:italic;}
+.q-item{margin-bottom:14px;}
+.q-item:last-child{margin-bottom:0;}
+.q-text{font-size:13.5px;color:#2c3346;margin-bottom:7px;line-height:1.55;}
+.q-answer{
+  width:100%;min-height:64px;border-radius:10px;border:1.4px solid var(--line);
+  padding:10px 11px;font-size:13.5px;line-height:1.6;resize:vertical;background:var(--paper);
+}
+.q-answer:focus{outline:none;border-color:var(--blue);}
+.save-hint{font-size:10.5px;color:var(--ink-soft);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.save-dot{width:6px;height:6px;border-radius:50%;background:#c9c2a8;}
+.save-dot.saved{background:var(--ok);}
+.save-dot.saving{background:#B8860B;}
+.reader-nav{
+  position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--line);
+  display:flex;gap:10px;padding:10px 20px;max-width:640px;margin-left:auto;margin-right:0;width:100%;
+}
+@media (max-width:819px){ .reader-nav{max-width:100%;margin:0;} }
+.navbtn{flex:1;padding:11px;border-radius:10px;border:1.4px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--ink);}
+.navbtn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+.navbtn:disabled{opacity:.4;}
+
+/* ---------- Loading & toast ---------- */
+#loadingOverlay{
+  position:fixed;inset:0;background:rgba(11,18,32,.75);display:flex;align-items:center;justify-content:center;
+  z-index:100;color:#fff;font-size:13px;flex-direction:column;gap:10px;
+}
+.spinner{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#toast{
+  position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:11px 18px;border-radius:12px;font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;
+  max-width:88vw;text-align:center;
+}
+#toast.show{opacity:1;}
+
+/* ---------- Impor PDF: field pilihan ---------- */
+.field select{width:100%;padding:11px 12px;border-radius:10px;border:1.4px solid var(--line);background:#fff;font-size:14px;color:var(--ink);}
+.field select:focus{outline:none;border-color:var(--blue);}
+
+/* ---------- Komponen bacaan tambahan (dipakai semua tema) ---------- */
+.block-lead{font-size:calc(var(--read-size,15px) + 1px);line-height:1.8;color:var(--ink-soft);font-style:italic;margin:0 0 16px;}
+.reflect-tag{font-size:10px;letter-spacing:2px;color:var(--ink-soft);font-weight:700;margin-bottom:10px;}
+.q-note{font-size:13.5px;line-height:1.65;color:var(--ink-soft);font-style:italic;margin:0 0 14px;}
+.slot-list{display:flex;flex-direction:column;gap:8px;}
+.slot{display:flex;align-items:center;gap:8px;}
+.slot span{width:20px;font-weight:700;color:var(--ink-soft);font-size:13.5px;}
+.q-slot{flex:1;min-width:0;padding:10px 11px;border-radius:10px;border:1.4px solid var(--line);font-size:13.5px;background:var(--paper);color:var(--ink);}
+.q-slot:focus{outline:none;border-color:var(--blue);}
+.toc-tag{display:inline-block;min-width:24px;margin-right:6px;font-weight:700;color:var(--blue);}
+.blk-closing{text-align:center;margin:38px 0 8px;padding-top:28px;border-top:1px solid var(--line);}
+.blk-closing .k{font-size:11px;letter-spacing:4px;font-weight:700;color:var(--ink-soft);}
+.blk-closing .h{font-size:20px;font-weight:800;line-height:1.35;color:var(--ink);margin:14px 0 18px;}
+.blk-closing p{font-size:14.5px;line-height:1.8;color:var(--ink-soft);font-style:italic;margin:0 0 12px;}
+.blk-closing .f{font-size:10.5px;letter-spacing:1.2px;color:var(--ink-soft);margin-top:18px;}
+.blk-closing svg.rings{display:block;width:150px;height:150px;margin:20px auto 6px;}
+.block-h{font-size:17px;font-weight:700;line-height:1.4;color:var(--ink);margin:32px 0 10px;}
+.blk-affirm{margin:26px 0;padding:18px 18px 8px;border-radius:16px;background:var(--paper-2);text-align:center;}
+.blk-affirm .k{font-size:10.5px;letter-spacing:2.5px;font-weight:700;color:var(--ink-soft);margin-bottom:14px;}
+.blk-affirm p{font-size:14.5px;line-height:1.75;color:var(--ink);font-style:italic;margin:0 0 12px;}
+.chk-row{display:flex;align-items:flex-start;gap:11px;padding:10px 2px;font-size:13.5px;line-height:1.55;color:#2c3346;cursor:pointer;border-bottom:1px solid var(--line);}
+.chk-row:last-of-type{border-bottom:none;}
+.chk-row input{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--blue);}
+
+/* ============================================================
+   TEMA PER BUKU — "Evergreen"
+   Dipasang lewat atribut data-theme pada #readerScreen (halaman baca) dan
+   kelas .th-evergreen pada sampul kecil di rak buku / riwayat.
+   Tema baru cukup ditambahkan di sini + di daftar THEMES pada script.
+============================================================ */
+#readerScreen[data-theme="evergreen"]{
+  --navy:#3B4A37; --navy-2:#4C6249;
+  --blue:#6E9575; --cyan:#8FB08F;
+  --paper:#F7F5EA; --paper-2:#E9EEDF; --ink:#3D4A37; --ink-soft:#7A7462; --line:#DAE2CD;
+  background:linear-gradient(180deg,#F7F5EA 0%,#EAF0DF 55%,#DDE9D5 100%);
+}
+#readerScreen[data-theme="evergreen"] .block-p,
+#readerScreen[data-theme="evergreen"] .block-list li,
+#readerScreen[data-theme="evergreen"] .block-lead,
+#readerScreen[data-theme="evergreen"] .block-quote,
+#readerScreen[data-theme="evergreen"] .q-text,
+#readerScreen[data-theme="evergreen"] .q-note,
+#readerScreen[data-theme="evergreen"] .q-answer,
+#readerScreen[data-theme="evergreen"] .q-slot,
+#readerScreen[data-theme="evergreen"] .blk-closing p{font-family:'Lora',Georgia,'Times New Roman',serif;}
+#readerScreen[data-theme="evergreen"] .block-p,
+#readerScreen[data-theme="evergreen"] .block-list li,
+#readerScreen[data-theme="evergreen"] .q-text{color:#4A5245;}
+#readerScreen[data-theme="evergreen"] .block-p{line-height:1.9;}
+#readerScreen[data-theme="evergreen"] .block-lead{color:#6B6152;}
+#readerScreen[data-theme="evergreen"] .block-p strong{color:#3D4A37;}
+#readerScreen[data-theme="evergreen"] .mod-title,
+#readerScreen[data-theme="evergreen"] .blk-closing .h,
+#readerScreen[data-theme="evergreen"] .ev-hero-title{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:700;color:#3D4A37;}
+#readerScreen[data-theme="evergreen"] .mod-title{font-size:26px;letter-spacing:.2px;}
+#readerScreen[data-theme="evergreen"] .mod-kicker,
+#readerScreen[data-theme="evergreen"] .reflect-kicker,
+#readerScreen[data-theme="evergreen"] .reflect-tag,
+#readerScreen[data-theme="evergreen"] .toc-tag,
+#readerScreen[data-theme="evergreen"] .blk-closing .k,
+#readerScreen[data-theme="evergreen"] .ev-hero-kicker{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600;letter-spacing:3px;color:#7C9A7E;}
+#readerScreen[data-theme="evergreen"] .reflect-box{background:rgba(255,255,255,.55);border-color:#CFDBC2;}
+#readerScreen[data-theme="evergreen"] .reflect-title{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;font-style:normal;font-weight:600;font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:#3D4A37;}
+#readerScreen[data-theme="evergreen"] .blk-closing p{color:#6B6152;}
+#readerScreen[data-theme="evergreen"] .blk-closing .f{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;color:#9A917C;}
+#readerScreen[data-theme="evergreen"] .block-h,
+#readerScreen[data-theme="evergreen"] .blk-affirm .k{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;}
+#readerScreen[data-theme="evergreen"] .blk-affirm p,
+#readerScreen[data-theme="evergreen"] .chk-row{font-family:'Lora',Georgia,'Times New Roman',serif;}
+#readerScreen[data-theme="evergreen"] .toc-item{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;}
+
+/* Sampul di halaman baca (bagian pertama) */
+.ev-hero{text-align:center;padding:6px 0 34px;margin-bottom:28px;border-bottom:1px solid var(--line);}
+.ev-hero svg.rings{display:block;width:min(72vw,250px);height:auto;margin:0 auto 6px;}
+.ev-hero-kicker{font-size:11px;letter-spacing:5px;margin:0 0 16px;}
+.ev-hero-title{font-size:clamp(34px,10vw,46px);letter-spacing:2px;line-height:1.05;}
+.ev-hero-sub{font-family:'Lora',Georgia,serif;font-style:italic;font-size:17px;color:#6B6152;margin-top:16px;}
+.ev-hero-tag{font-family:'Lora',Georgia,serif;font-style:italic;font-size:13.5px;color:#8A806B;margin:6px auto 0;max-width:300px;line-height:1.6;}
+.ev-hero-rule{width:64px;height:3px;border-radius:2px;background:#8FB08F;margin:22px auto 16px;}
+.ev-hero-credit{font-family:'Poppins',-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:500;font-size:10.5px;letter-spacing:3px;color:#8A806B;line-height:1.6;}
+
+/* Sampul kecil (rak buku, riwayat) */
+.th-evergreen{background:linear-gradient(180deg,#F5F3E6 0%,#DCE8D3 100%) !important;color:#3F4A38 !important;position:relative;overflow:hidden;}
+.book-cover.th-evergreen svg.rings{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:64px;height:64px;}
+.book-cover.th-evergreen .cv-title{position:absolute;bottom:6px;left:0;right:0;text-align:center;font:700 9.5px/1 'Poppins',-apple-system,'Segoe UI',sans-serif;letter-spacing:2.2px;}
+.hist-cover.th-evergreen svg.rings{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);}
+.continue-card.th-evergreen-card{background:linear-gradient(135deg,#3B4A37,#5B7A5E);}
+.continue-card.th-evergreen-card .continue-kicker{color:#CFE3C4;}
+.continue-card.th-evergreen-card .continue-bar i{background:#B8D3AE;}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="hidden">
+  <div class="spinner"></div>
+  <div id="loadingText">Memuat…</div>
+</div>
+<div id="toast"></div>
+
+<div id="app">
+
+  <!-- ======================= AUTH ======================= -->
+  <div id="authScreen">
+    <div class="auth-card">
+      <div class="auth-logo">E</div>
+      <div class="auth-title" id="authTitle">Masuk ke Essensiana</div>
+      <div class="auth-sub">Baca materi & isi latihan refleksinya, tersimpan otomatis di akunmu.</div>
+
+      <div class="auth-error" id="authError"></div>
+      <div class="auth-note" id="authNote"></div>
+
+      <div class="field" id="fieldName" style="display:none;">
+        <label>Nama</label>
+        <input type="text" id="inpName" placeholder="Nama kamu">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="inpEmail" placeholder="nama@email.com">
+      </div>
+      <div class="field" id="fieldPass">
+        <label>Kata sandi</label>
+        <input type="password" id="inpPass" placeholder="Minimal 6 karakter">
+      </div>
+
+      <button class="btn" id="btnAuthSubmit">Masuk</button>
+      <button class="btn btn-secondary" id="btnAuthAlt" style="margin-top:8px;">Buat akun baru</button>
+
+      <div class="auth-switch">
+        <a id="linkForgot">Lupa kata sandi?</a>
+      </div>
+      <div class="auth-switch" id="demoWrap" style="display:none;">
+        <a id="linkDemo">Lihat pratinjau tanpa login</a>
+        <div style="margin-top:3px;font-size:11px;">Data hanya sementara dan tidak disimpan.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= LIBRARY / MAIN SHELL (dengan bottom bar) ======================= -->
+  <div id="libraryScreen" class="hidden">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="btnHelp" title="Panduan impor PDF">?</button>
+    </div>
+    <div class="demo-banner hidden" id="demoBanner">Mode pratinjau — data hanya sementara, tidak disimpan ke akun.</div>
+
+    <!-- Dashboard -->
+    <div id="view_dashboard" class="view">
+      <div id="dashContinue"></div>
+      <div class="stat-row">
+        <div class="stat"><b id="statBooks">0</b><span>Buku</span></div>
+        <div class="stat"><b id="statRead">0</b><span>Bagian dibaca</span></div>
+        <div class="stat"><b id="statDone">0</b><span>Selesai</span></div>
+      </div>
+    </div>
+
+    <!-- Daftar Buku -->
+    <div id="view_books" class="view hidden">
+      <div class="library-header">
+        <div>
+          <h1>Rak Bukumu</h1>
+          <p id="libSubtitle">Materi yang sudah kamu simpan</p>
+        </div>
+      </div>
+      <div id="gridBooks" class="grid-books"></div>
+      <div id="emptyState" class="empty-state hidden">
+        <div class="big">📚</div>
+        <div><b>Rak bukumu masih kosong.</b></div>
+        <div style="margin-top:4px;">Tekan tombol + untuk mengimpor PDF pertamamu.</div>
+      </div>
+    </div>
+
+    <!-- Riwayat Baca -->
+    <div id="view_history" class="view hidden">
+      <div class="library-header">
+        <div>
+          <h1>Riwayat Baca</h1>
+          <p>Materi yang terakhir kamu buka</p>
+        </div>
+      </div>
+      <div id="historyList"></div>
+      <div id="historyEmpty" class="empty-state hidden">
+        <div class="big">🕘</div>
+        <div><b>Belum ada riwayat baca.</b></div>
+        <div style="margin-top:4px;">Buka salah satu materi di Daftar Buku, dan riwayatnya muncul di sini.</div>
+      </div>
+    </div>
+
+    <!-- Setting -->
+    <div id="view_settings" class="view hidden">
+      <div class="library-header">
+        <div>
+          <h1>Setting</h1>
+          <p>Akun dan tampilan bacaan</p>
+        </div>
+      </div>
+      <div class="set-card set-account">
+        <div class="set-avatar" id="setAvatar">E</div>
+        <div>
+          <div class="set-name" id="setName">—</div>
+          <div class="set-email" id="setEmail"></div>
+        </div>
+      </div>
+      <div class="set-card">
+        <div class="set-label">Ukuran teks bacaan</div>
+        <div class="seg" id="sizeSeg">
+          <button data-size="kecil">Kecil</button>
+          <button data-size="sedang">Sedang</button>
+          <button data-size="besar">Besar</button>
+        </div>
+        <div class="set-preview">Contoh teks bacaan: pelan-pelan saja, satu bagian dalam satu waktu.</div>
+      </div>
+      <button class="set-row" id="btnHelp2"><span>Panduan impor PDF</span><span>›</span></button>
+      <button class="set-row danger" id="btnLogout"><span>Keluar</span><span>⎋</span></button>
+    </div>
+
+    <!-- Bottom bar -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Navigasi utama">
+      <button class="bn-item active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+        <span class="bn-lbl">Dashboard</span>
+      </button>
+      <button class="bn-item" data-tab="books">
+        <svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5.3 8.5 4.8 4 5v13c4.5-.2 6.5.3 8 1.5 1.5-1.2 3.5-1.7 8-1.5V5c-4.5-.2-6.5.3-8 1.5z"/><path d="M12 6.5v13"/></svg>
+        <span class="bn-lbl">Daftar Buku</span>
+      </button>
+      <div class="bn-center">
+        <button class="bn-add" id="btnAddBook" aria-label="Tambah materi" title="Tambah materi">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+      <button class="bn-item" data-tab="history">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span class="bn-lbl">Riwayat Baca</span>
+      </button>
+      <button class="bn-item" data-tab="settings">
+        <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+        <span class="bn-lbl">Setting</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ======================= READER ======================= -->
+  <div id="readerScreen" class="hidden">
+    <div class="reader-top">
+      <button class="iconbtn" id="btnBackLib">←</button>
+      <div class="rt-title" id="rtTitle">Judul buku</div>
+      <button class="iconbtn" id="btnTocMobile" title="Daftar isi">☰</button>
+    </div>
+    <div class="reader-body">
+      <div class="toc-panel" id="tocPanel">
+        <h4>Daftar Isi</h4>
+        <div id="tocList"></div>
+      </div>
+      <div class="reader-content" id="readerContent"></div>
+    </div>
+    <div class="reader-nav">
+      <button class="navbtn" id="btnPrevChap">← Sebelumnya</button>
+      <button class="navbtn primary" id="btnNextChap">Selanjutnya →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================= MODAL: ADD BOOK (PDF) ======================= -->
+<div class="modal-backdrop hidden" id="modalAdd">
+  <div class="modal">
+    <button class="modal-close" id="closeAdd">×</button>
+    <h2>Impor Buku dari PDF</h2>
+    <div class="sub">Unggah PDF workbook-mu. Essensiana hanya mengambil teks dan susunannya (sampul, bab, latihan), jadi yang tersimpan cuma beberapa KB, bukan file PDF-nya. Lihat tanda <b>(?)</b> untuk panduan.</div>
+
+    <div class="field">
+      <label>Judul buku (opsional)</label>
+      <input type="text" id="inpTitleFile" placeholder="Kosongkan untuk memakai judul dari sampul PDF">
+    </div>
+    <div class="dropzone">
+      <div>📄 File PDF workbook</div>
+      <label for="fileInput">pilih file dari perangkat</label>
+      <input type="file" id="fileInput" accept="application/pdf,.pdf">
+      <div class="file-picked" id="filePicked"></div>
+    </div>
+    <div class="field">
+      <label>Tampilan buku</label>
+      <select id="selTheme"></select>
+    </div>
+
+    <div id="parsePreview" class="hint-box hidden"></div>
+
+    <label class="checkline">
+      <input type="checkbox" id="chkKeepOriginal">
+      <span>Simpan juga file PDF asli ke Firebase Storage sebagai cadangan (menambah pemakaian storage, maksimal 3MB, tidak disarankan).</span>
+    </label>
+
+    <button class="btn" id="btnSaveBook" style="margin-top:16px;">Simpan ke Rak Buku</button>
+  </div>
+</div>
+
+<!-- ======================= MODAL: HELP / PANDUAN IMPOR PDF ======================= -->
+<div class="modal-backdrop hidden" id="modalHelp">
+  <div class="modal">
+    <button class="modal-close" id="closeHelp">×</button>
+    <h2>Panduan Impor PDF</h2>
+    <div class="sub">Essensiana hanya menerima PDF. Teksnya diambil lalu digambar ulang oleh aplikasi, jadi ukuran yang tersimpan kecil tanpa perlu kompresi.</div>
+
+    <table class="rec-table">
+      <tr><th>Tahap</th><th>Yang terjadi</th></tr>
+      <tr><td>Dibaca</td><td>Teks beserta posisi &amp; ukuran hurufnya diambil di perangkatmu</td></tr>
+      <tr><td>Disimpan</td><td class="tag-good">Teks terstruktur (puluhan KB), bukan file PDF</td></tr>
+      <tr><td>Ditampilkan</td><td>Digambar ulang aplikasi dengan tampilan buku itu</td></tr>
+      <tr><td>Foto / scan</td><td class="tag-bad">Tidak didukung (tidak ada teks, butuh OCR)</td></tr>
+    </table>
+
+    <div class="help-section">
+      <h3>Kenapa bukan simpan file aslinya saja?</h3>
+      <p>Firestore membatasi satu dokumen maksimal 1MB, dan Firebase Storage dihitung per GB tersimpan dan per GB yang diunduh. Sebuah PDF workbook bisa ratusan KB sampai puluhan MB, sedangkan teks hasil ekstraksinya biasanya cuma puluhan KB. Karena itu file PDF dibuang setelah teksnya diambil (kecuali kamu mencentang opsi cadangan saat impor).</p>
+    </div>
+
+    <div class="help-section">
+      <h3>Susunan PDF yang dikenali</h3>
+      <p>Halaman 1 dibaca sebagai sampul (judul, subjudul, keterangan). Daftar isi dilewati dan dibuat ulang otomatis dari daftar bab. Halaman isi dikenali dari penanda kecil di bagian atas seperti <code class="inline">MODUL 01</code>, lalu judul besar dan paragraf. Halaman <code class="inline">MODUL 01 · REFLEKSI</code> dengan baris <code class="inline">LATIHAN · Judul</code> menjadi kolom jawaban yang bisa diketik. Baris kosong bernomor (1. 2. 3.) menjadi kolom berbaris. Halaman terakhir dibaca sebagai penutup.</p>
+      <p>Susunan kedua yang juga dikenali: PDF dengan halaman <code class="inline">Daftar Isi</code> bernomor halaman (mis. <code class="inline">Modul 1: Judul ... 6</code>), judul di tiap halaman, kolom refleksi berlabel <code class="inline">Tuliskan apa yang terasa jujur buat kamu</code>, checklist (<code class="inline">Centang ...</code>), dan halaman afirmasi <code class="inline">Rangkulan Hangat</code>. Bagian dari Daftar Isi menjadi bab, checklist bisa dicentang, dan kotak tulis kosong menjadi kolom jawaban.</p>
+            <p>Kalau PDF-mu tidak mengikuti susunan ini, teksnya tetap dibaca lalu dipecah ke bab lewat tebakan kata kunci seperti <code class="inline">MODUL</code>, <code class="inline">BAB</code>, <code class="inline">CHAPTER</code>, <code class="inline">PART</code>, dan <code class="inline">LATIHAN</code>. Hasilnya bisa kurang rapi.</p>
+    </div>
+
+    <div class="help-section">
+      <h3>Tampilan per buku</h3>
+      <p>Tiap buku punya tampilannya sendiri. Pilihan <b>Otomatis</b> mencocokkan judul buku dengan tema yang tersedia (saat ini: Evergreen), selain itu dipakai tampilan Standar. Kamu juga bisa memilih tema secara manual saat impor.</p>
+    </div>
+
+    <div class="help-section">
+      <h3>Soal upgrade aplikasi</h3>
+      <p>Aplikasi ini didesain supaya kalau kamu mau upgrade fitur, kamu cukup mengganti file <code class="inline">index.html</code> di GitHub. File <code class="inline">firebase-config.js</code>, <code class="inline">manifest.json</code>, <code class="inline">service-worker.js</code>, dan folder <code class="inline">icons/</code> dibuat supaya jarang atau tidak pernah perlu disentuh lagi.</p>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script>
+/* Penjaga: kalau aplikasi gagal jalan sebelum sempat dimulai (mis. browser lama),
+   tampilkan pesan di layar login, bukan diam saja. */
+window.__essBooted = false;
+window.addEventListener("error", function(e){
+  if(window.__essBooted || !e || !e.message) return;
+  var el = document.getElementById("authError");
+  if(el){ el.textContent = "Aplikasi gagal dimuat: " + e.message; el.style.display = "block"; }
+});
+document.addEventListener("click", function(e){
+  if(window.__essBooted) return;
+  if(e.target.closest && e.target.closest("#btnAuthSubmit,#btnAuthAlt,#linkForgot")){
+    var el = document.getElementById("authError");
+    if(el){ el.textContent = "Aplikasi belum selesai dimuat. Tunggu sebentar, atau muat ulang halaman."; el.style.display = "block"; }
+  }
+});
+</script>
+<script type="module">
+window.__essBooted = true;
+
+/* ============================================================
+   FIREBASE — dimuat dinamis (bukan import statis) supaya kalau gagal dimuat
+   (browser internal aplikasi lain, koneksi/pemblokir), aplikasi tetap hidup
+   dan bisa dipakai dalam "mode pratinjau" tanpa login.
+============================================================ */
+const FB_BASE = "https://www.gstatic.com/firebasejs/10.13.0/";
+
+// Cadangan kalau firebase-config.js tidak terbaca. Kalau firebase-config.js ada,
+// isinya yang dipakai (jadi tetap bisa ganti kredensial lewat file itu).
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAsEb9ckf9biP7Y5Cm61FXe0gH_CC1cYEQ",
+  authDomain: "essensiana-7b729.firebaseapp.com",
+  projectId: "essensiana-7b729",
+  storageBucket: "essensiana-7b729.firebasestorage.app",
+  messagingSenderId: "233284568221",
+  appId: "1:233284568221:web:45ffe5138b027c255a4074"
+};
+
+let initializeApp, initializeAuth, getAuth, indexedDBLocalPersistence, browserLocalPersistence,
+    browserSessionPersistence, inMemoryPersistence, onAuthStateChanged, createUserWithEmailAndPassword,
+    signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile;
+let getFirestore, initializeFirestore, doc, setDoc, getDoc, getDocs, deleteDoc, collection,
+    serverTimestamp, writeBatch, query, orderBy;
+
+let fbApp = null, auth = null, db = null;
+let backendReady = false, backendMsg = "";
+let demoMode = false, realFs = null;
+let currentUser = null;
+let storageMod = null; // lazy-loaded only if "keep original" is used
+
+async function getStorageMod(){
+  if (storageMod) return storageMod;
+  storageMod = await import(FB_BASE + "firebase-storage.js");
+  storageMod.storage = storageMod.getStorage(fbApp);
+  return storageMod;
+}
+
+async function initBackend(){
+  try{
+    const [appM, authM, fsM] = await Promise.all([
+      import(FB_BASE + "firebase-app.js"),
+      import(FB_BASE + "firebase-auth.js"),
+      import(FB_BASE + "firebase-firestore.js")
+    ]);
+    ({ initializeApp } = appM);
+    ({ initializeAuth, getAuth, indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence,
+       inMemoryPersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+       signOut, sendPasswordResetEmail, updateProfile } = authM);
+    ({ getFirestore, initializeFirestore, doc, setDoc, getDoc, getDocs, deleteDoc, collection,
+       serverTimestamp, writeBatch, query, orderBy } = fsM);
+
+    fbApp = initializeApp(window.ESSENSIANA_FIREBASE_CONFIG || DEFAULT_FIREBASE_CONFIG);
+
+    // Penyimpanan sesi login dengan cadangan berlapis — browser internal (WebView) sering
+    // membatasi IndexedDB/localStorage; inMemory jadi jaring pengaman terakhir.
+    try{
+      auth = initializeAuth(fbApp, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence]
+      });
+    } catch(e){ auth = getAuth(fbApp); }
+
+    // Auto-deteksi long-polling: koneksi Firestore lebih stabil di WebView/proxy.
+    try{
+      db = initializeFirestore(fbApp, { experimentalAutoDetectLongPolling: true });
+    } catch(e){ db = getFirestore(fbApp); }
+
+    backendReady = true;
+    onAuthStateChanged(auth, handleAuthChange);
+  } catch(err){
+    console.error("Firebase gagal dimuat:", err);
+    backendMsg = "Firebase gagal dimuat di browser ini. Cek koneksi internet, matikan pemblokir iklan/VPN, lalu muat ulang. Kamu tetap bisa melihat tampilan lewat mode pratinjau.";
+    showAuthError(backendMsg);
+    showDemoLink();
+  }
+}
+
+/* ============================================================
+   UI HELPERS
+============================================================ */
+const $ = (id) => document.getElementById(id);
+function show(el){ el.classList.remove("hidden"); }
+function hide(el){ el.classList.add("hidden"); }
+function toast(msg, ms=2400){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove("show"), ms);
+}
+function loading(on, text="Memuat…"){
+  $("loadingText").textContent = text;
+  on ? show($("loadingOverlay")) : hide($("loadingOverlay"));
+}
+// Dialog konfirmasi kustom (di tengah layar, pastel, ikut dark/light mode) — pengganti confirm() bawaan
+function customConfirm(message, okLabel="Ya", cancelLabel="Batal"){
+  return new Promise((resolve) => {
+    const backdrop = document.createElement("div");
+    backdrop.className = "confirm-backdrop";
+    backdrop.innerHTML = `
+      <div class="confirm-box">
+        <p>${escapeHtml(message)}</p>
+        <div class="confirm-actions">
+          <button class="confirm-cancel">${escapeHtml(cancelLabel)}</button>
+          <button class="confirm-ok">${escapeHtml(okLabel)}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(backdrop);
+    const finish = (val) => { backdrop.remove(); resolve(val); };
+    backdrop.querySelector(".confirm-cancel").onclick = () => finish(false);
+    backdrop.querySelector(".confirm-ok").onclick = () => finish(true);
+    backdrop.onclick = (e) => { if(e.target === backdrop) finish(false); };
+  });
+}
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function inlineMd(s){
+  s = escapeHtml(s);
+  s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  return s;
+}
+
+/* ============================================================
+   PARSER: raw text/markdown -> { title, modules:[{title, blocks}] }
+============================================================ */
+const HEADING_KEYWORDS = /^\s*(#{1,3}\s+|MODUL\s*\d*\s*[:\-–]?\s*|BAB\s*\d*\s*[:\-–]?\s*|CHAPTER\s*\d*\s*[:\-–]?\s*|PART\s*\d*\s*[:\-–]?\s*|PENUTUP\b|BAGIAN\s*\d*\s*[:\-–]?\s*)/i;
+
+function isHeadingLine(line){
+  const t = line.trim();
+  if(!t) return false;
+  if(/^#{1,3}\s+/.test(t)) return true;
+  if(/^(MODUL|BAB|CHAPTER|PART|BAGIAN)\s*\d+/i.test(t)) return true;
+  if(/^PENUTUP\b/i.test(t)) return true;
+  return false;
+}
+function cleanHeadingText(line){
+  return line.trim().replace(/^#{1,3}\s+/, "");
+}
+
+function parseBlocksFromLines(lines){
+  const blocks = [];
+  let para = [];
+  let list = [];
+  let i = 0;
+
+  function flushPara(){
+    if(para.length){ blocks.push({type:"p", text: para.join(" ").trim()}); para = []; }
+  }
+  function flushList(){
+    if(list.length){ blocks.push({type:"list", items: list.slice()}); list = []; }
+  }
+
+  while(i < lines.length){
+    let line = lines[i];
+    const trimmed = line.trim();
+
+    // Fenced reflection block :::latihan ... :::
+    if(/^:::\s*latihan/i.test(trimmed)){
+      flushPara(); flushList();
+      const titleMatch = trimmed.replace(/^:::\s*latihan/i,"").trim();
+      const qs = [];
+      i++;
+      while(i < lines.length && !/^:::\s*$/.test(lines[i].trim())){
+        const l = lines[i].trim();
+        if(l){
+          const q = l.replace(/^[-*]\s+/, "").replace(/^\d+[.)]\s+/, "");
+          qs.push(q);
+        }
+        i++;
+      }
+      blocks.push({type:"reflection", title: titleMatch || "Latihan Refleksi", questions: qs.map((q,idx)=>({id:"q"+idx, text:q}))});
+      i++; // skip closing :::
+      continue;
+    }
+
+    // Heuristic reflection trigger: a line containing the word LATIHAN
+    if(/LATIHAN/i.test(trimmed) && trimmed.length < 80 && !/^:::/.test(trimmed)){
+      flushPara(); flushList();
+      const titleMatch = trimmed.replace(/^[·•\-–\s]*LATIHAN[·•\-–\s]*/i,"").trim();
+      const qs = [];
+      i++;
+      while(i < lines.length && !isHeadingLine(lines[i]) && !/^:::/.test(lines[i].trim())){
+        const l = lines[i].trim();
+        if(l) qs.push(l.replace(/^[-*]\s+/, "").replace(/^\d+[.)]\s+/, ""));
+        i++;
+      }
+      if(qs.length){
+        blocks.push({type:"reflection", title: titleMatch || "Latihan Refleksi", questions: qs.map((q,idx)=>({id:"q"+idx, text:q}))});
+      }
+      continue;
+    }
+
+    if(!trimmed){
+      flushPara(); flushList();
+      i++; continue;
+    }
+
+    if(/^>\s?/.test(trimmed)){
+      flushPara(); flushList();
+      blocks.push({type:"quote", text: trimmed.replace(/^>\s?/,"")});
+      i++; continue;
+    }
+
+    if(/^[-*]\s+/.test(trimmed) || /^\d+[.)]\s+/.test(trimmed)){
+      flushPara();
+      list.push(trimmed.replace(/^[-*]\s+/, "").replace(/^\d+[.)]\s+/, ""));
+      i++; continue;
+    }
+
+    flushList();
+    para.push(trimmed);
+    i++;
+  }
+  flushPara(); flushList();
+  return blocks;
+}
+
+function parseRawContent(raw, fallbackTitle){
+  const lines = raw.replace(/\r\n/g, "\n").split("\n");
+
+  // find all heading line indices
+  const headingIdx = [];
+  lines.forEach((l, idx) => { if(isHeadingLine(l)) headingIdx.push(idx); });
+
+  let bookTitle = fallbackTitle;
+  let workLines = lines;
+  let startIdxList = headingIdx;
+
+  // If the very first heading is level-1 markdown (#) and used only once before any repeats, treat as doc title
+  if(headingIdx.length && /^#\s+/.test(lines[headingIdx[0]].trim())){
+    const isOnlyOne = headingIdx.filter(i => /^#\s+/.test(lines[i].trim())).length === 1;
+    if(isOnlyOne && headingIdx.length > 1){
+      bookTitle = cleanHeadingText(lines[headingIdx[0]]) || fallbackTitle;
+      startIdxList = headingIdx.slice(1);
+    }
+  }
+
+  const modules = [];
+  if(!startIdxList.length){
+    modules.push({ title: "Isi", blocks: parseBlocksFromLines(workLines) });
+  } else {
+    for(let m = 0; m < startIdxList.length; m++){
+      const start = startIdxList[m];
+      const end = m + 1 < startIdxList.length ? startIdxList[m+1] : workLines.length;
+      const title = cleanHeadingText(workLines[start]);
+      const bodyLines = workLines.slice(start+1, end);
+      modules.push({ title: title || ("Bagian " + (m+1)), blocks: parseBlocksFromLines(bodyLines) });
+    }
+  }
+  return { title: bookTitle, modules };
+}
+
+/* ============================================================
+   IMPOR PDF (pdf.js dimuat saat dibutuhkan)
+============================================================ */
+function loadScriptOnce(src){
+  return new Promise((resolve, reject) => {
+    if(document.querySelector(`script[src="${src}"]`)) return resolve();
+    const s = document.createElement("script");
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+/* ============================================================
+   PDF LAYOUT PARSER — membaca susunan halaman (posisi & ukuran teks) supaya
+   struktur workbook (sampul, modul, latihan, penutup) bisa dikenali.
+   Hanya teks terstruktur yang disimpan; file PDF-nya dibuang.
+============================================================ */
+const PDF_BASE_WORDS = "yang untuk dan dari dengan pada ini itu kamu diri sendiri satu dua tiga empat lima enam tugas kita cuma surat catatan pribadi latihan refleksi modul penutup sebelum mulai bertemu lagi sampai jadi kalau tidak bisa".split(" ");
+const PDF_SMALL_WORDS = new Set(["yang","di","ke","dan","untuk","dari","pada","dengan","atau","the","of","and","on","in","a","to"]);
+
+// Item teks pdf.js -> baris-baris (dikelompokkan berdasarkan posisi vertikal)
+function pdfBuildLines(items){
+  const its = items
+    .filter(it => it.str && it.str.trim())
+    .map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5], w: it.width, h: it.height, font: it.fontName }));
+  its.sort((a, b) => (b.y - a.y) || (a.x - b.x));
+  const lines = [];
+  its.forEach(it => {
+    const last = lines[lines.length - 1];
+    if(last && Math.abs(last.y - it.y) <= 1.5) last.items.push(it);
+    else lines.push({ y: it.y, items: [it] });
+  });
+  lines.forEach(l => {
+    l.items.sort((a, b) => a.x - b.x);
+    l.x = l.items[0].x;
+    l.h = Math.max.apply(null, l.items.map(i => i.h));
+  });
+  return lines;
+}
+
+// Teks dengan huruf direnggangkan ("M O D U L 0 1") -> true
+function pdfIsSpaced(s){
+  const t = (s || "").trim();
+  if(!t) return false;
+  const toks = t.split(" ");
+  return toks.length >= 2 && toks.every(k => k.length === 1);
+}
+
+function pdfBuildVocab(pages){
+  const vocab = new Set(PDF_BASE_WORDS);
+  pages.forEach(p => p.lines.forEach(l => l.items.forEach(it => {
+    if(pdfIsSpaced(it.str)) return;
+    it.str.toLowerCase().split(/[^a-z0-9']+/).forEach(w => { if(w.length >= 3) vocab.add(w); });
+  })));
+  return vocab;
+}
+
+// Memisahkan kata yang menempel ("KENALIENERGIMU") memakai kosakata dari dokumen itu sendiri
+function pdfSegmentWords(blob, vocab){
+  const s = blob.toLowerCase();
+  const n = s.length;
+  if(n <= 8) return [blob];
+  const INF = 1e9;
+  const best = new Array(n + 1).fill(INF);
+  const prev = new Array(n + 1).fill(-1);
+  best[0] = 0;
+  for(let i = 1; i <= n; i++){
+    for(let j = Math.max(0, i - 24); j < i; j++){
+      if(best[j] >= INF) continue;
+      const w = s.slice(j, i);
+      let c;
+      if(w.length >= 3 && vocab.has(w)) c = 1;
+      else if(w.length >= 5) c = 6 + 0.5 * w.length;
+      else c = 30;
+      if(best[j] + c < best[i]){ best[i] = best[j] + c; prev[i] = j; }
+    }
+  }
+  const out = [];
+  let i = n;
+  while(i > 0){ const j = prev[i]; out.unshift(blob.slice(j, i)); i = j; }
+  return out;
+}
+
+function pdfDecodeSpaced(str, vocab){
+  const toks = str.trim().split(" ");
+  const seps = new Set(["·", ",", "-", "–", "—", ":", "•"]);
+  const out = [];
+  let cur = "";
+  const flush = () => {
+    if(!cur) return;
+    let blob = cur;
+    const m = blob.match(/^(MODUL|BAB|BAGIAN|CHAPTER|PART)(\d+)$/i);
+    if(m) out.push(m[1], m[2]);
+    else out.push.apply(out, pdfSegmentWords(blob, vocab));
+    cur = "";
+  };
+  toks.forEach(t => {
+    if(seps.has(t)){ flush(); out.push(t); }
+    else cur += t;
+  });
+  flush();
+  return out.join(" ").replace(/ ,/g, ",").replace(/ :/g, ":");
+}
+
+function pdfItemText(it, vocab){
+  return pdfIsSpaced(it.str) ? pdfDecodeSpaced(it.str, vocab) : it.str.trim();
+}
+
+// Teks satu baris; item dengan font berbeda dari font isi -> **tebal** (bila allowBold)
+function pdfLineText(line, vocab, bodyFont, allowBold){
+  const toks = [];
+  line.items.forEach((it, i) => {
+    const txt = pdfItemText(it, vocab);
+    if(!txt) return;
+    const prev = line.items[i - 1];
+    const gap = prev ? it.x - (prev.x + prev.w) : 0;
+    toks.push({ text: txt, bold: !!(allowBold && bodyFont && it.font !== bodyFont), sep: (prev && gap > 0.8) ? " " : "" });
+  });
+  let out = "";
+  let i = 0;
+  while(i < toks.length){
+    if(toks[i].bold){
+      let j = i, run = "";
+      while(j < toks.length && toks[j].bold){ run += (j > i ? toks[j].sep : "") + toks[j].text; j++; }
+      out += (i > 0 ? toks[i].sep : "") + "**" + run + "**";
+      i = j;
+    } else {
+      out += (i > 0 ? toks[i].sep : "") + toks[i].text;
+      i++;
+    }
+  }
+  return out;
+}
+
+// Ukuran & font teks isi (paling dominan) pada satu halaman
+function pdfBodyStats(lines){
+  const hCount = {}, fCount = {};
+  lines.forEach(l => l.items.forEach(it => {
+    if(pdfIsSpaced(it.str)) return;
+    const hk = (Math.round(it.h * 2) / 2).toFixed(1);
+    hCount[hk] = (hCount[hk] || 0) + it.str.length;
+  }));
+  let bodyH = 0, best = -1;
+  for(const k in hCount){ if(hCount[k] > best){ best = hCount[k]; bodyH = parseFloat(k); } }
+  lines.forEach(l => l.items.forEach(it => {
+    if(pdfIsSpaced(it.str) || Math.abs(it.h - bodyH) > 0.6) return;
+    fCount[it.font] = (fCount[it.font] || 0) + it.str.length;
+  }));
+  let bodyFont = null;
+  best = -1;
+  for(const f in fCount){ if(fCount[f] > best){ best = fCount[f]; bodyFont = f; } }
+  return { bodyH: bodyH || 10, bodyFont };
+}
+
+// Baris -> paragraf (dipisah oleh jarak vertikal yang lebih besar dari jarak antarbaris)
+function pdfParagraphs(lines, ctx){
+  if(!lines.length) return { paras: [], base: ctx.bodyH * 1.55 };
+  const steps = [];
+  for(let i = 1; i < lines.length; i++) steps.push(lines[i - 1].y - lines[i].y);
+  const ok = steps.filter(s => s >= ctx.bodyH * 0.9);
+  let base = ok.length ? Math.min.apply(null, ok) : ctx.bodyH * 1.55;
+  if(ctx.median){
+    // varian 2: jarak antarbaris = nilai tengah (tahan terhadap satu-dua baris yang posisinya geser)
+    const cand = steps.filter(s => s >= ctx.bodyH * 0.9 && s <= ctx.bodyH * 2.6).sort((x, y) => x - y);
+    base = cand.length ? cand[Math.floor(cand.length / 2)] : ctx.bodyH * 2.2;
+  }
+  const paras = [];
+  let cur = null;
+  lines.forEach((l, i) => {
+    const step = i ? lines[i - 1].y - l.y : 0;
+    if(!cur || step > base * 1.35){ cur = { lines: [l], stepBefore: step }; paras.push(cur); }
+    else cur.lines.push(l);
+  });
+  paras.forEach(p => {
+    p.top = p.lines[0].y;
+    p.last = p.lines[p.lines.length - 1].y;
+    const items = [].concat.apply([], p.lines.map(l => l.items));
+    let nonBodyChars = 0, allChars = 0, nonBodyItems = 0;
+    items.forEach(it => {
+      allChars += it.str.length;
+      if(ctx.bodyFont && it.font !== ctx.bodyFont){ nonBodyChars += it.str.length; nonBodyItems++; }
+    });
+    p.allNonBody = !!ctx.bodyFont && nonBodyItems === items.length;
+    p.hasBold = !!ctx.bodyFont && nonBodyItems > 0 && !p.allNonBody && nonBodyChars <= allChars * 0.45;
+    p.text = p.lines.map(l => pdfLineText(l, ctx.vocab, ctx.bodyFont, p.hasBold)).join(" ").replace(/\s+/g, " ").trim();
+  });
+  return { paras, base };
+}
+
+function pdfTitleCase(s){
+  return s.toLowerCase().split(" ").map((w, i) => {
+    if(!w) return w;
+    if(i > 0 && PDF_SMALL_WORDS.has(w)) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(" ");
+}
+
+function pdfParseCover(lines, vocab){
+  const spaced = l => l.items.some(it => pdfIsSpaced(it.str));
+  const maxH = Math.max.apply(null, lines.map(l => l.h));
+  const ti = lines.findIndex(l => l.h >= maxH * 0.9 && !spaced(l));
+  if(ti < 0) return null;
+  const title = pdfLineText(lines[ti], vocab).trim();
+  const kicker = [], after = [], credit = [];
+  lines.forEach((l, i) => {
+    const t = pdfLineText(l, vocab).trim();
+    if(!t || i === ti) return;
+    if(i < ti){ if(spaced(l)) kicker.push(t); }
+    else if(spaced(l)) credit.push(t);
+    else after.push(t);
+  });
+  return {
+    kicker: kicker.join(" "),
+    title,
+    subtitle: after[0] || "",
+    tagline: after.slice(1).join(" "),
+    credit: credit.join(" ")
+  };
+}
+
+function pdfClamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+// Halaman latihan: paragraf yang punya ruang tulis -> pertanyaan; sisanya -> catatan
+function pdfReflectionBlock(kicker, lines, ctx, pageH, qc){
+  let title = "";
+  let rest = lines;
+  if(rest.length){
+    const t0 = pdfLineText(rest[0], ctx.vocab);
+    if(/^LATIHAN\b/i.test(t0) && rest[0].items.some(it => pdfIsSpaced(it.str))){
+      const after = t0.replace(/^LATIHAN\s*[·:\-–—]?\s*/i, "");
+      title = after ? pdfTitleCase(after) : "";
+      rest = rest.slice(1);
+    }
+  }
+  const blanks = [], textLines = [];
+  rest.forEach(l => {
+    const t = pdfLineText(l, ctx.vocab);
+    if(/^\d{1,2}[.)]$/.test(t)) blanks.push(l); else textLines.push(l);
+  });
+  const { paras, base } = pdfParagraphs(textLines, ctx);
+  const questions = [];
+  paras.forEach((p, i) => {
+    const text = p.text.replace(/\*\*/g, "");
+    const next = paras[i + 1];
+    const slots = blanks.filter(b => b.y < p.last && (!next || b.y > next.top)).length;
+    if(slots > 0){
+      questions.push({ id: "q" + (qc.n++), text, slots: pdfClamp(slots, 1, 10) });
+    } else if(!next){
+      const rows = pdfClamp(Math.round((p.last - pageH * 0.08) / (base * 2)), 3, 8);
+      questions.push({ id: "q" + (qc.n++), text, rows });
+    } else if(next.stepBefore >= base * 2.2){
+      const rows = pdfClamp(Math.round((next.stepBefore - base * 1.6) / base) + 1, 2, 4);
+      questions.push({ id: "q" + (qc.n++), text, rows });
+    } else {
+      questions.push({ id: "n" + (qc.n++), text, note: true });
+    }
+  });
+  if(!questions.length) return null;
+  return { type: "reflection", kicker, title: title || "Latihan Refleksi", questions };
+}
+
+// Halaman-halaman PDF -> { cover, modules:[{title,kicker,heading,blocks}], tags }
+// Mengembalikan null kalau struktur workbook tidak dikenali.
+function parsePdfPages(pages){
+  const vocab = pdfBuildVocab(pages);
+  const out = { cover: null, modules: [], tags: [] };
+  const qc = { n: 0 };
+  let cur = null;
+  const lastIdx = pages.length - 1;
+
+  for(let pi = 0; pi < pages.length; pi++){
+    const pg = pages[pi];
+    const footY = pg.h * 0.075;
+    const body = pg.lines.filter(l => l.y >= footY);
+    const foot = pg.lines.filter(l => l.y < footY);
+    if(!body.length) continue;
+
+    if(pi === 0){ out.cover = pdfParseCover(body, vocab); continue; }
+
+    const st = pdfBodyStats(body);
+    const ctx = { vocab, bodyH: st.bodyH, bodyFont: st.bodyFont };
+
+    // daftar isi: dilewati (dibuat ulang otomatis dari daftar modul)
+    const bigLine = body.reduce((a, b) => (b.h > a.h ? b : a), body[0]);
+    if(/^(daftar isi|table of contents|contents)$/i.test(pdfLineText(bigLine, vocab).trim())) continue;
+
+    // penanda kecil di atas halaman ("MODUL 01", "MODUL 01 · REFLEKSI", ...)
+    let kicker = "";
+    let start = 0;
+    const f0 = body[0];
+    if(f0.items.some(it => pdfIsSpaced(it.str)) && f0.h <= ctx.bodyH * 1.05){
+      kicker = pdfLineText(f0, vocab).trim();
+      start = 1;
+    }
+    const rest = body.slice(start);
+
+    // halaman latihan
+    if(kicker && /REFLEKSI|REFLECTION/i.test(kicker)){
+      if(!cur) continue;
+      const blk = pdfReflectionBlock(kicker, rest, ctx, pg.h, qc);
+      if(blk) cur.blocks.push(blk);
+      continue;
+    }
+
+    // halaman penutup terakhir (bukan modul bernomor)
+    const isNumbered = /^(MODUL|BAB|BAGIAN|CHAPTER|PART)\s*\d+$/i.test(kicker);
+    if(pi === lastIdx && kicker && !isNumbered && !/^PENUTUP$/i.test(kicker) && cur){
+      const hl = [];
+      let k = 0;
+      while(k < rest.length && rest[k].h >= ctx.bodyH * 1.3){ hl.push(rest[k]); k++; }
+      const heading = hl.map(l => pdfLineText(l, vocab)).join(" ").replace(/\s+/g, " ").trim();
+      const { paras } = pdfParagraphs(rest.slice(k), ctx);
+      const footer = foot.map(l => pdfLineText(l, vocab).trim()).filter(t => t && !/^\d+$/.test(t)).join(" ");
+      cur.blocks.push({
+        type: "closing", kicker, heading,
+        paras: paras.map(p => p.text.replace(/\*\*/g, "")),
+        footer
+      });
+      continue;
+    }
+
+    // halaman isi: judul besar + paragraf
+    const hl = [];
+    let k = 0;
+    while(k < rest.length && rest[k].h >= ctx.bodyH * 1.3){ hl.push(rest[k]); k++; }
+    const heading = hl.map(l => pdfLineText(l, vocab)).join(" ").replace(/\s+/g, " ").trim();
+    const { paras } = pdfParagraphs(rest.slice(k), ctx);
+    const blocks = paras.map(p => ({
+      type: (p.allNonBody && p.lines.length <= 2) ? "lead" : "p",
+      text: p.text
+    }));
+
+    if(kicker){
+      // modul baru
+      let title, tag;
+      if(isNumbered){ title = heading || pdfTitleCase(kicker); tag = (kicker.match(/\d+/) || ["•"])[0]; }
+      else if(/^PENUTUP$/i.test(kicker)){ title = heading ? ("Penutup, " + heading) : "Penutup"; tag = "✦"; }
+      else { title = pdfTitleCase(kicker); tag = "•"; }
+      cur = { title, kicker, heading: heading || title, blocks };
+      out.modules.push(cur);
+      out.tags.push(tag);
+    } else if(cur){
+      // lanjutan halaman modul sebelumnya
+      if(heading) cur.blocks.push({ type: "p", text: "**" + heading + "**" });
+      blocks.forEach(b => cur.blocks.push(b));
+    }
+  }
+
+  if(out.modules.length < 2) return null;
+  return out;
+}
+
+/* ============================================================
+   VARIAN 2 — workbook dengan judul di tiap halaman + Daftar Isi bernomor halaman
+   (contoh: "Sleep Harmony"). Modul diambil dari Daftar Isi; halaman di dalam modul
+   dikenali dari isinya: bacaan, kolom refleksi, checklist, afirmasi, kotak tulis.
+============================================================ */
+const PDF_SPLIT_FIX = { "sant ai": "santai" };
+
+// Tinggi teks huruf saja (abaikan simbol ikon seperti ■ ◆ yang ukurannya besar)
+function pdfLineH(l){
+  let h = 0;
+  l.items.forEach(it => { if(/[A-Za-z0-9]/.test(it.str) && it.h > h) h = it.h; });
+  return h || l.h;
+}
+
+// Bersihkan sisa-sisa hasil ekstraksi: simbol ikon, tanda tebal pada tanda baca, spasi berlebih
+function pdfClean(s, freq){
+  s = String(s || "")
+    .replace(/\*\*([^A-Za-z0-9*]*)\*\*/g, "$1")
+    .replace(/[■◆✦]\s*/g, "")
+    .replace(/\*\*([^*]+?)\*\*/g, (m, a) => "**" + a.trim() + "**")
+    .replace(/(\S)\s+-\s+(\S)/g, (m, a, b) => (/[A-Za-z0-9]/.test(a) && /[a-z0-9]/.test(b) && m.length <= 5) ? a + "-" + b : m)
+    .replace(/\s+/g, " ")
+    .trim();
+  Object.keys(PDF_SPLIT_FIX).forEach(k => { s = s.split(k).join(PDF_SPLIT_FIX[k]); });
+  if(freq){
+    // kata terpotong di teks PDF: "kem bali" -> "kembali", "ya ng" -> "yang"
+    // (gabung hanya jika gabungannya kata yang umum di dokumen, sedangkan salah satu potongannya jarang)
+    const toks = s.split(" ");
+    const res = [];
+    for(let i = 0; i < toks.length; i++){
+      const a = toks[i], b = toks[i + 1];
+      if(b !== undefined && /^[a-z]{2,4}$/.test(a) && /^[a-z]{2,4}[.,;:!?]?$/.test(b)){
+        const bw = b.replace(/[.,;:!?]$/, "");
+        const w = a + bw;
+        if(w.length >= 4 && (freq.get(w) || 0) >= 2 && ((freq.get(a) || 0) <= 1 || (freq.get(bw) || 0) <= 1)){
+          res.push(w + b.slice(bw.length));
+          i++;
+          continue;
+        }
+      }
+      res.push(a);
+    }
+    s = res.join(" ");
+  }
+  return s;
+}
+
+// Hitung kemunculan tiap kata di seluruh dokumen
+function pdfWordFreq(pages){
+  const f = new Map();
+  pages.forEach(p => p.lines.forEach(l => l.items.forEach(it => {
+    if(pdfIsSpaced(it.str)) return;
+    it.str.toLowerCase().split(/[^a-z0-9']+/).forEach(w => { if(w) f.set(w, (f.get(w) || 0) + 1); });
+  })));
+  return f;
+}
+
+function pdfNorm(s){ return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function pdfSameBlock(a, b){ return a && b && a.type === "reflection" && b.type === "reflection" && a.title === b.title && a.questions.length === 1 && b.questions.length === 1 && a.questions[0].text === b.questions[0].text; }
+
+function pdfParseCoverV2(pg, vocab){
+  const lines = pg.lines;
+  if(!lines.length) return null;
+  const spaced = l => l.items.some(it => pdfIsSpaced(it.str));
+  const maxH = Math.max.apply(null, lines.map(pdfLineH));
+  const big = lines.filter(l => pdfLineH(l) >= maxH * 0.9 && !spaced(l));
+  if(!big.length) return null;
+  const T = l => pdfClean(pdfLineText(l, vocab));
+  const first = lines.indexOf(big[0]);
+  const last = lines.indexOf(big[big.length - 1]);
+  const creditY = pg.h * 0.12;
+  const kicker = [], after = [], credit = [];
+  lines.forEach((l, i) => {
+    if(i >= first && i <= last) return;
+    const t = T(l);
+    if(!t) return;
+    if(i < first) kicker.push(t);
+    else if(l.y <= creditY || spaced(l)) credit.push(t);
+    else after.push(t);
+  });
+  return {
+    kicker: kicker.join(" "),
+    title: big.map(T).join(" ").trim(),
+    subtitle: after[0] || "",
+    tagline: after.slice(1).join(" "),
+    credit: credit.join(" ")
+  };
+}
+
+function parsePdfPagesV2(pages){
+  const n = pages.length;
+  if(n < 4) return null;
+  const vocab = pdfBuildVocab(pages);
+  const freq = pdfWordFreq(pages);
+  const qc = { n: 0 };
+  const DIV = /^(MODUL|BAB|BAGIAN|CHAPTER|PART)\s*(\d+)$/i;
+
+  // ---- 1. Ringkasan tiap halaman ----
+  const info = pages.map((pg, pi) => {
+    const footY = pg.h * 0.075;
+    const body = pg.lines.filter(l => l.y >= footY);
+    const foot = pg.lines.filter(l => l.y < footY);
+    if(!body.length) return { pi, pg, empty: true, body, foot };
+    const st = pdfBodyStats(body);
+    const ctx = { vocab, bodyH: st.bodyH, bodyFont: st.bodyFont, median: true };
+    const T = l => pdfClean(pdfLineText(l, vocab), freq);
+    // penanda dekoratif "— Judul —" di atas halaman
+    let k0 = 0;
+    if(/^[—–-]{1,2}\s*\S.*\S\s*[—–-]{1,2}$/.test(pdfLineText(body[0], vocab).trim())) k0 = 1;
+    let k = k0;
+    const hl = [];
+    const h0 = body[k0] ? pdfLineH(body[k0]) : 0;
+    while(k < body.length && pdfLineH(body[k]) >= ctx.bodyH * 1.15 && pdfLineH(body[k]) >= h0 * 0.9){ hl.push(body[k]); k++; }
+    const head0 = k0 ? pdfClean(pdfLineText(body[0], vocab).replace(/[—–-]/g, " ")) : "";
+    const divM = DIV.exec(T(body[0]));
+    return {
+      pi, pg, body, foot, ctx, T, k0, k, hl, head0,
+      title: hl.map(T).join(" ").trim(),
+      divider: (divM && body.length <= 8) ? { word: divM[1], num: parseInt(divM[2], 10) } : null
+    };
+  });
+
+  // ---- 2. Daftar isi -> awal tiap modul ----
+  let tocIdx = -1;
+  for(let i = 1; i < Math.min(n, 12); i++){
+    if(!info[i].empty && /^(daftar isi|table of contents|contents)$/i.test(info[i].title)){ tocIdx = i; break; }
+  }
+  const entries = [];
+  let offset = 0;
+  if(tocIdx >= 0){
+    const ti = info[tocIdx];
+    ti.body.slice(ti.k).forEach(l => {
+      const m = /^(.*\S)\s+(\d{1,3})$/.exec(ti.T(l));
+      if(!m) return;
+      const num = parseInt(m[2], 10);
+      if(num < 1 || num > n + 20) return;
+      const title = m[1].replace(/[.\s·…]+$/, "");
+      const nm = /^(modul|bab|bagian|chapter|part)\s*(\d+)\s*[:.\-–—]?\s*(.*)$/i.exec(title);
+      entries.push(nm
+        ? { numbered: true, word: nm[1].toUpperCase(), n: parseInt(nm[2], 10), title: nm[3] || title, page: num }
+        : { numbered: false, title, page: num });
+    });
+    const fn = ti.foot.map(l => ti.T(l)).find(t => /^\d+$/.test(t));
+    if(fn) offset = (tocIdx + 1) - parseInt(fn, 10);
+  }
+
+  const starts = [];
+  if(entries.length >= 2){
+    let prev = 0;
+    entries.forEach(e => {
+      let idx = e.page - 1 + offset;
+      if(e.numbered){
+        const d = info.findIndex((x, i) => i > prev && x.divider && x.divider.num === e.n);
+        if(d >= 0) idx = d;
+      } else {
+        const want = pdfNorm(e.title);
+        for(const d of [0, 1, -1, 2, -2, 3, -3]){
+          const j = idx + d;
+          if(j > prev && j < n && !info[j].empty && (pdfNorm(info[j].title) === want || pdfNorm(info[j].head0) === want)){ idx = j; break; }
+        }
+      }
+      if(idx <= prev) idx = prev + 1;
+      if(idx >= n) return;
+      starts.push({ page: idx, e });
+      prev = idx;
+    });
+  }
+  if(starts.length < 2){
+    // tanpa daftar isi: pakai halaman pembuka modul bernomor
+    starts.length = 0;
+    info.forEach((x, i) => {
+      if(i > 0 && x.divider){
+        const big = x.body.reduce((a, b) => (pdfLineH(b) > pdfLineH(a) ? b : a), x.body[0]);
+        starts.push({ page: i, e: { numbered: true, word: x.divider.word.toUpperCase(), n: x.divider.num, title: x.T(big), page: i + 1 } });
+      }
+    });
+    if(starts.length < 2) return null;
+    if(starts[0].page > 1) starts.unshift({ page: 1, e: { numbered: false, title: "Pembuka", page: 2 } });
+  }
+
+  // ---- 3. Modul & isinya ----
+  const out = { cover: null, modules: [], tags: [] };
+  out.cover = pdfParseCoverV2(pages[0], vocab);
+  const firstNum = starts.findIndex(s => s.e.numbered);
+  let lastNum = -1;
+  starts.forEach((s, i) => { if(s.e.numbered) lastNum = i; });
+
+  starts.forEach((s, si) => {
+    const e = s.e;
+    const endPage = si + 1 < starts.length ? starts[si + 1].page : n;
+    let kicker = null, tag = "•";
+    if(e.numbered){ kicker = e.word + " " + e.n; tag = String(e.n); }
+    else if(firstNum >= 0 && si < firstNum) kicker = "PEMBUKA";
+    else if(lastNum >= 0 && si > lastNum) kicker = "PENUTUP";
+    if(!e.numbered && /^penutup$/i.test(e.title)) tag = "✦";
+    const mod = { title: e.title, kicker, heading: e.title, blocks: [] };
+    const modNorm = pdfNorm(e.title);
+
+    for(let pi = s.page; pi < endPage; pi++){
+      const p = info[pi];
+      if(p.empty || pi === tocIdx) continue;
+      const { pg, body, ctx, T } = p;
+      const allText = body.map(T).join(" ");
+      if(/hak cipta dilindungi/i.test(allText)) continue;
+
+      // halaman pembuka modul: hanya kutipan
+      if(p.divider){
+        const big = body.reduce((a, b) => (pdfLineH(b) > pdfLineH(a) ? b : a), body[0]);
+        const bi = body.indexOf(big);
+        const q = body.slice(bi + 1).map(T).filter(t => t && !DIV.test(t) && !/^modul\s*\d+$/i.test(t)).join(" ")
+          .replace(/^["“”'‘’]+|["“”'‘’]+$/g, "").trim();
+        if(q) mod.blocks.push({ type: "quote", text: q });
+        continue;
+      }
+
+      let k = p.k;
+      let title = p.title;
+      let rest = body.slice(k);
+
+      // halaman afirmasi "◆ Rangkulan Hangat ◆"
+      const firstTxt = body[p.k0] ? T(body[p.k0]) : "";
+      if(/^rangkulan hangat$/i.test(title || firstTxt)){
+        const { paras } = pdfParagraphs(body.slice(p.k0 + (title ? p.hl.length : 1)), ctx);
+        const items = paras.map(x => pdfClean(x.text.replace(/\*\*/g, ""), freq)).filter(Boolean);
+        if(items.length) mod.blocks.push({ type: "affirm", title: "Rangkulan Hangat", items });
+        continue;
+      }
+
+      // halaman penutup terakhir dokumen
+      if(pi === n - 1 && title){
+        const { paras } = pdfParagraphs(rest, ctx);
+        if(paras.length <= 3){
+          const footer = p.foot.map(T).filter(t => t && !/^\d+$/.test(t)).join(" ");
+          mod.blocks.push({ type: "closing", kicker: "", heading: title, paras: paras.map(x => pdfClean(x.text.replace(/\*\*/g, ""), freq)), footer });
+          continue;
+        }
+      }
+
+      const sub = rest[0] ? T(rest[0]) : "";
+
+      // checklist: "Centang ..." / "Catat ..."
+      if(title && /^(centang|catat)\b/i.test(sub)){
+        let items = rest.slice(1).map(T).filter(Boolean);
+        if(items.some(t => /(\bHari(?: \d+:?)?|\bBonus:?)$/.test(t) || /^\d+:/.test(t))){
+          const parts = items.join(" ").split(/\s+(?=(?:Hari \d+:|Bonus:))/).map(x => x.trim()).filter(Boolean);
+          if(parts.length >= 2) items = parts;
+        }
+        if(items.length){
+          mod.blocks.push({ type: "checklist", id: "c" + (qc.n++), title, intro: sub, items, note: /catat/i.test(sub) });
+          continue;
+        }
+      }
+
+      // halaman refleksi berpertanyaan: "Tuliskan apa yang terasa jujur buat kamu"
+      if(title && /terasa jujur buat kamu/i.test(sub)){
+        const { paras, base } = pdfParagraphs(rest.slice(1), ctx);
+        const questions = paras.map((x, i) => {
+          const next = paras[i + 1];
+          const rows = next
+            ? pdfClamp(Math.round((next.stepBefore - base * 1.6) / base) + 1, 2, 4)
+            : ((x.last - pg.h * 0.08) > 120 ? 4 : 3);
+          return { id: "q" + (qc.n++), text: pdfClean(x.text.replace(/\*\*/g, ""), freq), rows };
+        }).filter(q => q.text);
+        if(questions.length){
+          mod.blocks.push({ type: "reflection", kicker: "", title, questions });
+          continue;
+        }
+      }
+
+      const { paras } = pdfParagraphs(rest, ctx);
+      const nLines = paras.reduce((c, x) => c + x.lines.length, 0);
+      const lastY = rest.length ? rest[rest.length - 1].y : 0;
+
+      // halaman kotak tulis: judul + 1 petunjuk pendek, sisanya ruang kosong
+      if(title && paras.length >= 1 && paras.length <= 2 && nLines <= 6 && lastY > pg.h * 0.55){
+        const text = paras.map(x => pdfClean(x.text.replace(/\*\*/g, ""), freq)).join(" ");
+        const blk = { type: "reflection", kicker: "", title, questions: [{ id: "q" + (qc.n++), text, rows: 8 }] };
+        const prevBlk = mod.blocks[mod.blocks.length - 1];
+        if(pdfSameBlock(prevBlk, blk)){
+          prevBlk.questions[0].rows = Math.min(20, prevBlk.questions[0].rows + 4);
+        } else mod.blocks.push(blk);
+        continue;
+      }
+
+      // halaman bacaan biasa
+      if(title && pdfNorm(title) !== modNorm) mod.blocks.push({ type: "h", text: title });
+      paras.forEach(x => {
+        const t = pdfClean(x.text, freq);
+        if(t) mod.blocks.push({ type: "p", text: t });
+      });
+    }
+    if(mod.blocks.length){ out.modules.push(mod); out.tags.push(tag); }
+  });
+
+  if(out.modules.length < 2) return null;
+  return out;
+}
+
+// Cadangan: PDF tanpa struktur workbook -> teks biasa berbaris (untuk parseRawContent)
+function pdfPagesToText(pages){
+  const vocab = pdfBuildVocab(pages);
+  const parts = [];
+  pages.forEach(pg => {
+    const footY = pg.h * 0.075;
+    const body = pg.lines.filter(l => l.y >= footY);
+    if(!body.length) return;
+    const st = pdfBodyStats(body);
+    const { paras } = pdfParagraphs(body, { vocab, bodyH: st.bodyH, bodyFont: st.bodyFont });
+    paras.forEach(p => parts.push(p.lines.map(l => pdfLineText(l, vocab)).join("\n")));
+  });
+  return parts.join("\n\n");
+}
+
+
+const PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+async function renderPdfPageImage(page, targetWidth){
+  try{
+    const vp1 = page.getViewport({ scale: 1 });
+    const scale = targetWidth / vp1.width;
+    const vp = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(vp.width));
+    canvas.height = Math.max(1, Math.round(vp.height));
+    const ctx = canvas.getContext("2d");
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    return canvas.toDataURL("image/jpeg", 0.72);
+  } catch(e){
+    console.warn("Gagal membuat gambar sampul dari PDF:", e);
+    return null;
+  }
+}
+
+async function extractPdfPages(file){
+  await loadScriptOnce(PDFJS_URL);
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+  const buf = await file.arrayBuffer();
+  const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  let coverImage = null;
+  for(let p = 1; p <= pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const vp = page.getViewport({ scale: 1 });
+    const tc = await page.getTextContent();
+    pages.push({ w: vp.width, h: vp.height, lines: pdfBuildLines(tc.items) });
+    if(p === 1) coverImage = await renderPdfPageImage(page, 320);
+  }
+  return { pages, coverImage };
+}
+
+// File PDF -> { mode, title, cover, modules, tags, textSize }
+async function parsePdfFile(file){
+  const { pages, coverImage } = await extractPdfPages(file);
+  const wb = parsePdfPages(pages) || parsePdfPagesV2(pages);
+  if(wb){
+    let title = "";
+    if(wb.cover && wb.cover.title){
+      title = pdfTitleCase(wb.cover.title) + (wb.cover.subtitle ? " — " + wb.cover.subtitle : "");
+    }
+    return {
+      mode: "workbook", title, cover: wb.cover, modules: wb.modules, tags: wb.tags,
+      textSize: new Blob([JSON.stringify(wb.modules)]).size, coverImage
+    };
+  }
+  const raw = pdfPagesToText(pages);
+  if(!raw.trim()) throw new Error("PDF ini tidak berisi teks yang bisa dibaca (mungkin hasil scan atau foto).");
+  const parsed = parseRawContent(raw, "");
+  return {
+    mode: "teks", title: parsed.title || "", cover: null, modules: parsed.modules, tags: null,
+    textSize: new Blob([raw]).size, coverImage
+  };
+}
+
+/* ============================================================
+   AUTH SCREEN LOGIC
+============================================================ */
+let authMode = "login"; // "login" | "register"
+
+function setAuthMode(mode){
+  authMode = mode;
+  $("authError").style.display = "none";
+  $("authNote").style.display = "none";
+  if(mode === "login"){
+    $("authTitle").textContent = "Masuk ke Essensiana";
+    $("fieldName").style.display = "none";
+    $("fieldPass").style.display = "block";
+    $("btnAuthSubmit").textContent = "Masuk";
+    $("btnAuthAlt").textContent = "Buat akun baru";
+  } else {
+    $("authTitle").textContent = "Buat Akun Essensiana";
+    $("fieldName").style.display = "block";
+    $("fieldPass").style.display = "block";
+    $("btnAuthSubmit").textContent = "Daftar";
+    $("btnAuthAlt").textContent = "Sudah punya akun? Masuk";
+  }
+}
+$("btnAuthAlt").onclick = () => setAuthMode(authMode === "login" ? "register" : "login");
+
+function friendlyAuthError(code, err){
+  const map = {
+    "auth/invalid-email":"Format email tidak valid.",
+    "auth/user-not-found":"Akun dengan email ini tidak ditemukan.",
+    "auth/wrong-password":"Kata sandi salah.",
+    "auth/invalid-credential":"Email atau kata sandi salah, atau akun ini belum terdaftar di proyek Firebase yang dipakai aplikasi.",
+    "auth/email-already-in-use":"Email ini sudah terdaftar.",
+    "auth/weak-password":"Kata sandi minimal 6 karakter.",
+    "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.",
+    "auth/user-disabled":"Akun ini dinonaktifkan di Firebase.",
+    "auth/network-request-failed":"Koneksi internet bermasalah. Coba lagi.",
+    "auth/unauthorized-domain":"Domain aplikasi ini belum diizinkan di Firebase (Authentication → Settings → Authorized domains).",
+    "auth/operation-not-allowed":"Login email/kata sandi belum diaktifkan di Firebase (Authentication → Sign-in method).",
+    "auth/operation-not-supported-in-this-environment":"Buka aplikasi lewat alamat https (GitHub Pages), bukan langsung dari file di perangkat.",
+    "auth/invalid-api-key":"API key Firebase tidak valid. Cek firebase-config.js."
+  };
+  if(map[code]) return map[code];
+  const detail = code || (err && err.message) || "";
+  return "Terjadi kesalahan" + (detail ? " (" + detail + ")" : "") + ". Coba lagi.";
+}
+
+function showAuthError(msg){
+  const el = $("authError");
+  if(!msg){ el.style.display = "none"; return; }
+  el.textContent = msg; el.style.display = "block";
+}
+function showDemoLink(){ $("demoWrap").style.display = "block"; }
+// Kode error yang biasanya berarti "browser/alamat ini memang tidak bisa login" -> tawarkan pratinjau.
+const DEMO_HINT_CODES = ["auth/unauthorized-domain","auth/operation-not-supported-in-this-environment","auth/network-request-failed","auth/invalid-api-key"];
+
+$("btnAuthSubmit").onclick = async () => {
+  if(!backendReady){ showAuthError(backendMsg || "Aplikasi belum selesai dimuat. Tunggu sebentar lalu coba lagi."); return; }
+  const email = $("inpEmail").value.trim();
+  const pass = $("inpPass").value;
+  $("authError").style.display = "none";
+  if(!email || !pass){
+    $("authError").textContent = "Isi email dan kata sandi dulu ya.";
+    $("authError").style.display = "block";
+    return;
+  }
+  loading(true, authMode === "login" ? "Masuk…" : "Membuat akun…");
+  try{
+    if(authMode === "login"){
+      await signInWithEmailAndPassword(auth, email, pass);
+    } else {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const name = $("inpName").value.trim();
+      if(name) await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, "users", cred.user.uid), {
+        email, displayName: name || "", createdAt: serverTimestamp()
+      });
+    }
+  } catch(err){
+    console.error("Auth error:", err);
+    $("authError").textContent = friendlyAuthError(err.code, err);
+    $("authError").style.display = "block";
+    if(DEMO_HINT_CODES.includes(err.code)) showDemoLink();
+  } finally {
+    loading(false);
+  }
+};
+
+$("linkForgot").onclick = async () => {
+  if(!backendReady){ showAuthError(backendMsg || "Aplikasi belum selesai dimuat. Tunggu sebentar lalu coba lagi."); return; }
+  const email = $("inpEmail").value.trim();
+  if(!email){
+    $("authError").textContent = "Isi kolom email dulu, lalu tekan \"Lupa kata sandi?\" lagi.";
+    $("authError").style.display = "block";
+    return;
+  }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    $("authError").style.display = "none";
+    $("authNote").textContent = "Link reset kata sandi sudah dikirim ke " + email + ".";
+    $("authNote").style.display = "block";
+  } catch(err){
+    $("authError").textContent = friendlyAuthError(err.code, err);
+    $("authError").style.display = "block";
+  }
+};
+
+$("btnLogout").onclick = () => { if(demoMode) exitDemo(); else signOut(auth); };
+
+function enterApp(){
+  hide($("authScreen")); show($("libraryScreen")); hide($("readerScreen"));
+  $("demoBanner").classList.toggle("hidden", !demoMode);
+  renderAccount();
+  switchTab("dashboard");
+  loadLibrary();
+}
+function leaveApp(){
+  booksCache = [];
+  show($("authScreen")); hide($("libraryScreen")); hide($("readerScreen"));
+}
+function handleAuthChange(user){
+  if(demoMode) return; // sedang di mode pratinjau, abaikan event login asli
+  currentUser = user;
+  if(user) enterApp(); else leaveApp();
+}
+
+/* ============================================================
+   MODE PRATINJAU — Firestore tiruan di memori (tanpa login, tanpa Firebase).
+   Berguna untuk mengecek tampilan di browser yang tidak bisa login Firebase.
+============================================================ */
+function makeDemoFirestore(){
+  class DTs { constructor(d){ this.d = d; } toDate(){ return this.d; } }
+  const SERVER = { __serverTs: true };
+  const store = new Map();
+  let seq = 0;
+  const resolve = (v) => {
+    if(v === SERVER) return new DTs(new Date());
+    if(v instanceof DTs) return v;
+    if(Array.isArray(v)) return v.map(resolve);
+    if(v && typeof v === "object"){ const o = {}; for(const k in v) o[k] = resolve(v[k]); return o; }
+    return v;
+  };
+  const refOf = (path) => ({ path, id: path.split("/").pop() });
+
+  const api = {
+    serverTimestamp: () => SERVER,
+    collection: (_db, ...segs) => ({ __col: true, path: segs.join("/") }),
+    doc: (base, ...segs) => {
+      if(base && base.__col && !segs.length) return refOf(base.path + "/demo" + (++seq) + Date.now().toString(36));
+      return refOf(segs.join("/"));
+    },
+    orderBy: (field, dir) => ({ __order: true, field, dir: dir || "asc" }),
+    query: (col, ...cs) => ({ __query: true, col, order: cs.find(c => c && c.__order) }),
+    setDoc: async (ref, data, opts) => {
+      const nv = resolve(data);
+      store.set(ref.path, opts && opts.merge ? Object.assign({}, store.get(ref.path) || {}, nv) : nv);
+    },
+    getDoc: async (ref) => ({
+      exists: () => store.has(ref.path),
+      data: () => store.has(ref.path) ? resolve(store.get(ref.path)) : undefined
+    }),
+    deleteDoc: async (ref) => { store.delete(ref.path); },
+    getDocs: async (q) => {
+      const col = q.__query ? q.col : q;
+      const prefix = col.path + "/";
+      const rows = [];
+      store.forEach((val, path) => {
+        if(path.startsWith(prefix) && !path.slice(prefix.length).includes("/")) rows.push([path, val]);
+      });
+      if(q.__query && q.order){
+        const { field, dir } = q.order;
+        const key = (v) => { const x = v[field]; return x && x.toDate ? x.toDate().getTime() : (x == null ? 0 : x); };
+        rows.sort((a, b) => key(a[1]) - key(b[1]));
+        if(dir === "desc") rows.reverse();
+      }
+      const docs = rows.map(([path, val]) => ({
+        id: path.split("/").pop(), ref: refOf(path), exists: () => true, data: () => resolve(val)
+      }));
+      return { docs, empty: !docs.length, size: docs.length, forEach: (fn) => docs.forEach(fn) };
+    },
+    writeBatch: () => {
+      const ops = [];
+      return {
+        set: (ref, data) => { ops.push(() => api.setDoc(ref, data)); },
+        delete: (ref) => { ops.push(() => store.delete(ref.path)); },
+        commit: async () => { ops.forEach(f => f()); }
+      };
+    }
+  };
+
+  // Contoh materi supaya tampilan langsung bisa dicek
+  const base = "users/demo/books/contoh";
+  const now = () => new DTs(new Date());
+  store.set(base, {
+    title: "Contoh Materi — Pelan-pelan Saja", sourceType: "pratinjau", chapterCount: 3,
+    moduleTitles: ["Mulai dari yang kecil", "Menata perhatian", "Penutup"],
+    sizeBytes: 0, lastReadIndex: null, createdAt: now(), updatedAt: now()
+  });
+  store.set(base + "/modules/0", { order: 0, title: "Mulai dari yang kecil", blocks: [
+    { type: "p", text: "Perubahan besar biasanya dimulai dari langkah yang terlalu kecil untuk disebut langkah. Bagian ini hanya contoh isi supaya kamu bisa menilai tampilan bacaan." },
+    { type: "quote", text: "Satu bagian dalam satu waktu sudah cukup." },
+    { type: "list", items: ["Baca perlahan", "Berhenti saat perlu", "Tulis satu kalimat refleksi"] },
+    { type: "reflection", title: "Latihan Refleksi", questions: [
+      { id: "q0", text: "Satu hal kecil apa yang bisa kamu mulai hari ini?" },
+      { id: "q1", text: "Apa yang biasanya membuatmu berhenti di tengah jalan?" }
+    ] }
+  ] });
+  store.set(base + "/modules/1", { order: 1, title: "Menata perhatian", blocks: [
+    { type: "p", text: "Perhatian itu seperti cahaya senter: ke mana ia diarahkan, di situ segalanya terlihat jelas. Ini juga hanya teks contoh." },
+    { type: "reflection", title: "Latihan", questions: [ { id: "q0", text: "Apa yang paling menyita perhatianmu minggu ini?" } ] }
+  ] });
+  store.set(base + "/modules/2", { order: 2, title: "Penutup", blocks: [
+    { type: "p", text: "Terima kasih sudah mencoba pratinjau. Data di mode ini hanya sementara dan tidak disimpan ke akunmu." }
+  ] });
+
+  return { api, db: { demo: true } };
+}
+
+function enterDemo(){
+  if(demoMode) return;
+  realFs = { doc, setDoc, getDoc, getDocs, deleteDoc, collection, serverTimestamp, writeBatch, query, orderBy, db };
+  const d = makeDemoFirestore();
+  ({ doc, setDoc, getDoc, getDocs, deleteDoc, collection, serverTimestamp, writeBatch, query, orderBy } = d.api);
+  db = d.db;
+  demoMode = true;
+  currentUser = { uid: "demo", displayName: "Pratinjau", email: "Mode pratinjau (tanpa login)" };
+  showAuthError("");
+  enterApp();
+}
+function exitDemo(){
+  if(!demoMode) return;
+  ({ doc, setDoc, getDoc, getDocs, deleteDoc, collection, serverTimestamp, writeBatch, query, orderBy, db } = realFs);
+  realFs = null; demoMode = false; currentUser = null;
+  leaveApp();
+}
+$("linkDemo").onclick = enterDemo;
+
+/* ============================================================
+   TEMA PER BUKU
+   Tiap buku menyimpan themeId ("default" | "evergreen" | ...). Tema baru:
+   tambahkan entri di THEMES + aturan CSS [data-theme="..."] di atas.
+   match: pola judul untuk pemilihan tema otomatis saat impor.
+============================================================ */
+const THEMES = {
+  default:   { label: "Standar", color: "#1652F0" },
+  evergreen: {
+    label: "Evergreen", match: /evergreen/i, color: "#3B4A37", hero: true,
+    fonts: "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@500;600;700&display=swap"
+  }
+};
+
+function themeOf(book){
+  const id = book && book.themeId;
+  return (id && THEMES[id]) ? id : "default";
+}
+function themeCls(book){
+  const id = themeOf(book);
+  return id === "default" ? "" : " th-" + id;
+}
+function detectThemeId(text){
+  for(const id in THEMES){
+    const t = THEMES[id];
+    if(t.match && t.match.test(text || "")) return id;
+  }
+  return "default";
+}
+function ensureThemeFonts(id){
+  const t = THEMES[id];
+  if(!t || !t.fonts || document.getElementById("fonts-" + id)) return;
+  const l = document.createElement("link");
+  l.id = "fonts-" + id; l.rel = "stylesheet"; l.href = t.fonts;
+  document.head.appendChild(l);
+}
+function setThemeColor(color){
+  const m = document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute("content", color);
+}
+function escapeAttr(s){
+  return escapeHtml(String(s == null ? "" : s)).replace(/"/g, "&quot;");
+}
+
+// Judul buku bisa berbentuk "Judul — Keterangan tambahan" (dari subtitle PDF).
+// Bagian sebelum " — " tetap tebal, bagian setelahnya dibuat lebih kecil & transparan.
+function titleHTML(title){
+  const t = title || "Tanpa judul";
+  const idx = t.indexOf(" — ");
+  if(idx === -1) return escapeHtml(t);
+  const main = t.slice(0, idx);
+  const sub = t.slice(idx + 3);
+  return escapeHtml(main) + '<span class="title-sub">' + escapeHtml(sub) + '</span>';
+}
+
+// Lingkaran konsentris khas Evergreen
+function ringsSVG(){
+  return '<svg class="rings" viewBox="0 0 100 100" aria-hidden="true">' +
+    '<circle cx="50" cy="50" r="47" fill="none" stroke="#D3DFCB" stroke-width=".6"/>' +
+    '<circle cx="50" cy="50" r="37.8" fill="none" stroke="#E6D6B4" stroke-width=".7"/>' +
+    '<circle cx="50" cy="50" r="28" fill="none" stroke="#B0C4A8" stroke-width=".9"/>' +
+    '<circle cx="50" cy="50" r="18.4" fill="none" stroke="#CBDDC0" stroke-width=".9"/>' +
+    '<circle cx="50" cy="50" r="3.2" fill="#86A288"/></svg>';
+}
+
+// Isi sampul kecil di rak buku / riwayat
+function coverHTML(book, mini){
+  const id = themeOf(book);
+  if(id === "evergreen"){
+    ensureThemeFonts(id);
+    const label = ((book.cover && book.cover.title) || book.title || "").toUpperCase().slice(0, 12);
+    return ringsSVG() + (mini ? "" : '<span class="cv-title">' + escapeHtml(label) + '</span>');
+  }
+  if(book.coverImage){
+    return '<img src="' + escapeAttr(book.coverImage) + '" alt="" loading="lazy">';
+  }
+  return escapeHtml(initialsOf(book));
+}
+
+// Sampul besar di bagian pertama halaman baca
+function heroHTML(c){
+  return '<div class="ev-hero">' + ringsSVG() +
+    (c.kicker ? '<div class="ev-hero-kicker">' + escapeHtml(c.kicker) + '</div>' : '') +
+    '<div class="ev-hero-title">' + escapeHtml(c.title || "") + '</div>' +
+    (c.subtitle ? '<div class="ev-hero-sub">' + escapeHtml(c.subtitle) + '</div>' : '') +
+    (c.tagline ? '<div class="ev-hero-tag">' + escapeHtml(c.tagline) + '</div>' : '') +
+    '<div class="ev-hero-rule"></div>' +
+    (c.credit ? '<div class="ev-hero-credit">' + escapeHtml(c.credit) + '</div>' : '') +
+    '</div>';
+}
+
+/* ============================================================
+   LIBRARY SHELL + BOTTOM NAV (Dashboard / Daftar Buku / Riwayat Baca / Setting)
+============================================================ */
+let booksCache = [];
+let currentTab = "dashboard";
+const TABS = ["dashboard", "books", "history", "settings"];
+const TAB_LABELS = { dashboard: "Dashboard", books: "Daftar Buku", history: "Riwayat Baca", settings: "Setting" };
+
+function switchTab(name){
+  if(!TABS.includes(name)) name = "dashboard";
+  currentTab = name;
+  TABS.forEach(n => $("view_" + n).classList.toggle("hidden", n !== name));
+  document.querySelectorAll(".bn-item").forEach(b => {
+    const on = b.dataset.tab === name;
+    b.classList.toggle("active", on);
+    if(on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  const titleEl = $("topbarTitle");
+  if(titleEl) titleEl.textContent = TAB_LABELS[name] || "Dashboard";
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".bn-item").forEach(b => { b.onclick = () => switchTab(b.dataset.tab); });
+
+function bookProgress(b){
+  const chapters = b.chapterCount || 0;
+  const read = b.lastReadIndex != null ? b.lastReadIndex + 1 : 0;
+  const pct = chapters ? Math.min(100, Math.round((read / chapters) * 100)) : 0;
+  return { chapters, read, pct };
+}
+function isFinished(b){
+  const c = b.chapterCount || 0;
+  return c > 0 && b.lastReadIndex != null && b.lastReadIndex >= c - 1;
+}
+function initialsOf(b){ return (b.title || "?").trim().slice(0, 2).toUpperCase(); }
+function formatWhen(ts){
+  if(!ts || !ts.toDate) return "";
+  const d = ts.toDate(), now = new Date();
+  const dayStart = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const days = Math.round((dayStart(now) - dayStart(d)) / 86400000);
+  const time = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(":", ".");
+  if(days <= 0) return "Hari ini, " + time;
+  if(days === 1) return "Kemarin, " + time;
+  if(days < 7) return days + " hari lalu";
+  return d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/* ---- Akun (dipakai Dashboard & Setting) ---- */
+function renderAccount(){
+  if(!currentUser) return;
+  const shown = currentUser.displayName || (currentUser.email || "").split("@")[0] || "Pengguna";
+  $("setName").textContent = shown;
+  $("setEmail").textContent = currentUser.email || "";
+  $("setAvatar").textContent = shown.slice(0, 1).toUpperCase();
+}
+
+/* ---- Dashboard ---- */
+function renderDashboard(){
+  const box = $("dashContinue");
+  const started = booksCache.filter(b => b.lastReadIndex != null);
+  const target = started.find(b => !isFinished(b)) || started[0] || booksCache[0];
+
+  if(!target){
+    box.innerHTML = `
+      <div class="empty-state">
+        <div class="big">📚</div>
+        <div><b>Belum ada materi.</b></div>
+        <div style="margin:4px 0 12px;">Impor PDF pertamamu untuk mulai membaca.</div>
+        <button class="continue-btn dark" id="dashAddBtn">+ Tambah materi</button>
+      </div>`;
+    $("dashAddBtn").onclick = () => $("btnAddBook").click();
+  } else {
+    const p = bookProgress(target);
+    const began = target.lastReadIndex != null;
+    const done = isFinished(target);
+    const kicker = !began ? "MULAI MEMBACA" : (done ? "BACA LAGI" : "LANJUTKAN MEMBACA");
+    const btn = !began ? "Mulai →" : (done ? "Baca lagi →" : "Lanjutkan →");
+    const meta = began ? `Bagian ${p.read} dari ${p.chapters} &middot; ${p.pct}%` : `${p.chapters} bagian`;
+    box.innerHTML = `
+      <div class="continue-card${themeOf(target) !== "default" ? " th-" + themeOf(target) + "-card" : ""}">
+        <div class="continue-kicker">${kicker}</div>
+        <div class="continue-title">${escapeHtml(target.title || "Tanpa judul")}</div>
+        <div class="continue-meta">${meta}</div>
+        <div class="continue-bar"><i style="width:${p.pct}%"></i></div>
+        <button class="continue-btn" id="dashContinueBtn">${btn}</button>
+      </div>`;
+    $("dashContinueBtn").onclick = () => openBook(target.id, target);
+  }
+
+  $("statBooks").textContent = booksCache.length;
+  $("statRead").textContent = booksCache.reduce((sum, b) => sum + bookProgress(b).read, 0);
+  $("statDone").textContent = booksCache.filter(isFinished).length;
+}
+
+/* ---- Daftar Buku ---- */
+function renderBooksView(){
+  const grid = $("gridBooks");
+  grid.innerHTML = "";
+  if(!booksCache.length){ show($("emptyState")); return; }
+  hide($("emptyState"));
+  booksCache.forEach((book) => {
+    const { chapters, pct } = bookProgress(book);
+    const card = document.createElement("div");
+    card.className = "book-card";
+    card.innerHTML = `
+      <div class="book-cover${themeCls(book)}">${coverHTML(book)}</div>
+      <div class="book-title">${titleHTML(book.title)}</div>
+      <div class="book-meta">${chapters} bagian &middot; ${book.sourceType || "teks"}</div>
+      <div class="book-progress"><i style="width:${pct}%"></i></div>
+      <div class="chip">${pct}% dibaca</div>
+      <div class="book-actions-row">
+        <button class="book-del" data-id="${book.id}" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></button>
+        <button class="book-reset" data-id="${book.id}" title="Ulangi dari awal (reset progres ke 0%)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+      </div>
+    `;
+    card.onclick = (e) => {
+      if(e.target.closest(".book-del") || e.target.closest(".book-reset")) return;
+      openBook(book.id, book);
+    };
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll(".book-del").forEach(btn => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      if(!(await customConfirm("Hapus materi ini beserta seluruh jawaban latihannya?", "Hapus"))) return;
+      await deleteBook(btn.dataset.id);
+    };
+  });
+  grid.querySelectorAll(".book-reset").forEach(btn => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      if(!(await customConfirm("Ulangi progres bacaan buku ini dari awal? Progres akan kembali ke 0%.", "Ulangi"))) return;
+      await resetBookProgress(btn.dataset.id);
+    };
+  });
+}
+
+/* ---- Riwayat Baca ---- */
+function renderHistory(){
+  const list = $("historyList");
+  list.innerHTML = "";
+  const started = booksCache.filter(b => b.lastReadIndex != null);
+  if(!started.length){ show($("historyEmpty")); return; }
+  hide($("historyEmpty"));
+  started.forEach((b) => {
+    const { chapters, read, pct } = bookProgress(b);
+    const when = formatWhen(b.updatedAt);
+    const row = document.createElement("div");
+    row.className = "hist-item";
+    row.innerHTML = `
+      <div class="hist-cover${themeCls(b)}">${coverHTML(b, true)}</div>
+      <div class="hist-body">
+        <div class="hist-title">${titleHTML(b.title)}</div>
+        <div class="hist-meta">Bagian ${read} dari ${chapters}${when ? " &middot; " + escapeHtml(when) : ""}</div>
+        <div class="book-progress"><i style="width:${pct}%"></i></div>
+      </div>
+      <div class="hist-chev">›</div>`;
+    row.onclick = () => openBook(b.id, b);
+    list.appendChild(row);
+  });
+}
+
+/* ---- Setting: ukuran teks bacaan (disimpan di perangkat ini) ---- */
+const READ_SIZES = { kecil: "13.5px", sedang: "15px", besar: "17px" };
+function applyReadSize(key){
+  if(!READ_SIZES[key]) key = "sedang";
+  document.documentElement.style.setProperty("--read-size", READ_SIZES[key]);
+  document.querySelectorAll("#sizeSeg button").forEach(b => b.classList.toggle("active", b.dataset.size === key));
+}
+document.querySelectorAll("#sizeSeg button").forEach(b => {
+  b.onclick = () => {
+    applyReadSize(b.dataset.size);
+    try{ localStorage.setItem("essensiana_read_size", b.dataset.size); }catch(e){}
+  };
+});
+(function(){
+  let k = "sedang";
+  try{ k = localStorage.getItem("essensiana_read_size") || "sedang"; }catch(e){}
+  applyReadSize(k);
+})();
+$("btnHelp2").onclick = () => show($("modalHelp"));
+
+/* ---- Muat data buku sekali, lalu render semua tab ---- */
+async function loadLibrary(){
+  loading(true, "Memuat rak buku…");
+  try{
+    const q = query(collection(db, "users", currentUser.uid, "books"), orderBy("updatedAt", "desc"));
+    const snap = await getDocs(q);
+    booksCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAccount();
+    renderDashboard();
+    renderBooksView();
+    renderHistory();
+  } catch(err){
+    console.error(err);
+    toast("Gagal memuat rak buku.");
+  } finally {
+    loading(false);
+  }
+}
+
+async function resetBookProgress(bookId){
+  loading(true, "Mengulang progres…");
+  try{
+    await setDoc(doc(db, "users", currentUser.uid, "books", bookId),
+      { lastReadIndex: null, updatedAt: serverTimestamp() }, { merge: true });
+    toast("Progres bacaan direset ke 0%.");
+    loadLibrary();
+  } catch(err){
+    console.error(err);
+    toast("Gagal mereset progres.");
+  } finally {
+    loading(false);
+  }
+}
+
+async function deleteBook(bookId){
+  loading(true, "Menghapus…");
+  try{
+    const modsSnap = await getDocs(collection(db, "users", currentUser.uid, "books", bookId, "modules"));
+    const ansSnap = await getDocs(collection(db, "users", currentUser.uid, "books", bookId, "answers"));
+    const batch = writeBatch(db);
+    modsSnap.forEach(d => batch.delete(d.ref));
+    ansSnap.forEach(d => batch.delete(d.ref));
+    batch.delete(doc(db, "users", currentUser.uid, "books", bookId));
+    await batch.commit();
+
+    // best-effort: remove original backup file if it exists
+    try{
+      const bookDoc = await getDoc(doc(db, "users", currentUser.uid, "books", bookId));
+      const data = bookDoc.exists() ? bookDoc.data() : null;
+      if(data && data.originalPath){
+        const sMod = await getStorageMod();
+        const r = sMod.ref(sMod.storage, data.originalPath);
+        await sMod.deleteObject(r).catch(()=>{});
+      }
+    }catch(e){}
+
+    toast("Materi dihapus.");
+    loadLibrary();
+  } catch(err){
+    console.error(err);
+    toast("Gagal menghapus materi.");
+  } finally {
+    loading(false);
+  }
+}
+
+/* ============================================================
+   ADD BOOK MODAL (khusus impor PDF)
+============================================================ */
+let pickedFile = null;
+let pickedParsed = null;
+let parsingNow = false;
+
+$("btnAddBook").onclick = () => { resetAddModal(); show($("modalAdd")); };
+$("closeAdd").onclick = () => hide($("modalAdd"));
+$("closeHelp").onclick = () => hide($("modalHelp"));
+$("btnHelp").onclick = () => show($("modalHelp"));
+
+(function buildThemeSelect(){
+  $("selTheme").innerHTML =
+    '<option value="auto">Otomatis (sesuai judul buku)</option>' +
+    Object.keys(THEMES).map(id => `<option value="${id}">${escapeHtml(THEMES[id].label)}</option>`).join("");
+})();
+
+function resetAddModal(){
+  pickedFile = null; pickedParsed = null; parsingNow = false;
+  $("inpTitleFile").value = "";
+  $("fileInput").value = "";
+  $("filePicked").style.display = "none";
+  $("chkKeepOriginal").checked = false;
+  $("selTheme").value = "auto";
+  hide($("parsePreview"));
+}
+
+function showPreview(html){
+  const box = $("parsePreview");
+  box.innerHTML = html;
+  show(box);
+}
+
+function themeChoiceFor(title, cover){
+  const sel = $("selTheme").value;
+  if(sel !== "auto" && THEMES[sel]) return sel;
+  return detectThemeId((title || "") + " " + ((cover && cover.title) || ""));
+}
+
+function currentBookTitle(){
+  const p = pickedParsed;
+  return $("inpTitleFile").value.trim() || (p && p.title) || (pickedFile ? pickedFile.name.replace(/\.[^.]+$/, "") : "") || "Tanpa judul";
+}
+
+function renderParsePreview(){
+  const p = pickedParsed;
+  if(!p || !pickedFile) return;
+  const exercises = p.modules.reduce((n, m) => n + m.blocks.filter(b => b.type === "reflection").length, 0);
+  const title = currentBookTitle();
+  const tid = themeChoiceFor(title, p.cover);
+  const kb = Math.max(1, Math.round(p.textSize / 1024));
+  let html = `<b>Hasil pembacaan PDF</b>${escapeHtml(title)}<br>` +
+    `${p.modules.length} bagian &middot; ${exercises} latihan &middot; tampilan ${escapeHtml(THEMES[tid].label)}<br>` +
+    `Yang tersimpan sekitar ${kb} KB (PDF asli ${Math.round(pickedFile.size / 1024)} KB tidak disimpan).`;
+  if(p.mode !== "workbook"){
+    html += `<br><br>Susunan workbook tidak dikenali, jadi bab dan latihan ditebak dari kata kunci. Hasilnya bisa kurang rapi.`;
+  }
+  showPreview(html);
+}
+
+$("fileInput").onchange = async () => {
+  const f = $("fileInput").files[0];
+  if(!f) return;
+  if(!/\.pdf$/i.test(f.name) && f.type !== "application/pdf"){
+    toast("Hanya file PDF yang bisa diimpor.");
+    $("fileInput").value = "";
+    return;
+  }
+  pickedFile = f; pickedParsed = null; parsingNow = true;
+  $("filePicked").style.display = "block";
+  $("filePicked").textContent = `${f.name} (${(f.size / 1024).toFixed(1)} KB)`;
+  showPreview("Membaca PDF…");
+  try{
+    pickedParsed = await parsePdfFile(f);
+    renderParsePreview();
+  } catch(err){
+    console.error(err);
+    pickedParsed = null;
+    showPreview("Gagal membaca PDF: " + escapeHtml(err.message || "kesalahan tidak diketahui"));
+  } finally {
+    parsingNow = false;
+  }
+};
+$("selTheme").onchange = renderParsePreview;
+$("inpTitleFile").oninput = () => { if(pickedParsed) renderParsePreview(); };
+
+// Buang nilai undefined (Firestore menolaknya)
+function cleanForStore(o){ return JSON.parse(JSON.stringify(o)); }
+
+$("btnSaveBook").onclick = async () => {
+  if(parsingNow){ toast("PDF masih dibaca, tunggu sebentar ya."); return; }
+  if(!pickedFile || !pickedParsed){ toast("Pilih file PDF dulu ya."); return; }
+  try{
+    const p = pickedParsed;
+    const finalTitle = currentBookTitle();
+    const themeId = themeChoiceFor(finalTitle, p.cover);
+
+    loading(true, "Menyimpan ke rak buku…");
+    const bookRef = doc(collection(db, "users", currentUser.uid, "books"));
+
+    const batch = writeBatch(db);
+    p.modules.forEach((mod, idx) => {
+      const modRef = doc(db, "users", currentUser.uid, "books", bookRef.id, "modules", String(idx));
+      batch.set(modRef, cleanForStore({
+        order: idx, title: mod.title, kicker: mod.kicker || null, heading: mod.heading || null, blocks: mod.blocks
+      }));
+    });
+    const bookData = cleanForStore({
+      title: finalTitle,
+      sourceType: "pdf",
+      chapterCount: p.modules.length,
+      moduleTitles: p.modules.map(m => m.title),
+      moduleTags: p.tags || null,
+      cover: p.cover || null,
+      coverImage: p.coverImage || null,
+      themeId,
+      sizeBytes: p.textSize,
+      lastReadIndex: null
+    });
+    bookData.createdAt = serverTimestamp();
+    bookData.updatedAt = serverTimestamp();
+    batch.set(bookRef, bookData);
+    await batch.commit();
+
+    if(!demoMode && $("chkKeepOriginal").checked){
+      if(pickedFile.size > 3 * 1024 * 1024){
+        toast("File asli tidak disimpan (lebih dari 3MB). Teksnya tetap tersimpan.");
+      } else {
+        try{
+          const sMod = await getStorageMod();
+          const path = `users/${currentUser.uid}/originals/${bookRef.id}_${pickedFile.name}`;
+          const r = sMod.ref(sMod.storage, path);
+          await sMod.uploadBytes(r, pickedFile);
+          await setDoc(bookRef, { originalPath: path }, { merge: true });
+        } catch(e){ console.warn("Gagal menyimpan file asli:", e); }
+      }
+    }
+
+    hide($("modalAdd"));
+    toast("Buku tersimpan ke rak buku.");
+    loadLibrary();
+  } catch(err){
+    console.error(err);
+    toast("Gagal menyimpan: " + (err.message || "kesalahan tidak diketahui"));
+  } finally {
+    loading(false);
+  }
+};
+
+/* ============================================================
+   READER SCREEN
+============================================================ */
+let activeBookId = null;
+let activeBookMeta = null;
+let activeModuleCache = {};
+let activeChapterIdx = 0;
+let activeThemeId = "default";
+let saveTimers = {};
+
+function leaveReader(){
+  hide($("readerScreen")); show($("libraryScreen"));
+  $("readerScreen").dataset.theme = "default";
+  activeThemeId = "default";
+  setThemeColor(THEMES.default.color);
+  loadLibrary();
+}
+
+async function openBook(bookId, meta){
+  activeBookId = bookId;
+  activeBookMeta = meta;
+  activeModuleCache = {};
+  activeThemeId = themeOf(meta);
+  $("readerScreen").dataset.theme = activeThemeId;
+  ensureThemeFonts(activeThemeId);
+  setThemeColor(THEMES[activeThemeId].color);
+  hide($("libraryScreen")); show($("readerScreen"));
+  $("rtTitle").textContent = meta.title || "Materi";
+
+  const tocList = $("tocList");
+  tocList.innerHTML = "";
+  const tags = meta.moduleTags || [];
+  (meta.moduleTitles || []).forEach((t, idx) => {
+    const b = document.createElement("button");
+    b.className = "toc-item";
+    const tag = tags[idx] != null ? tags[idx] : (idx + 1) + ".";
+    b.innerHTML = `<span class="toc-tag">${escapeHtml(String(tag))}</span>${escapeHtml(t)}`;
+    b.onclick = () => renderChapter(idx);
+    tocList.appendChild(b);
+  });
+
+  const startAt = meta.lastReadIndex != null ? meta.lastReadIndex : 0;
+  await renderChapter(startAt);
+}
+
+$("btnBackLib").onclick = leaveReader;
+$("btnTocMobile").onclick = () => {
+  const panel = $("tocPanel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+};
+
+async function fetchModule(idx){
+  if(activeModuleCache[idx]) return activeModuleCache[idx];
+  const snap = await getDoc(doc(db, "users", currentUser.uid, "books", activeBookId, "modules", String(idx)));
+  const data = snap.exists() ? snap.data() : { title: "(kosong)", blocks: [] };
+  activeModuleCache[idx] = data;
+  return data;
+}
+
+async function fetchAnswers(idx){
+  const snap = await getDoc(doc(db, "users", currentUser.uid, "books", activeBookId, "answers", String(idx)));
+  return snap.exists() ? snap.data() : {};
+}
+
+function renderBlocks(blocks, answers, chapterIdx){
+  let html = "";
+  blocks.forEach((b, bi) => {
+    if(b.type === "p"){
+      html += `<p class="block-p">${inlineMd(b.text)}</p>`;
+    } else if(b.type === "lead"){
+      html += `<p class="block-lead">${inlineMd(b.text)}</p>`;
+    } else if(b.type === "quote"){
+      html += `<div class="block-quote">${inlineMd(b.text)}</div>`;
+    } else if(b.type === "list"){
+      html += `<ul class="block-list">` + b.items.map(it => `<li>${inlineMd(it)}</li>`).join("") + `</ul>`;
+    } else if(b.type === "h"){
+      html += `<h3 class="block-h">${inlineMd(b.text)}</h3>`;
+    } else if(b.type === "affirm"){
+      html += `<div class="blk-affirm"><div class="k">✦ ${escapeHtml(b.title || "Rangkulan Hangat")} ✦</div>` +
+        (b.items || []).map(t => `<p>${inlineMd(t)}</p>`).join("") + `</div>`;
+    } else if(b.type === "checklist"){
+      const cur = new Set(String((answers && answers[b.id]) || "").split(",").filter(x => x !== ""));
+      const nid = b.id + "n";
+      const nval = answers && answers[nid] ? answers[nid] : "";
+      html += `<div class="reflect-box" data-block="${bi}">
+        <div class="reflect-kicker">CHECKLIST</div>
+        <div class="reflect-title">${escapeHtml(b.title)}</div>` +
+        (b.intro ? `<div class="q-note">${escapeHtml(b.intro)}</div>` : "") +
+        (b.items || []).map((it, k) =>
+          `<label class="chk-row"><input type="checkbox" class="chk" data-cid="${b.id}" data-k="${k}"${cur.has(String(k)) ? " checked" : ""}><span>${inlineMd(it)}</span></label>`
+        ).join("") +
+        (b.note ? `<div class="q-item" style="margin-top:16px;">
+          <div class="q-text">Catatan pengalamanmu</div>
+          <textarea class="q-answer" data-qid="${nid}" rows="4" placeholder="Tulis catatanmu di sini…">${escapeHtml(nval)}</textarea>
+          <div class="save-hint"><span class="save-dot" data-dot="${nid}"></span><span data-label="${nid}">Belum diisi</span></div>
+        </div>` : "") +
+        `</div>`;
+    } else if(b.type === "closing"){
+      html += `<div class="blk-closing">` +
+        (b.kicker ? `<div class="k">${escapeHtml(b.kicker)}</div>` : "") +
+        (b.heading ? `<div class="h">${escapeHtml(b.heading)}</div>` : "") +
+        (b.paras || []).map(p => `<p>${escapeHtml(p)}</p>`).join("") +
+        (activeThemeId === "evergreen" ? ringsSVG() : "") +
+        (b.footer ? `<div class="f">${escapeHtml(b.footer)}</div>` : "") +
+        `</div>`;
+    } else if(b.type === "reflection"){
+      html += `<div class="reflect-box" data-block="${bi}">` +
+        (b.kicker ? `<div class="reflect-tag">${escapeHtml(b.kicker)}</div>` : "") +
+        `<div class="reflect-kicker">LATIHAN</div>
+        <div class="reflect-title">${escapeHtml(b.title)}</div>`;
+      b.questions.forEach((q) => {
+        if(q.note){
+          html += `<div class="q-note">${inlineMd(q.text)}</div>`;
+          return;
+        }
+        const val = answers && answers[q.id] ? answers[q.id] : "";
+        const hint = `<div class="save-hint"><span class="save-dot" data-dot="${q.id}"></span><span data-label="${q.id}">Belum diisi</span></div>`;
+        if(q.slots){
+          const vals = String(val).split("\n");
+          let slotHtml = "";
+          for(let k = 0; k < q.slots; k++){
+            slotHtml += `<label class="slot"><span>${k + 1}.</span><input type="text" class="q-slot" data-qid="${q.id}" value="${escapeAttr(vals[k] || "")}" autocomplete="off"></label>`;
+          }
+          html += `
+          <div class="q-item">
+            <div class="q-text">${escapeHtml(q.text)}</div>
+            <div class="slot-list">${slotHtml}</div>
+            ${hint}
+          </div>`;
+        } else {
+          html += `
+          <div class="q-item">
+            <div class="q-text">${escapeHtml(q.text)}</div>
+            <textarea class="q-answer" data-qid="${q.id}" rows="${q.rows || 3}" placeholder="Tulis jawabanmu di sini…">${escapeHtml(val)}</textarea>
+            ${hint}
+          </div>`;
+        }
+      });
+      html += `</div>`;
+    }
+  });
+  return html;
+}
+
+async function renderChapter(idx){
+  activeChapterIdx = idx;
+  loading(true, "Memuat bagian…");
+  try{
+    const mod = await fetchModule(idx);
+    const answers = await fetchAnswers(idx);
+
+    const kicker = mod.kicker || `BAGIAN ${idx + 1} DARI ${activeBookMeta.chapterCount}`;
+    const heading = mod.heading || mod.title;
+    const hero = (idx === 0 && THEMES[activeThemeId].hero && activeBookMeta.cover) ? heroHTML(activeBookMeta.cover) : "";
+
+    const content = $("readerContent");
+    content.innerHTML = `
+      ${hero}
+      <div class="mod-kicker">${escapeHtml(kicker)}</div>
+      <div class="mod-title">${escapeHtml(heading)}</div>
+      ${renderBlocks(mod.blocks || [], answers, idx)}
+    `;
+    content.scrollTop = 0;
+    window.scrollTo(0, 0);
+
+    // Satu pertanyaan bisa punya satu kolom (textarea) atau beberapa kolom berbaris (1. 2. 3.)
+    const qids = new Set(Array.from(content.querySelectorAll("[data-qid]")).map(e => e.dataset.qid));
+    qids.forEach(qid => {
+      const inputs = Array.from(content.querySelectorAll(`[data-qid="${qid}"]`));
+      const dot = content.querySelector(`[data-dot="${qid}"]`);
+      const label = content.querySelector(`[data-label="${qid}"]`);
+      const currentValue = () => inputs.length === 1 && inputs[0].classList.contains("q-answer")
+        ? inputs[0].value
+        : inputs.map(i => i.value).join("\n");
+      if(inputs.some(i => i.value.trim())){ dot.classList.add("saved"); label.textContent = "Tersimpan"; }
+      inputs.forEach(inp => inp.addEventListener("input", () => {
+        dot.classList.remove("saved"); dot.classList.add("saving");
+        label.textContent = "Menyimpan…";
+        const key = idx + "_" + qid;
+        clearTimeout(saveTimers[key]);
+        saveTimers[key] = setTimeout(async () => {
+          try{
+            await setDoc(doc(db, "users", currentUser.uid, "books", activeBookId, "answers", String(idx)),
+              { [qid]: currentValue(), updatedAt: serverTimestamp() }, { merge: true });
+            dot.classList.remove("saving"); dot.classList.add("saved");
+            label.textContent = "Tersimpan";
+          } catch(e){
+            label.textContent = "Gagal menyimpan";
+          }
+        }, 800);
+      }));
+    });
+
+    // Checklist: simpan indeks kotak yang dicentang ("0,2,5") di dokumen jawaban bagian ini
+    content.querySelectorAll(".chk").forEach(cb => cb.addEventListener("change", () => {
+      const cid = cb.dataset.cid;
+      const val = Array.from(content.querySelectorAll(`.chk[data-cid="${cid}"]`)).filter(x => x.checked).map(x => x.dataset.k).join(",");
+      const key = "chk_" + idx + "_" + cid;
+      clearTimeout(saveTimers[key]);
+      saveTimers[key] = setTimeout(() => {
+        setDoc(doc(db, "users", currentUser.uid, "books", activeBookId, "answers", String(idx)),
+          { [cid]: val, updatedAt: serverTimestamp() }, { merge: true })
+          .catch(() => toast("Gagal menyimpan centangan."));
+      }, 400);
+    }));
+
+    document.querySelectorAll(".toc-item").forEach((el, i) => el.classList.toggle("active", i === idx));
+    $("btnPrevChap").disabled = idx <= 0;
+    $("btnNextChap").disabled = idx >= activeBookMeta.chapterCount - 1;
+    $("btnNextChap").textContent = idx >= activeBookMeta.chapterCount - 1 ? "Selesai ✓" : "Selanjutnya →";
+
+    await setDoc(doc(db, "users", currentUser.uid, "books", activeBookId),
+      { lastReadIndex: idx, updatedAt: serverTimestamp() }, { merge: true });
+    activeBookMeta.lastReadIndex = idx;
+  } catch(err){
+    console.error(err);
+    toast("Gagal memuat bagian ini.");
+  } finally {
+    loading(false);
+  }
+}
+
+$("btnPrevChap").onclick = () => { if(activeChapterIdx > 0) renderChapter(activeChapterIdx - 1); };
+$("btnNextChap").onclick = () => {
+  if(activeChapterIdx < activeBookMeta.chapterCount - 1) renderChapter(activeChapterIdx + 1);
+  else leaveReader();
+};
+
+/* ============================================================
+   SERVICE WORKER REGISTRATION
+============================================================ */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    try{ navigator.serviceWorker.register("service-worker.js").catch(console.warn); }catch(e){ console.warn(e); }
+  });
+}
+
+/* ============================================================
+   START
+============================================================ */
+// Dibuka langsung dari file / pratinjau (bukan http/https): login Firebase tidak akan jalan -> tawarkan pratinjau.
+if(!/^https?:$/.test(location.protocol)) showDemoLink();
+initBackend();
+</script>
+</body>
+</html>
