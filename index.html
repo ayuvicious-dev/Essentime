@@ -836,6 +836,53 @@
     text-overflow:ellipsis;
     white-space:nowrap;
   }
+  .multitask-modal-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:1px;
+    flex-shrink:0;
+  }
+  .multitask-modal-finish{
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--gold-dark);
+    font-variant-numeric:tabular-nums;
+  }
+  .multitask-summary{
+    margin-top:12px;
+    padding:10px 14px;
+    border-radius:14px;
+    background:#FBEEDB;
+    border:1px solid var(--line);
+    text-align:center;
+    font-size:12px;
+    font-weight:500;
+    color:var(--brown-soft);
+    line-height:1.5;
+  }
+  .multitask-summary b{
+    display:block;
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold-dark);
+    font-variant-numeric:tabular-nums;
+  }
+  .landscape-finish-all{
+    display:none;
+    margin-top:14px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--brown-soft);
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .landscape-finish-all.show{ display:block; }
+  .landscape-finish-all b{
+    color:var(--gold-dark);
+    font-weight:700;
+    font-size:15px;
+  }
   .landscape-mini-list{
     display:flex;
     flex-direction:column;
@@ -1358,6 +1405,7 @@
     <div class="bar-bg"><div class="bar-fill" id="landscape-bar-fill" style="width:0%"></div></div>
     <div class="landscape-name" id="landscape-name"></div>
     <div class="landscape-digits" data-role="digits" id="landscape-digits"></div>
+    <div class="landscape-finish-all" id="landscape-finish-all"></div>
     <div class="landscape-controls" id="landscape-controls"></div>
     <div class="landscape-mini-list" id="landscape-mini-list"></div>
   </div>
@@ -1610,6 +1658,7 @@
       <input type="text" id="multitask-search-input" placeholder="Cari atau ketik nama folder...">
     </div>
     <div class="multitask-modal-list" id="multitask-folder-list"></div>
+    <div class="multitask-summary" id="multitask-summary" style="display:none;"></div>
     <button class="btn btn-primary" id="multitask-go-btn" type="button" disabled style="margin-top:14px;">Go</button>
   </div>
 </div>
@@ -1683,6 +1732,7 @@ const closeMultitaskModalBtn = document.getElementById('close-multitask-modal');
 const multitaskSearchInput = document.getElementById('multitask-search-input');
 const multitaskFolderListEl = document.getElementById('multitask-folder-list');
 const multitaskGoBtnEl = document.getElementById('multitask-go-btn');
+const multitaskSummaryEl = document.getElementById('multitask-summary');
 const addTimerBtn = document.getElementById('add-timer-btn');
 const modalTitle = document.getElementById('modal-title');
 const stepOrderField = document.getElementById('step-order-field');
@@ -1777,6 +1827,7 @@ const landscapeDigits = document.getElementById('landscape-digits');
 const landscapeBarFill = document.getElementById('landscape-bar-fill');
 const landscapeControls = document.getElementById('landscape-controls');
 const landscapeMiniList = document.getElementById('landscape-mini-list');
+const landscapeFinishAllEl = document.getElementById('landscape-finish-all');
 const landscapeCloseBtn = document.getElementById('landscape-close-btn');
 const newFolderModalBackdrop = document.getElementById('new-folder-modal-backdrop');
 const closeNewFolderModalBtn = document.getElementById('close-new-folder-modal');
@@ -2608,6 +2659,7 @@ function renderLandscapeCard(id, data){
   landscapeBarFill.style.width = pct + '%';
   landscapeName.textContent = data.name;
   landscapeDigits.textContent = fmt(remaining);
+  updateLandscapeFinishAll();
 
   /* fitur multitasking: tampilkan semua timer lain yang sedang berjalan sebagai daftar kecil,
      lengkap dengan tombol jeda/atur ulang masing-masing */
@@ -2966,6 +3018,48 @@ function getFolderQueue(folderName){
       if(oa !== ob) return oa - ob;
       return timestampMs(a[1]) - timestampMs(b[1]);
     });
+}
+
+/* ---------------- estimasi jam selesai (gabung timer) ---------------- */
+/* sisa detik seluruh step yang belum selesai di satu folder (step berjalan berurutan) */
+function folderRemainingSeconds(folderName){
+  return getFolderQueue(folderName).reduce((sum, [, d]) => {
+    if(d.status === 'finished') return sum;
+    return sum + (currentRemaining(d) || 0);
+  }, 0);
+}
+/* folder berjalan paralel, jadi selesai keseluruhan = folder dengan sisa waktu terlama */
+function estimateFinishMs(folderNames){
+  let maxSec = 0;
+  folderNames.forEach(f => { maxSec = Math.max(maxSec, folderRemainingSeconds(f)); });
+  return Date.now() + maxSec * 1000;
+}
+function formatClock(ms){
+  const d = new Date(ms);
+  const hhmm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const now = new Date();
+  const sameDay = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  return sameDay ? hhmm : hhmm + ' (besok)';
+}
+function updateMultitaskSummary(){
+  if(!multitaskSummaryEl) return;
+  const sel = Array.from(multitaskSelected);
+  if(!sel.length){
+    multitaskSummaryEl.style.display = 'none';
+    return;
+  }
+  const maxSec = sel.reduce((m, f) => Math.max(m, folderRemainingSeconds(f)), 0);
+  multitaskSummaryEl.style.display = '';
+  multitaskSummaryEl.innerHTML = `Selesai keseluruhan<b>${formatClock(Date.now() + maxSec * 1000)}</b>Durasi terlama ${fmt(maxSec)}`;
+}
+function updateLandscapeFinishAll(){
+  if(!landscapeFinishAllEl) return;
+  if(!comboFolders.size){
+    landscapeFinishAllEl.classList.remove('show');
+    return;
+  }
+  landscapeFinishAllEl.classList.add('show');
+  landscapeFinishAllEl.innerHTML = `Selesai keseluruhan pukul <b>${formatClock(estimateFinishMs(comboFolders))}</b>`;
 }
 
 // Geser urutan langkah yang sudah ada di folder supaya timer baru bisa disisipkan
@@ -3356,11 +3450,15 @@ function renderMultitaskList(){
         const checked = multitaskSelected.has(f);
         const queue = getFolderQueue(f);
         const totalSeconds = queue.reduce((sum, [, d]) => sum + (d.durationSeconds || 0), 0);
+        const remainSec = folderRemainingSeconds(f);
         return `
         <div class="multitask-modal-row${checked ? ' checked' : ''}" data-folder="${escapeHtml(f)}">
           <span class="folder-row-check${checked ? ' checked' : ''}">${checked ? iconCheckSmall() : ''}</span>
           <span class="multitask-modal-name">${escapeHtml(f)}</span>
-          <span class="folder-row-total">${fmt(totalSeconds)}</span>
+          <span class="multitask-modal-right">
+            <span class="folder-row-total">${fmt(totalSeconds)}</span>
+            ${remainSec > 0 ? `<span class="multitask-modal-finish" data-finish-folder="${escapeHtml(f)}">selesai ${formatClock(Date.now() + remainSec * 1000)}</span>` : ''}
+          </span>
         </div>`;
       }).join('');
   multitaskFolderListEl.querySelectorAll('.multitask-modal-row').forEach(row => {
@@ -3371,6 +3469,7 @@ function renderMultitaskList(){
       renderMultitaskList();
     });
   });
+  updateMultitaskSummary();
   multitaskGoBtnEl.disabled = multitaskSelected.size < 2;
   multitaskGoBtnEl.textContent = multitaskSelected.size ? `Go (${multitaskSelected.size})` : 'Go';
 }
@@ -3457,6 +3556,14 @@ function stopTicker(){
 async function tick(){
   const user = auth.currentUser;
   if(!user) return;
+  if(multitaskMode){
+    updateMultitaskSummary();
+    multitaskFolderListEl.querySelectorAll('[data-finish-folder]').forEach(el => {
+      const rs = folderRemainingSeconds(el.dataset.finishFolder);
+      if(rs > 0) el.textContent = 'selesai ' + formatClock(Date.now() + rs * 1000);
+    });
+  }
+  if(comboFolders.size) updateLandscapeFinishAll();
   for(const [id, data] of localTimers.entries()){
     if(data.status !== 'running') continue;
     const remaining = currentRemaining(data);
