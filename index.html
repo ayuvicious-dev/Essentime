@@ -958,6 +958,21 @@
     color:#fff;
     border-color:transparent;
   }
+  .category-filter-chip.has-del{ padding-right:6px; display:inline-flex; align-items:center; gap:4px; }
+  .category-chip-del{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.12);
+    color:inherit;
+    line-height:0;
+  }
+  .category-chip-del:hover{ background:var(--danger); color:#fff; }
+  .category-manage-btn.delete:disabled{ opacity:.35; cursor:not-allowed; }
+  .category-manage-hint{ font-size:11px; color:var(--brown-faint); font-weight:500; }
   .folder-priority-badge{
     display:flex;
     align-items:center;
@@ -2347,6 +2362,16 @@ function getFolderCategory(folderName){
   return (entry && entry.category) || '';
 }
 
+/* jumlah folder yang memakai suatu kategori (folder eksplisit + folder dari timer aktif) */
+function getCategoryFolderCount(name){
+  const names = new Set();
+  localFolders.forEach(d => { if(d.category === name) names.add(d.name); });
+  localTimers.forEach(d => {
+    if(d.category === name && d.status !== 'finished') names.add(d.folder || 'Umum');
+  });
+  return names.size;
+}
+
 /* ---------------- daftar kategori (settings) ---------------- */
 function renderCategoryManageList(){
   const row = document.getElementById('category-manage-row');
@@ -2355,23 +2380,27 @@ function renderCategoryManageList(){
     row.innerHTML = `<div class="category-manage-empty">Belum ada kategori.</div>`;
     return;
   }
-  row.innerHTML = knownCategoryNames.map(c => `
+  row.innerHTML = knownCategoryNames.map(c => {
+    const folderCount = getCategoryFolderCount(c);
+    const locked = folderCount > 0;
+    return `
     <div class="category-manage-item">
-      <span class="category-manage-name" title="${escapeHtml(c)}">${escapeHtml(c)}</span>
+      <span class="category-manage-name" title="${escapeHtml(c)}">${escapeHtml(c)}${locked ? ` <span class="category-manage-hint">· ${folderCount} folder</span>` : ''}</span>
       <div class="category-manage-actions">
         <button class="category-manage-btn edit" data-category="${escapeHtml(c)}" type="button" title="Ubah nama">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
         </button>
-        <button class="category-manage-btn delete" data-category="${escapeHtml(c)}" type="button" title="Hapus">
+        <button class="category-manage-btn delete" data-category="${escapeHtml(c)}" type="button" ${locked ? 'disabled title="Tidak bisa dihapus: masih ada folder di kategori ini"' : 'title="Hapus"'}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   row.querySelectorAll('.category-manage-btn.edit').forEach(btn => {
     btn.addEventListener('click', () => renameCategory(btn.dataset.category));
   });
-  row.querySelectorAll('.category-manage-btn.delete').forEach(btn => {
+  row.querySelectorAll('.category-manage-btn.delete:not(:disabled)').forEach(btn => {
     btn.addEventListener('click', () => deleteCategory(btn.dataset.category));
   });
 }
@@ -2409,7 +2438,12 @@ async function renameCategory(oldName){
 async function deleteCategory(name){
   const user = auth.currentUser;
   if(!user) return;
-  const ok = confirm(`Hapus kategori "${name}"? Folder/timer yang memakainya akan jadi tanpa kategori.`);
+  const folderCount = getCategoryFolderCount(name);
+  if(folderCount > 0){
+    alert(`Kategori "${name}" belum bisa dihapus karena masih ada ${folderCount} folder di dalamnya. Pindahkan atau hapus folder tersebut dulu.`);
+    return;
+  }
+  const ok = confirm(`Hapus kategori "${name}"?`);
   if(!ok) return;
   try{
     const entry = Array.from(localCategories.entries()).find(([, d]) => d.name === name);
@@ -2971,6 +3005,7 @@ function renderAll(){
     ...explicitFolderNames
   ])).sort();
   populateFolderSelect();
+  renderCategoryManageList();
 
   updateLandscapeMode();
   /* modal detail folder: hanya tampil di tab folder & saat folder dipilih */
@@ -3004,7 +3039,10 @@ function renderAll(){
       `</div>` +
       `<div class="category-filter-row">
          <button class="category-filter-chip${hiddenCategories.size === 0 ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
-         ${knownCategoryNames.map(c => `<button class="category-filter-chip${!hiddenCategories.has(c) ? ' active' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}</button>`).join('')}
+         ${knownCategoryNames.map(c => {
+           const empty = getCategoryFolderCount(c) === 0;
+           return `<button class="category-filter-chip${!hiddenCategories.has(c) ? ' active' : ''}${empty ? ' has-del' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}${empty ? `<span class="category-chip-del" data-del="${escapeHtml(c)}" role="button" aria-label="Hapus kategori ${escapeHtml(c)}" title="Hapus kategori (kosong)">${iconCloseSmall()}</span>` : ''}</button>`;
+         }).join('')}
        </div>` +
       (searchedFolderNames.length === 0
         ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
@@ -3081,7 +3119,13 @@ function renderAll(){
     }
 
     folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
+      chip.addEventListener('click', (e) => {
+        const delBtn = e.target.closest('.category-chip-del');
+        if(delBtn){
+          e.stopPropagation();
+          deleteCategory(delBtn.dataset.del);
+          return;
+        }
         const cat = chip.dataset.category;
         if(!cat){
           if(hiddenCategories.size === 0){
