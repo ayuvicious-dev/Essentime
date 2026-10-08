@@ -429,6 +429,67 @@
     color:var(--gold-dark);
   }
 
+  .display-option-row{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:8px;
+  }
+  .display-option-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    flex:1 1 0;
+    min-width:0;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    padding:10px 2px 8px;
+    border-radius:14px;
+    cursor:pointer;
+    color:var(--brown-soft);
+    font-size:10.5px;
+    font-weight:600;
+    transition:background .15s, border-color .15s, color .15s, transform .1s;
+  }
+  .display-option-btn:active{ transform:scale(0.96); }
+  .display-option-btn .dopt-icon{ width:32px; height:32px; display:flex; align-items:center; justify-content:center; }
+  .display-option-btn .dopt-icon svg{ width:100%; height:100%; display:block; }
+  .display-option-btn.active{
+    border-color:var(--gold-dark);
+    background:#FBEEDB;
+    color:var(--gold-dark);
+  }
+  html[data-theme="dark"] .display-option-btn.active{ background:var(--glow); }
+  .mini-visual{ width:28px; height:28px; flex-shrink:0; display:flex; align-items:center; justify-content:center; align-self:center; }
+  .mini-visual svg{ width:100%; height:100%; display:block; }
+  .timer-card:not(.timer-card-compact) .mini-visual{ width:52px; height:52px; }
+  .landscape-visual{ height:min(24vh,150px); margin:2px auto 8px; display:flex; align-items:center; justify-content:center; }
+  .landscape-visual svg{ height:100%; width:auto; max-width:100%; display:block; }
+
+  .folder-dur-list{ display:flex; flex-direction:column; gap:8px; }
+  .folder-dur-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#FFFEFC;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:8px 10px 8px 12px;
+  }
+  .folder-dur-name{
+    flex:1;
+    min-width:0;
+    font-size:13.5px;
+    font-weight:600;
+    color:#3E2A16;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .field .folder-dur-row input{ width:76px; flex-shrink:0; text-align:center; padding:8px 6px; }
+  .folder-dur-unit{ font-size:12px; color:var(--brown-faint); flex-shrink:0; }
+
   /* timer list */
   #timer-list{
     display:flex;
@@ -965,6 +1026,75 @@
     font-size:12.5px;
     color:var(--brown-faint);
   }
+  .folder-chips-top{ position:relative; }
+  .folder-filter-btn{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .folder-filter-btn:hover{ background:#FBEEDB; color:var(--gold-dark); }
+  .folder-filter-btn.active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    color:#fff;
+    border-color:transparent;
+  }
+  .folder-filter-wrap{ position:relative; display:flex; flex-shrink:0; }
+  .category-filter-pop{
+    position:absolute;
+    right:0;
+    top:calc(100% + 8px);
+    z-index:30;
+    display:flex;
+    flex-direction:column;
+    min-width:190px;
+    max-width:min(260px, 80vw);
+    max-height:50vh;
+    overflow-y:auto;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    box-shadow:0 14px 30px -10px var(--shadow);
+    padding:6px;
+  }
+  .category-filter-option{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    border:none;
+    background:transparent;
+    padding:10px 10px;
+    border-radius:10px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--brown-soft);
+    text-align:left;
+    cursor:pointer;
+  }
+  .category-filter-option:hover{ background:var(--cream); }
+  .category-filter-all{ border-bottom:1px solid var(--line); border-radius:10px 10px 0 0; margin-bottom:4px; }
+  .category-filter-option .cf-check{
+    width:18px;height:18px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--brown-faint);
+    display:flex;align-items:center;justify-content:center;
+    color:transparent;
+  }
+  .category-filter-option.active{ color:var(--brown); }
+  .category-filter-option.active .cf-check{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    border-color:transparent;
+    color:#fff;
+  }
+  .category-filter-option .cf-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .category-filter-empty{ padding:10px; font-size:12.5px; color:var(--brown-faint); }
   .category-filter-row{
     display:flex;
     flex-wrap:nowrap;
@@ -1085,7 +1215,7 @@
   }
   .timer-digits-wrap{
     display:flex;
-    align-items:baseline;
+    align-items:center;
     gap:10px;
   }
   .folder-detail-head{
@@ -1320,6 +1450,38 @@
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
   }
+  .landscape-focus-btn{
+    position:absolute;
+    top:14px;left:14px;
+    width:34px;height:34px;
+    border-radius:11px;
+    border:none;
+    background:var(--cream);
+    color:var(--brown-soft);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    z-index:2;
+  }
+  .landscape-focus-btn:hover{color:var(--brown);}
+  .landscape-focus-btn:active{transform:scale(0.94);}
+  /* mode fokus: hanya nama timer + tampilan visual (jam pasir dll) */
+  .landscape-card.focus-mode.has-visual .landscape-digits,
+  .landscape-card.focus-mode.has-visual .landscape-controls,
+  .landscape-card.focus-mode.has-visual .landscape-mini-list,
+  .landscape-card.focus-mode.has-visual .landscape-finish-all{ display:none !important; }
+  .landscape-card.focus-mode.has-visual .landscape-name{ font-size:24px; margin:10px 0 14px; }
+  .landscape-card.focus-mode.has-visual .landscape-visual{ height:min(56vh,340px); margin:0 auto 6px; }
+  /* mode fokus + tampilan Default: hanya angka besar */
+  .landscape-card.focus-mode:not(.has-visual) .landscape-controls,
+  .landscape-card.focus-mode:not(.has-visual) .landscape-mini-list,
+  .landscape-card.focus-mode:not(.has-visual) .landscape-finish-all,
+  .landscape-card.focus-mode:not(.has-visual) .bar-bg{ display:none !important; }
+  .landscape-card.focus-mode:not(.has-visual) .landscape-name{ font-size:24px; margin:10px 0 0; }
+  .landscape-card.focus-mode:not(.has-visual) .landscape-digits{
+    font-size:min(30vw, 190px);
+    margin:8px 0 10px;
+    line-height:1.05;
+  }
   .landscape-close-btn:hover{color:var(--brown);}
   .landscape-close-btn:active{transform:scale(0.94);}
   .landscape-name{
@@ -1399,11 +1561,13 @@
 
 <div id="landscape-fullscreen">
   <div class="timer-card landscape-card" id="landscape-card">
+    <button class="landscape-focus-btn" id="landscape-focus-btn" type="button" title="Layar penuh (nama &amp; tampilan saja)"></button>
     <button class="landscape-close-btn" id="landscape-close-btn" type="button" title="Tutup">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="bar-bg"><div class="bar-fill" id="landscape-bar-fill" style="width:0%"></div></div>
     <div class="landscape-name" id="landscape-name"></div>
+    <div class="landscape-visual" data-role="visual" id="landscape-visual" style="display:none;"></div>
     <div class="landscape-digits" data-role="digits" id="landscape-digits"></div>
     <div class="landscape-finish-all" id="landscape-finish-all"></div>
     <div class="landscape-controls" id="landscape-controls"></div>
@@ -1531,10 +1695,9 @@
       <input id="step-order-input" type="number" min="1" inputmode="numeric">
     </div>
     <div class="field" id="folder-select-field">
-      <label for="timer-folder-input">Simpan ke folder</label>
+      <label for="timer-folder-input">Nama Kegiatan</label>
       <div class="combo-wrap" id="folder-combo-wrap">
-        <input id="timer-folder-input" type="text" autocomplete="off" placeholder="Cari atau ketik nama folder baru" maxlength="24">
-        <div class="combo-dropdown" id="folder-combo-dropdown"></div>
+        <input id="timer-folder-input" type="text" autocomplete="off" placeholder="Ketik nama kegiatan" maxlength="24">
       </div>
     </div>
     <div class="field" id="category-select-field">
@@ -1578,6 +1741,10 @@
           <span class="sound-label">Getar</span>
         </button>
       </div>
+    </div>
+    <div class="field">
+      <label>Tampilan</label>
+      <div class="display-option-row" id="display-option-row"></div>
     </div>
     <div class="rentetan-section" id="rentetan-section">
       <div class="rentetan-list" id="rentetan-list"></div>
@@ -1639,6 +1806,14 @@
           <span class="sound-label">Getar</span>
         </button>
       </div>
+    </div>
+    <div class="field">
+      <label>Tampilan</label>
+      <div class="display-option-row" id="folder-display-option-row"></div>
+    </div>
+    <div class="field" id="folder-durations-field" style="display:none;">
+      <label>Durasi timer</label>
+      <div class="folder-dur-list" id="folder-durations-list"></div>
     </div>
     <button class="btn btn-primary" id="create-folder-btn" type="button">Buat folder</button>
     <div class="auth-msg" id="new-folder-msg"></div>
@@ -1721,7 +1896,6 @@ const timerNameInput = document.getElementById('timer-name');
 const durMinInput = document.getElementById('dur-min');
 const timerFolderInput = document.getElementById('timer-folder-input');
 const folderComboWrap = document.getElementById('folder-combo-wrap');
-const folderComboDropdown = document.getElementById('folder-combo-dropdown');
 const folderSelectField = document.getElementById('folder-select-field');
 const timerCategoryInput = document.getElementById('timer-category-input');
 const categoryComboWrap = document.getElementById('category-combo-wrap');
@@ -1855,6 +2029,7 @@ const TAB_TITLES = { folders: 'Folder', settings: 'Setting' };
 let currentFolder = '';
 let folderListView = true; // true = tampilkan daftar folder saja, false = tampilkan isi folder
 let folderSearchOpen = false;
+let categoryFilterOpen = false;
 let folderSearchQuery = '';
 let hiddenCategories = new Set();
 let selectedFolderSoundType = 'chime';
@@ -1862,6 +2037,8 @@ let knownFolderNames = ['Umum'];
 let knownCategoryNames = [];
 let editingId = null;
 let selectedSoundType = 'chime';
+let selectedDisplayType = 'default';
+let selectedFolderDisplayType = 'default';
 let multitaskMode = false; // true = modal gabung timer sedang terbuka
 let multitaskSelected = new Set();
 let multitaskSearchQuery = '';
@@ -1869,6 +2046,69 @@ let comboFolders = new Set(); // folder names currently running together as a co
 const localTimers = new Map(); // id -> data
 const localFolders = new Map(); // id -> {name}
 const localCategories = new Map(); // id -> {name}
+
+/* ---------------- tampilan timer (default / jam pasir / lingkaran / cangkir) ---------------- */
+const DISPLAY_OPTIONS = [
+  { type:'default',   label:'Default' },
+  { type:'hourglass', label:'Jam pasir' },
+  { type:'ring',      label:'Lingkaran' },
+  { type:'cup',       label:'Cangkir' }
+];
+let visualUid = 0;
+/* pct = sisa waktu dalam persen (100 = penuh, 0 = habis); running = timer sedang berjalan */
+function visualSVG(type, pct, running){
+  const p = Math.min(1, Math.max(0, (pct || 0) / 100));
+  const id = 'vz' + (visualUid++);
+  if(type === 'ring'){
+    const C = 2 * Math.PI * 42;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="42" fill="none" stroke="var(--line)" stroke-width="9"/>
+      ${p > 0.002 ? `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--gold-dark)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="${(C * (1 - p)).toFixed(2)}" transform="rotate(-90 50 50)"/>` : ''}
+    </svg>`;
+  }
+  if(type === 'hourglass'){
+    const glass = 'M14 8 H66 V14 C66 30 48 40 44 50 C48 60 66 70 66 86 V92 H14 V86 C14 70 32 60 36 50 C32 40 14 30 14 14 Z';
+    const h1 = 42 * p;
+    const h2 = 42 * (1 - p);
+    return `<svg viewBox="0 0 80 100" aria-hidden="true">
+      <defs><clipPath id="${id}"><path d="${glass}"/></clipPath></defs>
+      <path d="${glass}" fill="var(--paper)" opacity="0.6"/>
+      <g clip-path="url(#${id})">
+        <rect x="0" y="${(50 - h1).toFixed(2)}" width="80" height="${h1.toFixed(2)}" fill="var(--gold-mid)"/>
+        <rect x="0" y="${(92 - h2).toFixed(2)}" width="80" height="${h2.toFixed(2)}" fill="var(--gold-mid)"/>
+      </g>
+      ${running && p > 0.002 ? `<line x1="40" y1="48" x2="40" y2="${(92 - h2).toFixed(2)}" stroke="var(--gold-dark)" stroke-width="1.6" stroke-linecap="round"/>` : ''}
+      <path d="${glass}" fill="none" stroke="var(--brown-soft)" stroke-width="2.4" stroke-linejoin="round"/>
+      <rect x="9" y="3" width="62" height="6" rx="2.5" fill="var(--brown-soft)"/>
+      <rect x="9" y="91" width="62" height="6" rx="2.5" fill="var(--brown-soft)"/>
+    </svg>`;
+  }
+  if(type === 'cup'){
+    const body = 'M16 38 H76 V58 C76 76 64 86 46 86 C28 86 16 76 16 58 Z';
+    const h = 48 * p;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs><clipPath id="${id}"><path d="${body}"/></clipPath></defs>
+      ${running && p > 0.002 ? `<path d="M34 28 C30 22 38 20 34 13" fill="none" stroke="var(--brown-faint)" stroke-width="3" stroke-linecap="round"/><path d="M50 28 C46 22 54 20 50 13" fill="none" stroke="var(--brown-faint)" stroke-width="3" stroke-linecap="round"/><path d="M66 28 C62 22 70 20 66 13" fill="none" stroke="var(--brown-faint)" stroke-width="3" stroke-linecap="round"/>` : ''}
+      <path d="${body}" fill="var(--paper)" opacity="0.6"/>
+      <g clip-path="url(#${id})">
+        <rect x="10" y="${(86 - h).toFixed(2)}" width="72" height="${h.toFixed(2)}" fill="var(--gold-mid)"/>
+      </g>
+      <path d="M76 44 H82 C94 44 94 66 80 66 H74" fill="none" stroke="var(--brown-soft)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${body}" fill="none" stroke="var(--brown-soft)" stroke-width="4" stroke-linejoin="round"/>
+      <line x1="10" y1="93" x2="84" y2="93" stroke="var(--brown-soft)" stroke-width="4" stroke-linecap="round"/>
+    </svg>`;
+  }
+  /* default: angka besar saja (untuk pratinjau pilihan) */
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <text x="50" y="62" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="30" font-weight="600" fill="currentColor">05:00</text>
+  </svg>`;
+}
+function normalizeDisplayType(t){
+  return DISPLAY_OPTIONS.some(o => o.type === t) ? t : 'default';
+}
+function pctOf(data, seconds){
+  return data.durationSeconds > 0 ? Math.min(100, Math.max(0, (seconds / data.durationSeconds) * 100)) : 0;
+}
 
 /* ---------------- finish sounds (no external audio file) + vibration ---------------- */
 function playChime(soundType){
@@ -2001,40 +2241,14 @@ bottomNav.querySelectorAll('.nav-item').forEach(btn => {
 });
 
 /* ---------------- add-timer modal ---------------- */
-function renderFolderComboDropdown(){
-  const q = timerFolderInput.value.trim();
-  const qLower = q.toLowerCase();
-  const matches = knownFolderNames.filter(f => !qLower || f.toLowerCase().includes(qLower));
-  const exact = knownFolderNames.some(f => f.toLowerCase() === qLower);
-  let html = matches.map(f => `<div class="combo-option" data-value="${escapeHtml(f)}">${escapeHtml(f)}</div>`).join('');
-  if(q && !exact){
-    html += `<div class="combo-option combo-create" data-value="${escapeHtml(q)}">+ Buat folder baru "${escapeHtml(q)}"</div>`;
-  }
-  if(!html){
-    html = `<div class="combo-empty">Ketik untuk membuat folder baru</div>`;
-  }
-  folderComboDropdown.innerHTML = html;
-  folderComboDropdown.querySelectorAll('.combo-option').forEach(opt => {
-    opt.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      timerFolderInput.value = opt.dataset.value;
-      closeFolderCombo();
-    });
-  });
-}
-function openFolderCombo(){
-  renderFolderComboDropdown();
-  folderComboWrap.classList.add('open');
-}
 function closeFolderCombo(){
   folderComboWrap.classList.remove('open');
 }
 function populateFolderSelect(){
   closeFolderCombo();
 }
-timerFolderInput.addEventListener('input', openFolderCombo);
-timerFolderInput.addEventListener('focus', openFolderCombo);
-timerFolderInput.addEventListener('blur', () => setTimeout(closeFolderCombo, 120));
+/* nama kegiatan: input teks biasa (tanpa dropdown); teks bawaan terpilih supaya langsung bisa diganti */
+timerFolderInput.addEventListener('focus', () => timerFolderInput.select());
 
 function renderCategoryComboDropdown(){
   const q = timerCategoryInput.value.trim();
@@ -2082,6 +2296,41 @@ soundOptionRow.querySelectorAll('.sound-option-btn').forEach(btn => {
   btn.addEventListener('click', () => { setSoundOption(btn.dataset.sound); playChime(btn.dataset.sound); });
 });
 
+const displayOptionRow = document.getElementById('display-option-row');
+displayOptionRow.innerHTML = DISPLAY_OPTIONS.map(o => `
+  <button class="display-option-btn" data-display="${o.type}" type="button" title="${o.label}">
+    <span class="dopt-icon">${visualSVG(o.type, 60, false)}</span>
+    <span>${o.label}</span>
+  </button>`).join('');
+function setDisplayOption(type){
+  selectedDisplayType = normalizeDisplayType(type);
+  displayOptionRow.querySelectorAll('.display-option-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.display === selectedDisplayType);
+  });
+}
+displayOptionRow.querySelectorAll('.display-option-btn').forEach(btn => {
+  btn.addEventListener('click', () => setDisplayOption(btn.dataset.display));
+});
+
+const folderDisplayOptionRow = document.getElementById('folder-display-option-row');
+folderDisplayOptionRow.innerHTML = displayOptionRow.innerHTML;
+function setFolderDisplayOption(type){
+  selectedFolderDisplayType = normalizeDisplayType(type);
+  folderDisplayOptionRow.querySelectorAll('.display-option-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.display === selectedFolderDisplayType);
+  });
+}
+folderDisplayOptionRow.querySelectorAll('.display-option-btn').forEach(btn => {
+  btn.addEventListener('click', () => setFolderDisplayOption(btn.dataset.display));
+});
+/* tampilan folder: pakai pilihan folder, kalau belum ada ikuti timer pertama di folder itu */
+function getFolderDisplayType(folderName){
+  const entry = Array.from(localFolders.values()).find(f => f.name === folderName);
+  if(entry && entry.displayType) return normalizeDisplayType(entry.displayType);
+  const first = getFolderQueue(folderName)[0];
+  return normalizeDisplayType(first && first[1].displayType);
+}
+
 function setFolderSoundOption(type){
   selectedFolderSoundType = type || 'chime';
   folderSoundOptionRow.querySelectorAll('.sound-option-btn').forEach(b => {
@@ -2104,11 +2353,12 @@ function openAddModal(){
   timerNameInput.value = '';
   durMinInput.value = 5;
   folderSelectField.style.display = '';
-  timerFolderInput.value = 'Umum';
+  timerFolderInput.value = '';
   closeFolderCombo();
-  timerCategoryInput.value = knownCategoryNames.length ? knownCategoryNames[0] : '';
+  timerCategoryInput.value = '';
   closeCategoryCombo();
   setSoundOption('chime');
+  setDisplayOption('default');
   rentetanSection.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
@@ -2116,11 +2366,12 @@ function openAddModal(){
 }
 function openAddModalForFolder(folderName){
   openAddModal();
-  if(knownFolderNames.includes(folderName)){
-    timerFolderInput.value = folderName;
-  }
+  timerFolderInput.value = folderName;
+  /* di dalam folder, kategori ikut kategori folder tersebut */
+  timerCategoryInput.value = getFolderCategory(folderName) || '';
   const folderEntry = Array.from(localFolders.values()).find(f => f.name === folderName);
   setSoundOption((folderEntry && folderEntry.soundType) || 'chime');
+  setDisplayOption(getFolderDisplayType(folderName));
   folderSelectField.style.display = 'none';
   rentetanSection.style.display = 'none';
   const queue = getFolderQueue(folderName);
@@ -2152,6 +2403,7 @@ function openEditModal(id, data){
   timerCategoryInput.value = category || (knownCategoryNames.length ? knownCategoryNames[0] : '');
   closeCategoryCombo();
   setSoundOption(data.soundType || 'chime');
+  setDisplayOption(data.displayType || 'default');
   resetRentetanList();
   addModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
@@ -2198,8 +2450,30 @@ newFolderCategorySelect.addEventListener('change', () => {
   if(isNew) newFolderCategoryNewInput.focus();
 });
 
+const folderDurationsField = document.getElementById('folder-durations-field');
+const folderDurationsList = document.getElementById('folder-durations-list');
+function renderFolderDurations(folderName){
+  const items = getFolderQueue(folderName).filter(([, d]) => d.status !== 'finished');
+  if(!items.length){
+    folderDurationsField.style.display = 'none';
+    folderDurationsList.innerHTML = '';
+    return;
+  }
+  folderDurationsList.innerHTML = items.map(([id, d]) => {
+    const mins = Math.round((d.durationSeconds || 0) / 60);
+    return `<div class="folder-dur-row">
+      <span class="folder-dur-name" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</span>
+      <input type="number" class="folder-dur-input" data-id="${id}" data-orig="${mins}" min="1" max="180" value="${mins}" inputmode="numeric">
+      <span class="folder-dur-unit">menit</span>
+    </div>`;
+  }).join('');
+  folderDurationsField.style.display = '';
+}
+
 function openNewFolderModal(){
   folderModalMode = 'create';
+  folderDurationsField.style.display = 'none';
+  folderDurationsList.innerHTML = '';
   renamingFolderOldName = null;
   newFolderModalTitle.textContent = 'Folder baru';
   createFolderBtn.textContent = 'Buat folder';
@@ -2215,6 +2489,7 @@ function openNewFolderModal(){
     newFolderCategoryNewField.style.display = '';
   }
   setFolderSoundOption('chime');
+  setFolderDisplayOption('default');
   newFolderModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
   setTimeout(() => newFolderNameInput.focus(), 50);
@@ -2244,6 +2519,8 @@ function openEditFolderModal(folderName){
     newFolderCategoryNewField.style.display = '';
   }
   setFolderSoundOption((folderEntry && folderEntry.soundType) || 'chime');
+  setFolderDisplayOption(getFolderDisplayType(folderName));
+  renderFolderDurations(folderName);
   newFolderModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
   setTimeout(() => { newFolderNameInput.focus(); newFolderNameInput.select(); }, 50);
@@ -2291,18 +2568,41 @@ createFolderBtn.addEventListener('click', async () => {
     return;
   }
   const soundType = selectedFolderSoundType || 'chime';
+  const displayType = selectedFolderDisplayType || 'default';
+  const durationChanges = [];
+  if(folderModalMode === 'rename'){
+    for(const inp of folderDurationsList.querySelectorAll('.folder-dur-input')){
+      const mins = parseInt(inp.value, 10);
+      if(!(mins > 0)){
+        showNewFolderMsg('Durasi tiap timer harus lebih dari 0 menit.', 'error');
+        inp.focus();
+        return;
+      }
+      if(String(mins) !== inp.dataset.orig) durationChanges.push([inp.dataset.id, mins * 60]);
+    }
+  }
   createFolderBtn.disabled = true;
   try{
     if(category && !knownCategoryNames.includes(category)){
       await addDoc(collection(db, 'users', user.uid, 'categories'), { name: category, createdAt: serverTimestamp() });
     }
     if(folderModalMode === 'rename'){
-      await renameFolder(renamingFolderOldName, name, category, soundType);
+      await renameFolder(renamingFolderOldName, name, category, soundType, displayType);
+      /* durasi yang diubah: timer kembali ke kondisi siap dengan durasi baru */
+      await Promise.all(durationChanges.map(([id, sec]) =>
+        updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+          durationSeconds: sec,
+          remainingSeconds: sec,
+          status: 'idle',
+          endAt: null
+        })
+      ));
     }else{
       await addDoc(collection(db, 'users', user.uid, 'folders'), {
         name,
         category,
         soundType,
+        displayType,
         createdAt: serverTimestamp()
       });
     }
@@ -2316,13 +2616,14 @@ createFolderBtn.addEventListener('click', async () => {
   }
 });
 
-async function renameFolder(oldName, newName, category, soundType){
+async function renameFolder(oldName, newName, category, soundType, displayType){
   const user = auth.currentUser;
   if(!user) return;
   const entry = Array.from(localFolders.entries()).find(([, d]) => d.name === oldName);
   const fields = { name: newName };
   if(category !== undefined) fields.category = category;
   if(soundType !== undefined) fields.soundType = soundType;
+  if(displayType !== undefined) fields.displayType = displayType;
   if(entry){
     await updateDoc(doc(db, 'users', user.uid, 'folders', entry[0]), fields);
   }else{
@@ -2330,7 +2631,10 @@ async function renameFolder(oldName, newName, category, soundType){
   }
   const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === oldName);
   await Promise.all(timersInFolder.map(([id]) =>
-    updateDoc(doc(db, 'users', user.uid, 'timers', id), { folder: newName })
+    updateDoc(doc(db, 'users', user.uid, 'timers', id), {
+      folder: newName,
+      ...(displayType !== undefined ? { displayType } : {})
+    })
   ));
 }
 
@@ -2394,7 +2698,8 @@ async function handleDuplicateFolder(folderName){
         remainingSeconds: d.durationSeconds,
         status: 'idle',
         endAt: null,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        displayType: d.displayType || 'default'
       })
     ));
     currentFolder = newName;
@@ -2626,6 +2931,20 @@ folderDetailBackdrop.addEventListener('click', (e) => {
 
 /* ---------------- landscape fullscreen timer ---------------- */
 let lastLandscapeId = null;
+let landscapeFocus = false; // true = hanya nama timer + tampilan visual
+const landscapeFocusBtn = document.getElementById('landscape-focus-btn');
+const ICON_FOCUS_ON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>`;
+const ICON_FOCUS_OFF = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>`;
+function applyLandscapeFocus(){
+  landscapeCard.classList.toggle('focus-mode', landscapeFocus);
+  landscapeFocusBtn.innerHTML = landscapeFocus ? ICON_FOCUS_OFF : ICON_FOCUS_ON;
+  landscapeFocusBtn.title = landscapeFocus ? 'Kembali ke tampilan lengkap' : 'Layar penuh (nama & tampilan saja)';
+}
+landscapeFocusBtn.addEventListener('click', () => {
+  landscapeFocus = !landscapeFocus;
+  applyLandscapeFocus();
+});
+applyLandscapeFocus();
 let landscapeDismissed = false;
 let manualFullscreenRequested = false;
 function pickLandscapeTimer(){
@@ -2659,6 +2978,17 @@ function renderLandscapeCard(id, data){
   landscapeBarFill.style.width = pct + '%';
   landscapeName.textContent = data.name;
   landscapeDigits.textContent = fmt(remaining);
+  const lsVisual = document.getElementById('landscape-visual');
+  const lsType = normalizeDisplayType(data.displayType);
+  lsVisual.dataset.vtype = lsType;
+  landscapeCard.classList.toggle('has-visual', lsType !== 'default');
+  if(lsType === 'default'){
+    lsVisual.style.display = 'none';
+    lsVisual.innerHTML = '';
+  }else{
+    lsVisual.style.display = '';
+    lsVisual.innerHTML = visualSVG(lsType, pct, data.status === 'running');
+  }
   updateLandscapeFinishAll();
 
   /* fitur multitasking: tampilkan semua timer lain yang sedang berjalan sebagai daftar kecil,
@@ -2716,6 +3046,8 @@ function updateLandscapeMode(){
   }
 }
 function closeLandscapeMode(){
+  landscapeFocus = false;
+  applyLandscapeFocus();
   landscapeDismissed = true;
   manualFullscreenRequested = false;
   const id = landscapeCard.dataset.id;
@@ -2730,9 +3062,27 @@ function closeLandscapeMode(){
   document.body.classList.remove('landscape-fullscreen');
 }
 landscapeCloseBtn.addEventListener('click', closeLandscapeMode);
+/* menutup dropdown filter; kalau tidak ada kategori yang dicentang, kembalikan ke semua tampil */
+function closeCategoryFilter(){
+  categoryFilterOpen = false;
+  if(knownCategoryNames.length && knownCategoryNames.every(c => hiddenCategories.has(c))){
+    hiddenCategories.clear();
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!categoryFilterOpen || !e.target.isConnected) return;
+  if(e.target.closest('#category-filter-pop, #folder-filter-btn')) return;
+  closeCategoryFilter();
+  renderAll();
+});
 window.addEventListener('orientationchange', updateLandscapeMode);
 window.addEventListener('resize', updateLandscapeMode);
 document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && landscapeFocus && document.body.classList.contains('landscape-fullscreen')){
+    landscapeFocus = false;
+    applyLandscapeFocus();
+    return;
+  }
   if(e.key === 'Escape' && folderDetailBackdrop.classList.contains('open') && !addModalBackdrop.classList.contains('open') && !newFolderModalBackdrop.classList.contains('open')){
     closeFolderDetail();
   }
@@ -2847,7 +3197,12 @@ addTimerBtn.addEventListener('click', async () => {
     durMinInput.focus();
     return;
   }
-  let folder = timerFolderInput.value.trim() || 'Umum';
+  let folder = timerFolderInput.value.trim();
+  if(!folder){
+    showComposerMsg('Isi nama kegiatan dulu.', 'error');
+    timerFolderInput.focus();
+    return;
+  }
   const category = timerCategoryInput.value.trim();
   if(!category){
     showComposerMsg('Isi jenis kategori dulu.', 'error');
@@ -2883,7 +3238,8 @@ addTimerBtn.addEventListener('click', async () => {
         remainingSeconds: totalSec,
         status: 'idle',
         endAt: null,
-        soundType: selectedSoundType
+        soundType: selectedSoundType,
+        displayType: selectedDisplayType
       });
     }else{
       await addDoc(collection(db, 'users', user.uid, 'timers'), {
@@ -2896,6 +3252,7 @@ addTimerBtn.addEventListener('click', async () => {
         endAt: startsIdle ? null : Date.now() + totalSec * 1000,
         createdAt: serverTimestamp(),
         soundType: selectedSoundType,
+        displayType: selectedDisplayType,
         ...(insertOrder !== null ? { order: insertOrder } : {})
       });
     }
@@ -2911,6 +3268,7 @@ addTimerBtn.addEventListener('click', async () => {
         endAt: null,
         createdAt: serverTimestamp(),
         soundType: selectedSoundType,
+        displayType: selectedDisplayType,
         ...(stepOrderCounter !== null ? { order: stepOrderCounter } : {})
       });
       if(stepOrderCounter !== null) stepOrderCounter++;
@@ -3130,14 +3488,17 @@ function renderAll(){
         `<button class="folder-chip-add" id="add-folder-chip" type="button" title="Tambah folder">+</button>` +
         `<button class="folder-multitask-btn" id="multitask-toggle-btn" type="button" title="Gabung timer (multitasking)">${iconLayersSmall()}</button>` +
         `<button class="folder-fullscreen-btn" id="folder-fullscreen-btn" type="button" title="Tampilan layar penuh" ${all.some(([, d]) => d.status === 'running' || d.status === 'paused') ? '' : 'disabled'}>${iconFullscreenSmall()}</button>` +
+        `<div class="folder-filter-wrap">` +
+          `<button class="folder-filter-btn${hiddenCategories.size ? ' active' : ''}" id="folder-filter-btn" type="button" title="Filter kategori">${iconFilterSmall()}</button>` +
+          (categoryFilterOpen
+            ? `<div class="category-filter-pop" id="category-filter-pop">
+                 ${knownCategoryNames.length
+                   ? `<button class="category-filter-option category-filter-all${hiddenCategories.size === 0 ? ' active' : ''}" data-category="" type="button"><span class="cf-check">${iconCheckSmall()}</span><span class="cf-name">Centang semua</span></button>` + knownCategoryNames.map(c => `<button class="category-filter-option${!hiddenCategories.has(c) ? ' active' : ''}" data-category="${escapeHtml(c)}" type="button"><span class="cf-check">${iconCheckSmall()}</span><span class="cf-name">${escapeHtml(c)}</span></button>`).join('')
+                   : '<div class="category-filter-empty">Belum ada kategori.</div>'}
+               </div>`
+            : '') +
+        `</div>` +
       `</div>` +
-      `<div class="category-filter-row">
-         <button class="category-filter-chip${hiddenCategories.size === 0 ? ' active' : ''}" data-category="" type="button">Semua kategori</button>
-         ${knownCategoryNames.map(c => {
-           const empty = getCategoryFolderCount(c) === 0;
-           return `<button class="category-filter-chip${!hiddenCategories.has(c) ? ' active' : ''}${empty ? ' has-del' : ''}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)}${empty ? `<span class="category-chip-del" data-del="${escapeHtml(c)}" role="button" aria-label="Hapus kategori ${escapeHtml(c)}" title="Hapus kategori (kosong)">${iconCloseSmall()}</span>` : ''}</button>`;
-         }).join('')}
-       </div>` +
       (searchedFolderNames.length === 0
         ? `<div class="folder-search-empty">Tidak ada folder yang cocok.</div>`
         : (() => {
@@ -3212,7 +3573,7 @@ function renderAll(){
       });
     }
 
-    folderChipsRow.querySelectorAll('.category-filter-chip').forEach(chip => {
+    folderChipsRow.querySelectorAll('.category-filter-option').forEach(chip => {
       chip.addEventListener('click', (e) => {
         const delBtn = e.target.closest('.category-chip-del');
         if(delBtn){
@@ -3235,6 +3596,20 @@ function renderAll(){
         renderAll();
       });
     });
+
+    const folderFilterBtn = document.getElementById('folder-filter-btn');
+    if(folderFilterBtn){
+      folderFilterBtn.addEventListener('click', () => {
+        if(categoryFilterOpen){
+          closeCategoryFilter();
+        }else{
+          /* saat dibuka, semua centang dikosongkan supaya bisa langsung pilih kategori yang dituju */
+          categoryFilterOpen = true;
+          hiddenCategories = new Set(knownCategoryNames);
+        }
+        renderAll();
+      });
+    }
 
     const folderSearchBtn = document.getElementById('folder-search-btn');
     if(folderSearchBtn){
@@ -3311,7 +3686,12 @@ function buildCard(id, data, stepLabel){
         finished: 'Selesai'
       }[data.status] || '';
 
+  const vType = normalizeDisplayType(data.displayType);
+  const visualHtml = vType === 'default'
+    ? ''
+    : `<div class="mini-visual" data-role="visual" data-vtype="${vType}">${visualSVG(vType, pct, data.status === 'running')}</div>`;
   const digitsWrapHtml = `
+    ${visualHtml}
     <div class="timer-digits" data-role="digits">${fmt(displaySeconds)}</div>
   `;
   const controlsHtml = `
@@ -3572,6 +3952,10 @@ async function tick(){
     });
     document.querySelectorAll(`.landscape-mini-item[data-id="${id}"] .landscape-mini-digits`).forEach(el => {
       el.textContent = fmt(remaining);
+    });
+    document.querySelectorAll(`.timer-card[data-id="${id}"] [data-role="visual"]`).forEach(el => {
+      const vt = el.dataset.vtype;
+      if(vt && vt !== 'default') el.innerHTML = visualSVG(vt, pctOf(data, remaining), true);
     });
     if(data.durationSeconds > 0){
       const pct = Math.min(100, Math.max(0, (remaining / data.durationSeconds) * 100)) + '%';
