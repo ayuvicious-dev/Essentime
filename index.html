@@ -1736,7 +1736,7 @@
         <input id="dur-min" type="text" value="5" inputmode="decimal" autocomplete="off" placeholder="mis. 0,5" title="Satuan menit. 0,5 = 30 detik">
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="sound-select-field">
       <label>Nada dering / getar</label>
       <div class="sound-option-row" id="sound-option-row">
         <button class="sound-option-btn" data-sound="chime" type="button" title="Lonceng">
@@ -1761,7 +1761,7 @@
         </button>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="display-select-field">
       <label>Tampilan</label>
       <div class="display-option-row" id="display-option-row"></div>
     </div>
@@ -1916,6 +1916,8 @@ const durMinInput = document.getElementById('dur-min');
 const timerFolderInput = document.getElementById('timer-folder-input');
 const folderComboWrap = document.getElementById('folder-combo-wrap');
 const folderSelectField = document.getElementById('folder-select-field');
+const soundSelectField = document.getElementById('sound-select-field');
+const displaySelectField = document.getElementById('display-select-field');
 const timerCategoryInput = document.getElementById('timer-category-input');
 const categoryComboWrap = document.getElementById('category-combo-wrap');
 const categoryComboDropdown = document.getElementById('category-combo-dropdown');
@@ -2379,6 +2381,8 @@ function openAddModal(){
   closeCategoryCombo();
   setSoundOption('chime');
   setDisplayOption('default');
+  soundSelectField.style.display = '';
+  displaySelectField.style.display = '';
   rentetanSection.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
@@ -2393,6 +2397,9 @@ function openAddModalForFolder(folderName){
   setSoundOption((folderEntry && folderEntry.soundType) || 'chime');
   setDisplayOption(getFolderDisplayType(folderName));
   folderSelectField.style.display = 'none';
+  /* nada dering/getar & tampilan sudah diatur di folder, jadi tidak perlu dipilih lagi */
+  soundSelectField.style.display = 'none';
+  displaySelectField.style.display = 'none';
   rentetanSection.style.display = 'none';
   const queue = getFolderQueue(folderName);
   modalTitle.textContent = 'Tambah timer';
@@ -2424,6 +2431,8 @@ function openEditModal(id, data){
   closeCategoryCombo();
   setSoundOption(data.soundType || 'chime');
   setDisplayOption(data.displayType || 'default');
+  soundSelectField.style.display = '';
+  displaySelectField.style.display = '';
   resetRentetanList();
   addModalBackdrop.classList.add('open');
   setFolderModalBehind(true);
