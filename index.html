@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Essentime</title>
 <meta name="description" content="Essentime, timer sederhana untuk ritual harianmu.">
 <meta name="theme-color" content="#B8763E">
@@ -1555,6 +1555,15 @@
     .bar-fill{transition:none;}
     .btn, .ctrl-btn{transition:none;}
   }
+
+  /* Cegah auto-zoom iOS saat fokus ke input: font-size efektif harus >= 16px.
+     --ui-zoom mengompensasi pengaturan ukuran huruf (CSS zoom) di Pengaturan. */
+  input, select, textarea,
+  .field input, .field select,
+  .folder-search-wrap input,
+  .field .folder-dur-row input{
+    font-size:calc(16px / var(--ui-zoom, 1)) !important;
+  }
 </style>
 </head>
 <body>
@@ -1956,6 +1965,7 @@ updateReleaseAge();
 const fontSizeRow = document.getElementById('font-size-row');
 function applyFontScale(scale){
   document.documentElement.style.zoom = scale;
+  document.documentElement.style.setProperty('--ui-zoom', scale);
   fontSizeRow.querySelectorAll('.font-size-btn').forEach(b => {
     b.classList.toggle('active', parseFloat(b.dataset.scale) === scale);
   });
