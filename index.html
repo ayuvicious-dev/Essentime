@@ -2723,19 +2723,24 @@ async function handleDuplicateFolder(folderName){
   }
   try{
     await addDoc(collection(db, 'users', user.uid, 'folders'), { name: newName, createdAt: serverTimestamp() });
-    const timersInFolder = Array.from(localTimers.entries()).filter(([, d]) => (d.folder || 'Umum') === folderName);
-    await Promise.all(timersInFolder.map(([, d]) =>
-      addDoc(collection(db, 'users', user.uid, 'timers'), {
+    /* ambil urutan rentetan asli, lalu simpan satu per satu dengan nomor order supaya susunan salinan sama persis */
+    const timersInFolder = getFolderQueue(folderName);
+    let stepNo = 1;
+    for(const [, d] of timersInFolder){
+      await addDoc(collection(db, 'users', user.uid, 'timers'), {
         name: d.name,
         folder: newName,
+        category: d.category || '',
         durationSeconds: d.durationSeconds,
         remainingSeconds: d.durationSeconds,
         status: 'idle',
         endAt: null,
         createdAt: serverTimestamp(),
-        displayType: d.displayType || 'default'
-      })
-    ));
+        soundType: d.soundType || 'chime',
+        displayType: d.displayType || 'default',
+        order: stepNo++
+      });
+    }
     currentFolder = newName;
   }catch(err){
     console.error(err);
