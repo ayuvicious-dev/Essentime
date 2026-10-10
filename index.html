@@ -92,7 +92,7 @@
   /* ---------- auth screen ---------- */
   #auth-screen{
     flex:1;
-    display:flex;
+    display:none; /* baru ditampilkan setelah dipastikan belum login (cegah prompt Face ID/Passwords iOS) */
     flex-direction:column;
     align-items:center;
     justify-content:center;
@@ -1802,11 +1802,11 @@
       <form id="auth-form">
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" type="email" autocomplete="email" required placeholder="nama@email.com">
+          <input id="email" type="email" autocomplete="email" required placeholder="nama@email.com" disabled>
         </div>
         <div class="field">
           <label for="password">Kata sandi</label>
-          <input id="password" type="password" autocomplete="current-password" required placeholder="Minimal 6 karakter" minlength="6">
+          <input id="password" type="password" autocomplete="current-password" required placeholder="Minimal 6 karakter" minlength="6" disabled>
         </div>
         <button class="btn btn-primary" id="auth-submit" type="submit">Masuk</button>
       </form>
@@ -3112,6 +3112,8 @@ function updateNotifBtn(){
 onAuthStateChanged(auth, (user) => {
   if(window.__splash) window.__splash.mark('auth', !!user);
   if(user){
+    emailInput.disabled = true;
+    passwordInput.disabled = true;
     authScreen.style.display = 'none';
     appScreen.style.display = 'flex';
     bottomNav.style.display = 'flex';
@@ -3127,6 +3129,8 @@ onAuthStateChanged(auth, (user) => {
     startTicker();
   }else{
     appScreen.style.display = 'none';
+    emailInput.disabled = false;
+    passwordInput.disabled = false;
     authScreen.style.display = 'flex';
     bottomNav.style.display = 'none';
     bottomNavFade.style.display = 'none';
