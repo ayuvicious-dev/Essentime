@@ -665,11 +665,11 @@
   }
   .folder-row{
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:6px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
     width:100%;
-    padding:10px 4px;
+    padding:12px 4px;
     border-bottom:1px solid var(--line);
   }
   .folder-row:last-child{
@@ -677,7 +677,7 @@
   }
   .folder-row.active{
     border-radius:0;
-    padding:10px 4px 10px 11px;
+    padding:12px 4px 12px 11px;
     border-bottom:1px solid var(--line);
     background:none;
     border-left:3px solid var(--gold-dark);
@@ -699,6 +699,17 @@
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+  }
+  .folder-row .folder-chip-label{
+    font-size:14.5px;
+    font-weight:700;
+    line-height:1.3;
+    color:var(--brown);
+    white-space:normal;
+    overflow-wrap:anywhere;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
   }
   .folder-row-main{
     display:flex;
@@ -728,21 +739,41 @@
     font-variant-numeric:tabular-nums;
   }
   .folder-row.active .folder-row-total{ color:var(--brown-soft); }
+  .folder-row .folder-row-main{ align-items:flex-start; gap:10px; }
+  .folder-row .folder-row-total{ font-size:12.5px; font-weight:600; line-height:1.5; }
+  .folder-row-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    min-width:0;
+  }
+  .folder-row-bottom .category-badge{
+    font-size:10px;
+    padding:2px 8px;
+    margin:0;
+    min-width:0;
+    max-width:40%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
   .folder-row-actions{
     display:flex;
     align-items:center;
     gap:2px;
     flex-shrink:0;
+    margin-left:auto;
   }
   .folder-row-action{
     background:none;
     border:none;
     color:var(--brown-faint);
     cursor:pointer;
-    padding:5px;
+    padding:7px;
     flex-shrink:0;
     display:flex;
-    border-radius:6px;
+    border-radius:8px;
   }
   .folder-row-action:hover{ color:var(--gold-dark); background:#FBEEDB; }
   .folder-row-action.danger:hover{ color:var(--danger); background:#FBEAE4; }
@@ -754,13 +785,12 @@
   .folder-row-action-start{
     display:flex;
     align-items:center;
-    gap:6px;
+    justify-content:center;
+    width:34px;
+    height:34px;
     border:none;
-    border-radius:999px;
-    padding:7px 14px;
-    font-size:11.5px;
-    font-weight:700;
-    letter-spacing:0.2px;
+    border-radius:50%;
+    padding:0 0 0 2px; /* geser tipis agar segitiga play terlihat di tengah */
     cursor:pointer;
     background:linear-gradient(135deg, var(--gold-light), var(--gold-dark));
     color:#fff;
@@ -3570,16 +3600,18 @@ function renderAll(){
                 <div class="folder-row-main">
                   <div class="folder-chip-textwrap">
                     <button class="folder-chip-label" data-folder="${escapeHtml(f)}" type="button">${escapeHtml(f)}</button>
-                    ${folderCategory ? `<span class="category-badge">${escapeHtml(folderCategory)}</span>` : ''}
                   </div>
                   <span class="folder-row-total">${fmt(totalSeconds)}</span>
                 </div>
+                <div class="folder-row-bottom">
+                ${folderCategory ? `<span class="category-badge">${escapeHtml(folderCategory)}</span>` : ''}
                 <div class="folder-row-actions">
                   <button class="folder-row-action pin-toggle${pinned ? ' active' : ''}" title="${pinned ? 'Lepas sematan' : 'Sematkan folder'}" data-folder-action="toggle-pin" data-folder="${escapeHtml(f)}" type="button">${iconPinSmall()}</button>
                   <button class="folder-row-action star-toggle${priority ? ' active' : ''}" title="${priority ? 'Hapus dari prioritas' : 'Tandai prioritas'}" data-folder-action="toggle-priority" data-folder="${escapeHtml(f)}" type="button">${iconStarSmall()}</button>
                   <button class="folder-row-action" title="Duplikat" data-folder-action="duplicate" data-folder="${escapeHtml(f)}" type="button">${iconDuplicateSmall()}</button>
                   <button class="folder-row-action" title="Edit" data-folder-action="edit" data-folder="${escapeHtml(f)}" type="button">${iconEditSmall()}</button>
-                  <button class="folder-row-action-start" title="${anyRunning ? 'Sedang berjalan' : 'Mulai urutan'}" data-folder-action="start" data-folder="${escapeHtml(f)}" type="button" ${canStart ? '' : 'disabled'}>${iconPlaySmall()}<span>${anyRunning ? 'Berjalan' : 'Mulai'}</span></button>
+                  <button class="folder-row-action-start" title="${anyRunning ? 'Sedang berjalan' : 'Mulai urutan'}" data-folder-action="start" data-folder="${escapeHtml(f)}" type="button" aria-label="${anyRunning ? 'Sedang berjalan' : 'Mulai urutan'}" ${canStart ? '' : 'disabled'}>${iconPlaySmall()}</button>
+                </div>
                 </div>
               </div>
             `;
